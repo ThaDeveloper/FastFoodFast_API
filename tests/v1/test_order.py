@@ -2,8 +2,10 @@ import json
 import unittest
 from tests.v1.test_setup import TestSetup
 
+
 class TestOrder(TestSetup):
     """All test cases for Order class"""
+
     def test_add_new_order(self):
         """Tests creating a new order."""
         response = self.app.post('/api/v1/orders',
@@ -71,7 +73,7 @@ class TestOrder(TestSetup):
             '/api/v1/orders',
             data=json.dumps(
                 dict(
-                    items="sausage",price=100, servings=2)),
+                    items="sausage", price=100, servings=2)),
             content_type="application/json")
         response = self.app.delete("/api/v1/orders/2",
                                    content_type="application/json")

@@ -8,5 +8,5 @@ class TestSetup(unittest.TestCase):
 
     def setUp(self):
         self.app = app.test_client()
-        self.order = {"items":"pizza","price": 1000, "servings": 2}
-        self.empty_order = {"items": "","price": "", "servings": ""}
+        self.order = {"items": "pizza", "price": 1000, "servings": 2}
+        self.empty_order = {"items": "", "price": "", "servings": ""}
