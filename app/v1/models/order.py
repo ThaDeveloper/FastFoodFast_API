@@ -6,13 +6,13 @@ class Order(Menu):
     def __init__(self):
         self.orders = {}
     
-    def create_order(self, owner, items, servings, status='pending'):
+    def create_order(self, owner, items, servings, total=0, status='pending'):
         """Adds a new order to the orders dictionary"""
         new_order = {'order_id': len(self.orders) + 1,
                     'owner': owner,
                     'items': items,
                     'servings': servings,
-                    'total': Menu.get_item_price(items) * servings,
+                    'total': total,
                     'status': status}
         self.orders[owner] = new_order
         return self.orders
@@ -27,7 +27,7 @@ class Order(Menu):
     def update_order(self, order_id, status):
         order = self.find_order_by_id(order_id)
         if order:
-            order['status'] == status
+            order['status'] = status
             return order
     
     def delete_order(self,order_id):

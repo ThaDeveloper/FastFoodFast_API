@@ -3,7 +3,7 @@ from flask import Flask
 from config import app_config
 
 #Import order_api blueprint
-from .views.order import order_api as order_blueprint
+from .views.order import order_v1 as order_blueprint
 
 def create_app(env_name):
   """
