@@ -35,3 +35,14 @@ def get_all_orders():
     """Returns all created orders"""
     return jsonify({"Orders": order_inst.orders}), 200
 
+@order_v1.route('/<int:order_id>', methods=['PUT'])
+def update_order(order_id):
+    """Updates the status of a given order"""
+    data = request.get_json()
+    new_status = data['status']
+    order = order_inst.find_order_by_id(order_id)
+    if order:
+        response = order_inst.update_order(order_id, new_status)
+        if response:
+            return jsonify({'Message': 'Order updated'}), 200
+    return jsonify({'Message': 'Order not found'}), 404
