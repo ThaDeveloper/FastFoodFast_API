@@ -21,3 +21,12 @@ def create_ordder():
         data['servings'] * price,
         data['status'])
     return jsonify({'Message': 'Order Created'}), 201
+
+@order_v1.route('/<int:order_id>', methods=['GET'])
+def get_single_order(order_id):
+    """Returns a single order"""
+    response = order_inst.find_order_by_id(order_id)
+    if response:
+        return jsonify({"Order": response}), 200
+    return jsonify({"Message": "Order not found"}), 404
+
