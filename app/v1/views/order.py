@@ -2,10 +2,11 @@ from flask import request, jsonify, Response, Blueprint
 from ..models.order import Order
 from ..models.menu import Menu
 
-#Bluepring app to handle our order resources
+# Bluepring app to handle our order resources
 order_v1 = Blueprint('order', __name__)
 order_inst = Order()
 menu_inst = Menu()
+
 
 @order_v1.route('/', methods=['POST'])
 def create_ordder():
@@ -22,6 +23,7 @@ def create_ordder():
         data['status'])
     return jsonify({'Message': 'Order Created'}), 201
 
+
 @order_v1.route('/<int:order_id>', methods=['GET'])
 def get_single_order(order_id):
     """Returns a single order"""
@@ -30,10 +32,12 @@ def get_single_order(order_id):
         return jsonify({"Order": response}), 200
     return jsonify({"Message": "Order not found"}), 404
 
+
 @order_v1.route('/', methods=['GET'])
 def get_all_orders():
     """Returns all created orders"""
     return jsonify({"Orders": order_inst.orders}), 200
+
 
 @order_v1.route('/<int:order_id>', methods=['PUT'])
 def update_order(order_id):
