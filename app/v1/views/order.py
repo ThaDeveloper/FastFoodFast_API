@@ -30,3 +30,8 @@ def get_single_order(order_id):
         return jsonify({"Order": response}), 200
     return jsonify({"Message": "Order not found"}), 404
 
+@order_v1.route('/', methods=['GET'])
+def get_all_orders():
+    """Returns all created orders"""
+    return jsonify({"Orders": order_inst.orders}), 200
+
