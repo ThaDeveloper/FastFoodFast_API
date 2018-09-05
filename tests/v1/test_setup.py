@@ -30,24 +30,24 @@ class TestSetup(unittest.TestCase):
                             "password": "password"}
 
         # Register and login a testuser
-        self.register = self.app.post('/api/v1/auth/register',
+        self.register = self.client.post('/api/v1/auth/register',
                                       data=json.dumps(self.user),
                                       headers={"content-type":
                                                "application/json"})
-        self.login = self.app.post('/api/v1/auth/login',
+        self.login = self.client.post('/api/v1/auth/login',
                                    data=json.dumps(self.user),
                                    content_type='application/json')
         self.data = json.loads(self.login.get_data(as_text=True))
         self.token = self.data['token']
 
         # Register and login a testunkownuser
-        self.app.post(
+        self.client.post(
             "/api/v1/auth/register",
             data=json.dumps(
                 self.unknownuser),
             content_type="application/json")
         
-        self.unkownlogin = self.app.post("/api/v1/auth/login",
+        self.unkownlogin = self.client.post("/api/v1/auth/login",
                                          data=json.dumps(self.unknownuser),
                                          content_type="application/json")
         self.data = json.loads(self.unkownlogin.get_data(as_text=True))
