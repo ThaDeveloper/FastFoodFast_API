@@ -31,9 +31,7 @@ class Order(Menu):
             order['status'] = status
             return order
 
-    def delete_order(self, order_id):
+    def cancel_order(self, order_id):
         order = self.find_order_by_id(order_id)
         if order:
-            if order['status'] == 'decline':
-                del self.orders[order_id]
-                return self.orders
+                del self.orders[order['owner']]
