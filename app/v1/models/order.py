@@ -1,5 +1,5 @@
 from .menu import Menu
-
+import datetime
 
 class Order(Menu):
     """constructor and methods for the Order model"""
@@ -14,21 +14,24 @@ class Order(Menu):
                      'items': items,
                      'servings': servings,
                      'total': total,
-                     'status': status}
+                     'status': status,
+                     'created_at': datetime.datetime.now()}
         self.orders[owner] = new_order
         return self.orders
 
     def find_order_by_id(self, order_id):
-        """Update the staus of an order"""
+        """Find an order by specific id"""
         if self.orders:
             for order in self.orders.values():
                 if order.get('order_id') == order_id:
                     return order
 
-    def update_order(self, order_id, status):
+    def update_order(self, order_id, status, updated_at=datetime.datetime.now()):
+        """Update the status of an order"""
         order = self.find_order_by_id(order_id)
         if order:
             order['status'] = status
+            order['updated_at'] = updated_at
             return order
 
     def cancel_order(self, order_id):

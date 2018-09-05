@@ -1,6 +1,7 @@
 from flask import request, jsonify, Response, Blueprint
 from ..models.order import Order
 from ..models.menu import Menu
+import datetime
 
 # Bluepring app to handle our order resources
 order_v1 = Blueprint('order', __name__)
@@ -43,9 +44,10 @@ def update_order(order_id):
     """Updates the status of a given order"""
     data = request.get_json()
     new_status = data['status']
+    new_time = datetime.datetime.now()
     order = order_inst.find_order_by_id(order_id)
     if order:
-        response = order_inst.update_order(order_id, new_status)
+        response = order_inst.update_order(order_id, new_status,new_time)
         if response:
             return jsonify({'Message': 'Order updated'}), 200
     return jsonify({'Message': 'Order not found'}), 404
