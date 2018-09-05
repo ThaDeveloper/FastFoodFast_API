@@ -10,8 +10,8 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
-        self.order = {"owner": "justin","items": "pizza", "servings": 2}
-        self.empty_order = {"owner": "","items": "", "servings": ""}
+        self.order = {"owner": "justin","items": {"burger": 2, "coffee": 1}}
+        self.empty_order = {"owner": "","items": {}}
         order_inst = Order()
         self.orders = order_inst.orders
     

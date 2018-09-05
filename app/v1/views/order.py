@@ -15,14 +15,12 @@ def create_ordder():
     data = request.get_json()
     if not data or not data['items']:
         return jsonify({'Message': 'Order cannot be empty'}), 400
-    price = menu_inst.get_item_price(data['items'])
+    total = order_inst.total_cost(data['items'])
     order_inst.create_order(
         data['owner'],
         data['items'],
-        data['servings'],
-        data['servings'] * price)
+        total)
     return jsonify({'Message': 'Order Created'}), 201
-
 
 @order_v1.route('<int:order_id>', methods=['GET'])
 def get_single_order(order_id):
@@ -32,12 +30,10 @@ def get_single_order(order_id):
         return jsonify({"Order": response}), 200
     return jsonify({"Message": "Order not found"}), 404
 
-
 @order_v1.route('', methods=['GET'])
 def get_all_orders():
     """Returns all created orders"""
     return jsonify({"Orders": order_inst.orders}), 200
-
 
 @order_v1.route('<int:order_id>', methods=['PUT'])
 def update_order(order_id):

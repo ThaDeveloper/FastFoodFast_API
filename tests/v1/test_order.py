@@ -18,7 +18,7 @@ class TestOrder(TestSetup):
     def test_empty_items(self):
         """Error raised for empty order placed."""
         response = self.client.post("/api/v1/orders",
-                                 data=json.dumps(dict(owner="user", items="", servings=2)),
+                                 data=json.dumps(self.empty_order),
                                  content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -71,7 +71,7 @@ class TestOrder(TestSetup):
             '/api/v1/orders',
             data=json.dumps(
                 dict(
-                    owner="user", items="sausage", servings=2)),
+                    owner="user", items={"sausage":2})),
             content_type="application/json")
         response = self.client.delete("/api/v1/orders/2",
                                    content_type="application/json")
