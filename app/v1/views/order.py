@@ -22,6 +22,7 @@ def create_ordder():
         total)
     return jsonify({'Message': 'Order Created'}), 201
 
+
 @order_v1.route('<int:order_id>', methods=['GET'])
 def get_single_order(order_id):
     """Returns a single order"""
@@ -30,10 +31,12 @@ def get_single_order(order_id):
         return jsonify({"Order": response}), 200
     return jsonify({"Message": "Order not found"}), 404
 
+
 @order_v1.route('', methods=['GET'])
 def get_all_orders():
     """Returns all created orders"""
     return jsonify({"Orders": order_inst.orders}), 200
+
 
 @order_v1.route('<int:order_id>', methods=['PUT'])
 def update_order(order_id):
@@ -43,10 +46,11 @@ def update_order(order_id):
     new_time = datetime.datetime.now()
     order = order_inst.find_order_by_id(order_id)
     if order:
-        response = order_inst.update_order(order_id, new_status,new_time)
+        response = order_inst.update_order(order_id, new_status, new_time)
         if response:
             return jsonify({'Message': 'Order updated'}), 200
     return jsonify({'Message': 'Order not found'}), 404
+
 
 @order_v1.route('<int:order_id>', methods=['DELETE'])
 def cancel_order(order_id):

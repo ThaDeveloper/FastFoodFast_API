@@ -16,7 +16,6 @@ def create_app(env_name):
 
     app.config.from_object(app_config[env_name])
 
-
     app.register_blueprint(order_blueprint, url_prefix='/api/v1/orders')
 
     @app.route('/', methods=['GET'])

@@ -9,8 +9,8 @@ class TestOrder(TestSetup):
     def test_add_new_order(self):
         """Tests creating a new order."""
         response = self.client.post('/api/v1/orders',
-                                 data=json.dumps(self.order),
-                                 content_type="application/json")
+                                    data=json.dumps(self.order),
+                                    content_type="application/json")
         self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Order", response_msg["Message"])
@@ -18,8 +18,8 @@ class TestOrder(TestSetup):
     def test_empty_items(self):
         """Error raised for empty order placed."""
         response = self.client.post("/api/v1/orders",
-                                 data=json.dumps(self.empty_order),
-                                 content_type="application/json")
+                                    data=json.dumps(self.empty_order),
+                                    content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("empty", response_msg["Message"])
@@ -49,8 +49,8 @@ class TestOrder(TestSetup):
     def test_update_order(self):
         """Tests a order can be updated."""
         response = self.client.put("/api/v1/orders/1",
-                                data=json.dumps(dict(status="accepted")),
-                                content_type="application/json")
+                                   data=json.dumps(dict(status="accepted")),
+                                   content_type="application/json")
         self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("updated", response_msg["Message"])
@@ -58,8 +58,8 @@ class TestOrder(TestSetup):
     def test_invalid_update(self):
         """Error raised for invalid update request."""
         response = self.client.put("/api/v1/orders/15",
-                                data=json.dumps(dict(status="accepted")),
-                                content_type="application/json")
+                                   data=json.dumps(dict(status="accepted")),
+                                   content_type="application/json")
 
         self.assertEqual(response.status_code, 404)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -71,10 +71,10 @@ class TestOrder(TestSetup):
             '/api/v1/orders',
             data=json.dumps(
                 dict(
-                    owner="user", items={"sausage":2})),
+                    owner="user", items={"sausage": 2})),
             content_type="application/json")
         response = self.client.delete("/api/v1/orders/2",
-                                   content_type="application/json")
+                                      content_type="application/json")
         self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("cancelled", response_msg["Message"])
