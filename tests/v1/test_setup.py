@@ -11,8 +11,8 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
-        self.order = {"owner": "justin", "items": {"burger": 2, "coffee": 1}}
-        self.empty_order = {"owner": "", "items": {}}
+        self.order = {"items": {"burger": 2, "coffee": 1}}
+        self.empty_order = {"items": {}}
         order_inst = Order()
         user_inst = User()
         self.orders = order_inst.orders
@@ -52,7 +52,6 @@ class TestSetup(unittest.TestCase):
                                          content_type="application/json")
         self.data = json.loads(self.unkownlogin.get_data(as_text=True))
         self.unkowntoken = self.data['token']
-
 
     def tearDown(self):
         self.orders.clear()

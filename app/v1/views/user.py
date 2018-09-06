@@ -6,6 +6,7 @@ import os
 
 from ...shared.authentication import user_inst 
 from ...shared.authentication import Auth
+from ...shared.validation import validate_user
 
 user_v1 = Blueprint('user', __name__)
 
@@ -16,12 +17,8 @@ def register_user():
     password_hash = generate_password_hash(data['password'], method='sha256')
     if data['username'] in user_inst.users:
         return jsonify({'Message': "User already exists"}), 400
-    if data['username'] == "" or data['password'] == "":
-        return jsonify({'Message':
-                        "Username and Password is required"}), 400
-    if not isinstance(data['username'], str):
-        return jsonify({"Message":
-                        "Wrong username format: Can only be a string"}), 400
+    if validate_user(data):
+        return validate_user(data)
     data = user_inst.create_user(data['first_name'], data['last_name'], data['username'], data['email'], password_hash)
     return jsonify({"Message": "User registered successfully"}), 201
 
