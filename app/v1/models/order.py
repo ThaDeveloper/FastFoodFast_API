@@ -10,19 +10,20 @@ class Order:
 
     def create_order(
             self,
-            user,
+            order_id,
+            user_id,
             items={
                 "item": 0},
             total=0,
             status='pending'):
         """Adds a new order to the orders dictionary"""
-        new_order = {'order_id': len(self.orders) + 1,
-                     'user': user,
+        new_order = {'order_id': order_id,
+                     'user_id': user_id,
                      'items': items,
                      'total': total,
                      'status': status,
                      'created_at': datetime.datetime.now()}
-        self.orders[user] = new_order
+        self.orders[order_id] = new_order
         return self.orders
 
     def find_order_by_id(self, order_id):
@@ -47,7 +48,7 @@ class Order:
     def cancel_order(self, order_id):
         order = self.find_order_by_id(order_id)
         if order:
-            del self.orders[order['user']]
+            del self.orders[order['order_id']]
 
     @staticmethod
     def total_cost(items):

@@ -21,6 +21,7 @@ def create_order(current_user):
     user = current_user['username']
     total = order_inst.total_cost(data['items'])
     order_inst.create_order(
+        len(order_inst.orders) + 1,
         user,
         data['items'],
         total)
