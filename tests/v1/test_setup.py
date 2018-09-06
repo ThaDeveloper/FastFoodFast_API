@@ -1,6 +1,6 @@
 import json
 import unittest
-from app.v1.app import create_app
+from app import create_app
 from app.v1.models.order import Order
 from app.v1.models.user import User
 
