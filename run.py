@@ -6,5 +6,4 @@ env_name = os.getenv('FLASK_ENV')
 app = create_app(env_name)
 
 if __name__ == '__main__':
-    # app.config['SESSION_TYPE'] = 'filesystem'
     app.run()
