@@ -44,6 +44,6 @@ def login():
                             datetime.timedelta(minutes=20)},
                            os.getenv('SECRET'))
         user_inst.u_token[user['username']] = token
-        return jsonify({"token": token.decode('UTF-8')}), 200 #decode to string since python3 returns toekn in bytes
+        return jsonify({"token": token.decode('UTF-8')}), 200 #decode to string since python3 returns token in bytes
 
     return jsonify({"Message": "login invalid!"}), 401

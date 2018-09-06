@@ -15,7 +15,7 @@ user_inst = User()
 class Auth:
     """Creates a decorator for all the endpoints that needs authentication"""
     @staticmethod
-    def auth(f):
+    def token_required(f):
         """All endoints that need log in will be wrapped by this decorator"""
         @wraps(f)
         def decorated(*args, **kwargs):
