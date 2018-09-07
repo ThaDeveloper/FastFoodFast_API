@@ -10,19 +10,23 @@ class Order:
 
     def create_order(
             self,
-            order_id,
             user_id,
             items={
                 "item": 0},
             total=0,
             status='pending'):
         """Adds a new order to the orders dictionary"""
+        if not self.orders:
+            order_id = 1
+        else:
+            order_id = list(self.orders.keys())[-1] + 1
         new_order = {'order_id': order_id,
                      'user_id': user_id,
                      'items': items,
                      'total': total,
                      'status': status,
                      'created_at': datetime.datetime.now()}
+        
         self.orders[order_id] = new_order
         return self.orders
 

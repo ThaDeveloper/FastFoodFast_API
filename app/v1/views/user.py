@@ -38,9 +38,10 @@ def login():
         # session['username'] = auth['username']
         token = jwt.encode({'username': user['username'],
                             'exp': datetime.datetime.utcnow() +
-                            datetime.timedelta(minutes=20)},
+                            datetime.timedelta(days=1)},
                            os.getenv('SECRET'))
         user_inst.u_token[user['username']] = token
-        return jsonify({"token": token.decode('UTF-8')}), 200 #decode to string since python3 returns token in bytes
+        return jsonify({"Message": "Login Sucess", 
+        "token": token.decode('UTF-8')}), 200 #decode to string since python3 returns token in bytes
 
     return jsonify({"Message": "login invalid!"}), 401

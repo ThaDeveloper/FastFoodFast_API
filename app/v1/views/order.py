@@ -20,8 +20,8 @@ def create_order(current_user):
         return jsonify({'Message': 'Order cannot be empty'}), 400
     user = current_user['username']
     total = order_inst.total_cost(data['items'])
+  
     order_inst.create_order(
-        len(order_inst.orders) + 1,
         user,
         data['items'],
         total)
