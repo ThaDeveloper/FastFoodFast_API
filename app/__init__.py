@@ -24,37 +24,20 @@ def create_app(env_name):
 
     @app.route('/', methods=['GET'])
     def index():
-        """
-        Home endpoint
-        """
-        return 'Welcome to Fast-Food-Fast API \n\
-        Endpoints (All order endpoints require auth):\n\
-            POST: /api/v1/auth/register\n\
-            POST: /api/v1/auth/login\n\
-            POST: /api/v1/orders\n\
-            GET: /api/v1/orders/order_id\n\
-            GET: /api/v1/orders\n\
-            PUT: POST: /api/v1/orders/order_id\n\
-            DELETE: POST: /api/v1/orders/order_id\n\n\
-            Sample user register data:\n\
-            {\n\
-            "first_name": "Kunta",\n\
-            "last_name": "Kinte",\n\
-            "username": "kunta.kinte",\n\
-            "email": "kuntatest@gmail.com",\n\
-            "password": "@Password1"\n\
-            }\n\
-            Sample order data:\n\
-            {\n\
-	            "items": {"sausage": 2, "pizza": 3}\n\
-            }\n\
-            Available menu items:\n\
-            {\n\
-                "burger": 800,\n\
-                "pizza": 1000,\n\
-                "coffee": 300,\n\
-                "sausage": 100,\n\
-                "rice": 500\n\
+        """Home endpoint"""
+        return '<h2 style="color: yellow;">Welcome to Fast-Food-Fast API<h2>\
+        <h3>Endpoints (All order endpoints require auth):</h3>\
+            <i>(To be tested on postman)<i><br><br>\
+            POST: /api/v1/auth/register<br>POST: /api/v1/auth/login<br>\
+            POST: /api/v1/orders<br>GET: /api/v1/orders/order_id<br>\
+            GET: /api/v1/orders<br>PUT: /api/v1/orders/order_id<br>\
+            DELETE: /api/v1/orders/order_id<br><br>\
+            <h4>Sample user register data:</h4>\
+            {<br>"first_name": "Kunta",<br>"last_name": "Kinte",<br>"username": "kunta.kinte",<br>\
+            "email": "kuntatest@gmail.com",<br>"password": "@Password1"<br>\
+            }<br><br><h4>Sample order data:</h4>{<br>"items": {"sausage": 2, "pizza": 3}<br>\
+            }<br><h4>Available menu items:</h4>\
+            {<br>"burger": 800,<br>"pizza": 1000,<br>"coffee": 300,<br>\
+                "sausage": 100,<br>"rice": 500<br>\
             }'
-
     return app
