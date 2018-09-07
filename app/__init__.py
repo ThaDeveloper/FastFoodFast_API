@@ -27,6 +27,34 @@ def create_app(env_name):
         """
         Home endpoint
         """
-        return 'Welcome to Fast-Food-Fast API'
+        return 'Welcome to Fast-Food-Fast API \n\
+        Endpoints (All order endpoints require auth):\n\
+            POST: /api/v1/auth/register\n\
+            POST: /api/v1/auth/login\n\
+            POST: /api/v1/orders\n\
+            GET: /api/v1/orders/order_id\n\
+            GET: /api/v1/orders\n\
+            PUT: POST: /api/v1/orders/order_id\n\
+            DELETE: POST: /api/v1/orders/order_id\n\n\
+            Sample user register data:\n\
+            {\n\
+            "first_name": "Kunta",\n\
+            "last_name": "Kinte",\n\
+            "username": "kunta.kinte",\n\
+            "email": "kuntatest@gmail.com",\n\
+            "password": "@Password1"\n\
+            }\n\
+            Sample order data:\n\
+            {\n\
+	            "items": {"sausage": 2, "pizza": 3}\n\
+            }\n\
+            Available menu items:\n\
+            {\n\
+                "burger": 800,\n\
+                "pizza": 1000,\n\
+                "coffee": 300,\n\
+                "sausage": 100,\n\
+                "rice": 500\n\
+            }'
 
     return app
