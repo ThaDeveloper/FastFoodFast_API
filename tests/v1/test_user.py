@@ -21,6 +21,21 @@ class TestUser(TestSetup):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("required", response_msg["Message"])
 
+    def test_username_less_3_chars(self):
+        """tests returns error if username less then 3 characters."""
+        response = self.client.post(
+            "api/v1/auth/register", data=json.dumps(
+                dict(
+                    first_name="blank",
+                    last_name="username",
+                    username="us",
+                    email="blank@gmail.com",
+                    password="password")),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("3 characters", response_msg["Message"])
+
     def test_missing_email(self):
         """Tests returns error if email is missing."""
         response = self.client.post(
@@ -153,22 +168,28 @@ class TestUser(TestSetup):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("required", response_msg["Message"])
 
-    def test_invalid_username_login(self):
+    def test_unkown_username_login(self):
         """Tests unauthorized error raised with invalid username."""
-        response = self.client.post("/api/v1/auth/login",
-                                 data=json.dumps(dict(username="invalid",
-                                                      password="testinvalid")),
-                                 content_type="application/json")
+        response = self.client.post(
+            "/api/v1/auth/login",
+            data=json.dumps(
+                dict(
+                    username="invalid",
+                    password="testinvalid")),
+            content_type="application/json")
         self.assertEqual(response.status_code, 401)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("not found", response_msg["Message"])
 
     def test_invalid_password_login(self):
         """Tests unauthorized error raised with invalid password."""
-        response = self.client.post("/api/v1/auth/login",
-                                 data=json.dumps(dict(username="justin.ndwiga",
-                                                      password="invalid")),
-                                 content_type="application/json")
+        response = self.client.post(
+            "/api/v1/auth/login",
+            data=json.dumps(
+                dict(
+                    username="justin.ndwiga",
+                    password="invalid")),
+            content_type="application/json")
         self.assertEqual(response.status_code, 401)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("invalid", response_msg["Message"])
@@ -176,13 +197,13 @@ class TestUser(TestSetup):
     def test_valid_login_generates_token(self):
         """Tests token is generated on successful login."""
         response = self.client.post("/api/v1/auth/login",
-                                 data=json.dumps(self.user),
-                                 content_type="application/json")
+                                    data=json.dumps(self.user),
+                                    content_type="application/json")
         self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("token", response_msg)
 
-    #to be implemented later
+    # to be implemented later
     # def test_logout(self):
     #     """Test logout success"""
     #     response = self.client.delete(
@@ -192,6 +213,7 @@ class TestUser(TestSetup):
     #     self.assertEqual(response.status_code, 200)
     #     response_msg = json.loads(response.data.decode("UTF-8"))
     #     self.assertIn("out", response_msg["Message"])
+
 
 if __name__ == "__main__":
     unittest.main()

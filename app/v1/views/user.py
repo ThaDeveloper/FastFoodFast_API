@@ -4,11 +4,12 @@ import jwt
 import datetime
 import os
 
-from ...shared.authentication import user_inst 
+from ...shared.authentication import user_inst
 from ...shared.authentication import Auth
 from ...shared.validation import validate_user
 
 user_v1 = Blueprint('user', __name__)
+
 
 @user_v1.route('/register', methods=['POST'])
 def register_user():
@@ -19,8 +20,14 @@ def register_user():
         return jsonify({'Message': "User already exists"}), 400
     if validate_user(data):
         return validate_user(data)
-    data = user_inst.create_user(data['first_name'], data['last_name'], data['username'], data['email'], password_hash)
+    data = user_inst.create_user(
+        data['first_name'],
+        data['last_name'],
+        data['username'],
+        data['email'],
+        password_hash)
     return jsonify({"Message": "User registered successfully"}), 201
+
 
 @user_v1.route('/login', methods=['POST'])
 def login():
@@ -41,7 +48,8 @@ def login():
                             datetime.timedelta(days=1)},
                            os.getenv('SECRET'))
         user_inst.u_token[user['username']] = token
-        return jsonify({"Message": "Login Sucess", 
-        "token": token.decode('UTF-8')}), 200 #decode to string since python3 returns token in bytes
+        # decode to string since python3 returns token in bytes
+        return jsonify({"Message": "Login Success",
+                        "token": token.decode('UTF-8')}), 200
 
     return jsonify({"Message": "login invalid!"}), 401

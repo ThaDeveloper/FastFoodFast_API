@@ -35,15 +35,15 @@ def create_order(current_user):
 
 @order_v1.route('<int:order_id>', methods=['GET'])
 @Auth.token_required
-def get_single_order(current_user,order_id):
+def get_single_order(current_user, order_id):
     """Returns a single order for the owner or admin"""
     order = order_inst.find_order_by_id(order_id)
     print(current_user)
     if order:
         if current_user['username'] == order['user_id']:
-            return jsonify({"Order": order}), 200 
-        return jsonify({"Message": "Not authorized to view order"}), 401 #to test
-    
+            return jsonify({"Order": order}), 200
+        return jsonify({"Message": "Not authorized to view order"}), 401
+
     return jsonify({"Message": "Order not found"}), 404
 
 
@@ -51,6 +51,8 @@ def get_single_order(current_user,order_id):
 @Auth.token_required
 def get_all_orders(current_user):
     """Returns all created orders"""
+    if not order_inst.orders:
+        return jsonify({'Message': "No orders found"}), 200
     return jsonify({"Orders": order_inst.orders}), 200
 
 
@@ -71,13 +73,14 @@ def update_order(current_user, order_id):
 
 @order_v1.route('<int:order_id>', methods=['DELETE'])
 @Auth.token_required
-def cancel_order(current_user,order_id):
+def cancel_order(current_user, order_id):
     """Owner cancels user order and deletes it from the storage"""
     order = order_inst.find_order_by_id(order_id)
     if order:
         if current_user['username'] == order['user_id']:
             order_inst.cancel_order(order_id)
             return jsonify({'Message': 'Order cancelled'}), 200
-        return jsonify({"Message": "Not authorized to cancel this order"}), 401 #to test
-        
+        return jsonify(
+            {"Message": "Not authorized to cancel this order"}), 401  # to test
+
     return jsonify({'Message': 'Order not found'}), 404

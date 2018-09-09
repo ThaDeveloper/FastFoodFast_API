@@ -12,6 +12,7 @@ from v1.models.user import User
 
 user_inst = User()
 
+
 class Auth:
     """Creates a decorator for all the endpoints that needs authentication"""
     @staticmethod
@@ -32,7 +33,8 @@ class Auth:
                 if data['username'] in user_inst.u_token:
                     current_user = user_inst.users[data['username']]
                 else:
-                    return jsonify({"Message": "Token expired:Login again"}), 401
+                    return jsonify(
+                        {"Message": "Token expired:Login again"}), 401
             except BaseException:
                 return jsonify({'Message': 'Invalid request!'}), 401
 

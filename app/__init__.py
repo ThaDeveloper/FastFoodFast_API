@@ -1,5 +1,5 @@
 from flask import Flask
-import os 
+import os
 import sys
 import inspect
 
@@ -8,6 +8,7 @@ from config import app_config
 # Import order_api blueprint
 from . v1.views.order import order_v1 as order_blueprint
 from . v1.views.user import user_v1 as user_blueprint
+
 
 def create_app(env_name):
     """

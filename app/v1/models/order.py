@@ -27,7 +27,7 @@ class Order:
                      'total': total,
                      'status': status,
                      'created_at': datetime.datetime.now()}
-        
+
         self.orders[order_id] = new_order
         return self.orders
 

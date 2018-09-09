@@ -8,7 +8,14 @@ class User(object):
         self.users = {}
         self.u_token = {}
 
-    def create_user(self, first_name, last_name, username, email, password, admin=False):
+    def create_user(
+            self,
+            first_name,
+            last_name,
+            username,
+            email,
+            password,
+            admin=False):
         """Creates a new user an append to the list of users"""
         data = {'id': str(uuid.uuid4()),
                 'first_name': first_name,
