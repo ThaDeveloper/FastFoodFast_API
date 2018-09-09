@@ -4,6 +4,7 @@ import datetime
 from ..models.order import Order
 from ..models.menu import Menu
 from ...shared.authentication import Auth
+from ...shared.validation import ValidationError
 
 # Bluepring app to handle our order resources
 order_v1 = Blueprint('order', __name__)
@@ -16,11 +17,15 @@ menu_inst = Menu()
 def create_order(current_user):
     """Create order method"""
     data = request.get_json()
-    if not data or not data['items']:
-        return jsonify({'Message': 'Order cannot be empty'}), 400
+    try:
+        sanitized = order_inst.import_data(data)
+        if sanitized == "Invalid":
+            return jsonify({'Message': 'Order cannot be empty'}), 400
+    except ValidationError as e:
+        return jsonify({"Message": str(e)}), 400
+
     user = current_user['username']
     total = order_inst.total_cost(data['items'])
-  
     order_inst.create_order(
         user,
         data['items'],

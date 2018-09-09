@@ -1,5 +1,6 @@
 import datetime
 from .menu import Menu
+from ...shared.validation import ValidationError
 
 
 class Order:
@@ -53,6 +54,17 @@ class Order:
         order = self.find_order_by_id(order_id)
         if order:
             del self.orders[order['order_id']]
+
+    def import_data(self, data):
+        """validates the input json data"""
+        try:
+            if len(data['items']) == 0:
+                return "Invalid"
+            else:
+                self.items = data['items']
+        except KeyError as e:
+            raise ValidationError("Invalid: Field required: " + e.args[0])
+        return self
 
     @staticmethod
     def total_cost(items):

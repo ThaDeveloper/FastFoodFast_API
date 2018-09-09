@@ -34,7 +34,7 @@ def create_app(env_name):
             DELETE: /api/v1/orders/order_id<br><br>\
             <h4>Sample user register data:</h4>\
             {<br>"first_name": "Kunta",<br>"last_name": "Kinte",<br>"username": "kunta.kinte",<br>\
-            "email": "kuntatest@gmail.com",<br>"password": "@Password1"<br>\
+            "email": "kuntatest@gmail.com",<br>"password": "#123pass"<br>\
             }<br><br><h4>Sample order data:</h4>{<br>"items": {"sausage": 2, "pizza": 3}<br>\
             }<br><h4>Available menu items:</h4>\
             {<br>"burger": 800,<br>"pizza": 1000,<br>"coffee": 300,<br>\
