@@ -45,7 +45,7 @@ def login():
         # session['username'] = auth['username']
         token = jwt.encode({'username': user['username'],
                             'exp': datetime.datetime.utcnow() +
-                            datetime.timedelta(days=1)},
+                            datetime.timedelta(minutes=30)},
                            os.getenv('SECRET'))
         user_inst.u_token[user['username']] = token
         # decode to string since python3 returns token in bytes

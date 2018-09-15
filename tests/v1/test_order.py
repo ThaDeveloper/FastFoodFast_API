@@ -28,18 +28,6 @@ class TestOrder(TestSetup):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("need to", response_msg["Message"])
 
-    def test_add_order_with_xpired_token(self):
-        """Tests returns error when ordering with expired token."""
-        response = self.client.post(
-            '/api/v1/orders',
-            data=json.dumps(
-                self.order),
-            content_type="application/json",
-            headers={
-                "x-access-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imp1c3RpbiIsImV4cCI6MTUzNjU3NjkwN30.NwcMO5Ro08pYfKxbeRNph8Jb0ec0Zkz5ZlEHzR2mQcY"})
-        self.assertEqual(response.status_code, 401)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("expired", response_msg["Message"])
 
     def test_add_order_with_invalid_token(self):
         """Tests returns error when ordering with invalid token."""
