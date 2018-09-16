@@ -6,12 +6,13 @@ from app.v1.models.user import User
 
 
 class TestSetup(unittest.TestCase):
-    """Initialize the app with test data"""
-
+    """Initialize the app with test data
+    All other test classes inherits from TestSetup"""
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
         self.order = {"items": {"burger": 2, "coffee": 1}}
+        self.new_order = {"items" : {"burger": 1, "coffee": 3}}
         self.empty_order = {"items": {}}
         order_inst = Order()
         user_inst = User()

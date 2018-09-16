@@ -132,6 +132,42 @@ class TestOrder(TestSetup):
         self.assertEqual(resp.status_code, 404)
         response_msg = json.loads(resp.data.decode("UTF-8"))
         self.assertIn("not found", response_msg["Message"])
+    
+    def test_edit_order(self):
+        """Tests a order can be editted."""
+        response = self.client.put(
+            "/api/v1/orders/1/edit",
+            data=json.dumps(self.new_order),
+            content_type="application/json",
+            headers={
+                "x-access-token": self.token})
+        self.assertEqual(response.status_code, 200)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("updated", response_msg["Message"])
+    
+    def test_invalid_edit(self):
+        """Error raised for invalid edit request."""
+        response = self.client.put(
+            "/api/v1/orders/15/edit",
+            data=json.dumps(self.new_order),
+            content_type="application/json",
+            headers={
+                "x-access-token": self.token})
+        self.assertEqual(response.status_code, 404)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("not found", response_msg["Message"])
+
+    def test_editting_unauthorized_order(self):
+        """Tests error raised when editting non-authorized order."""
+        response = self.client.put("/api/v1/orders/1/edit",
+                                   data=json.dumps(self.new_order),
+                                   content_type="application/json",
+                                   headers={
+                                        "x-access-token": self.unkowntoken})
+
+        self.assertEqual(response.status_code, 401)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("Not authorized", response_msg["Message"])
 
     def test_update_order(self):
         """Tests a order can be updated."""
