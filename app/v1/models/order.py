@@ -50,6 +50,7 @@ class Order:
             order['status'] = status
             order['updated_at'] = updated_at
             return order
+
     def edit_order(
             self,
             order_id,

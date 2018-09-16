@@ -55,6 +55,7 @@ def get_all_orders(current_user):
         return jsonify({'Message': "No orders found"}), 200
     return jsonify({"Orders": all_orders}), 200
 
+
 @order_v1.route('/customer', methods=['GET'])
 @Auth.token_required
 def get_order_history(current_user):
@@ -66,6 +67,7 @@ def get_order_history(current_user):
     if user_orders:
         return jsonify({"Your orders": user_orders}), 200
     return jsonify({"Message": "You have 0 orders"}), 200
+
 
 @order_v1.route('<int:order_id>/edit', methods=['PUT'])
 @Auth.token_required
@@ -84,6 +86,7 @@ def edit_order(current_user, order_id):
             {"Message": "Not authorized to edit this order"}), 401
     return jsonify({'Message': 'Order not found'}), 404
 
+
 @order_v1.route('<int:order_id>', methods=['PUT'])
 @Auth.token_required
 def update_order_status(current_user, order_id):
@@ -95,7 +98,7 @@ def update_order_status(current_user, order_id):
     if order:
         response = order_inst.update_order(order_id, new_status, new_time)
         if response:
-            return jsonify({'Message': 'Order updated'}), 200
+            return jsonify({'Message': 'Order {}'.format(new_status)}), 200
     return jsonify({'Message': 'Order not found'}), 404
 
 
@@ -109,6 +112,6 @@ def cancel_order(current_user, order_id):
             order_inst.cancel_order(order_id)
             return jsonify({'Message': 'Order cancelled'}), 200
         return jsonify(
-            {"Message": "Not authorized to cancel this order"}), 401 
+            {"Message": "Not authorized to cancel this order"}), 401
 
     return jsonify({'Message': 'Order not found'}), 404
