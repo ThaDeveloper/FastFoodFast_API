@@ -78,6 +78,28 @@ class TestOrder(TestSetup):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
 
+    def test_order_history(self):
+        """Test user order history is returned"""
+        resp = self.client.get(
+            '/api/v1/orders/customer',
+            headers={
+                "x-access-token": self.token})
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content_type, 'application/json')
+
+    def test_no_order_history(self):
+        """Test returns 0 orders message to user"""
+        self.client.delete(
+            "/api/v1/orders/1",
+            content_type="application/json",
+            headers={
+                "x-access-token": self.token})
+        resp = self.client.get(
+            '/api/v1/orders/customer',
+            headers={
+                "x-access-token": self.token})
+        response_msg = json.loads(resp.data.decode("UTF-8"))
+        self.assertIn("0 orders", response_msg["Message"])
 
     def test_order_detail_200(self):
         """Test if you can get a single order.
