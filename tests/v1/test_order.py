@@ -134,7 +134,7 @@ class TestOrder(TestSetup):
         self.assertIn("not found", response_msg["Message"])
     
     def test_edit_order(self):
-        """Tests a order can be editted."""
+        """Tests a order can be updated"""
         response = self.client.put(
             "/api/v1/orders/1/edit",
             data=json.dumps(self.new_order),
@@ -181,7 +181,7 @@ class TestOrder(TestSetup):
                 "x-access-token": self.token})
         self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("updated", response_msg["Message"])
+        self.assertIn("ed", response_msg["Message"])
 
     def test_invalid_update(self):
         """Error raised for invalid update request."""
