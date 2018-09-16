@@ -1,4 +1,5 @@
 import datetime
+from flask import jsonify
 from .menu import Menu
 from ...shared.validation import ValidationError
 
@@ -47,6 +48,19 @@ class Order:
         order = self.find_order_by_id(order_id)
         if order:
             order['status'] = status
+            order['updated_at'] = updated_at
+            return order
+    def edit_order(
+            self,
+            order_id,
+            items,
+            total,
+            updated_at=datetime.datetime.now()):
+        """Update the status of an order"""
+        order = self.find_order_by_id(order_id)
+        if order:
+            order['items'] = items
+            order['total'] = total
             order['updated_at'] = updated_at
             return order
 
