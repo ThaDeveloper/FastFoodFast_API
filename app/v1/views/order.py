@@ -9,6 +9,7 @@ from ...shared.validation import ValidationError
 # Bluepring app to handle our order resources
 order_v1 = Blueprint('order', __name__)
 order_inst = Order()
+all_orders = order_inst.orders
 menu_inst = Menu()
 
 
@@ -51,9 +52,21 @@ def get_single_order(current_user, order_id):
 @Auth.token_required
 def get_all_orders(current_user):
     """Returns all created orders"""
-    if not order_inst.orders:
+    if not all_orders:
         return jsonify({'Message': "No orders found"}), 200
-    return jsonify({"Orders": order_inst.orders}), 200
+    return jsonify({"Orders": all_orders}), 200
+
+@order_v1.route('/customer', methods=['GET'])
+@Auth.token_required
+def get_order_history(current_user):
+    """Returns all orders user made in the past"""
+    user_orders = []
+    for order in all_orders:
+        if all_orders[order]['user_id'] == current_user['username']:
+            user_orders.append(all_orders[order])
+    if user_orders:
+        return jsonify({"Your orders": user_orders}), 200
+    return jsonify({"Message": "You have 0 orders"}), 200
 
 
 @order_v1.route('<int:order_id>', methods=['PUT'])
