@@ -42,3 +42,23 @@ def get_single_item(item_id):
         return jsonify({"Item": item}), 200
     return jsonify({"Message": "Item not found"}), 404
  
+@menu_v1.route('/<int:item_id>', methods=['PUT'])
+@Auth.token_required
+def update_menu_item(current_user, item_id):
+    data = request.get_json()
+    new_time = datetime.datetime.now()
+    resp = menu_inst.edit_menu(item_id, data['name'], data['price'], data['category'], data['image'], new_time)
+   
+    if resp:
+        #after updating menu item we also want to update dict keys are
+        #represented by item name
+        return jsonify({"Message": "Item updated"}), 200
+    return jsonify({"Message": "Item not found"}), 404
+
+@menu_v1.route('/<int:item_id>', methods=['DELETE'])
+@Auth.token_required
+def delete_men_item(current_user, item_id):
+    resp = menu_inst.del_menu(item_id)
+    if resp:
+        return jsonify({"Message": "Item deleted"}), 200
+    return jsonify({"Message": "Item not found"}), 404

@@ -21,12 +21,6 @@ class Menu:
                 'category': 'snacks'}
             }
 
-    def get_item_price(self, item):
-        """Find price of a menu item by passing item name"""
-        if self.menu:
-            if item in self.menu:
-                return self.menu[item]['price']
-
     def add_menu(self, name, price, category, image="food.jpg"):
         """Adds new menu item and returns all menus"""
         new_item = {
@@ -56,6 +50,41 @@ class Menu:
     
     def get_item_by_id(self, item_id):
         """Returns a single menu item"""
-        for item in self.menu.values():
-            if item.get('item_id') == item_id:
-                return item
+        for item in self.menu:
+            if self.menu[item].get('item_id') == item_id:
+                return self.menu[item]
+    
+    def get_item_price(self, item):
+        """Find price of a menu item by passing item name"""
+        if self.menu:
+            if item in self.menu:
+                return self.menu[item]['price']
+
+    def edit_menu(
+            self,
+            item_id,
+            name,
+            price,
+            category,
+            image,
+            updated_at=datetime.datetime.now()):
+        """Update the status of an order"""
+        item = self.get_item_by_id(item_id)
+        # old_key = item['name']
+        # new_key = name
+        if item:
+            item['name'] = name
+            item['price'] = price
+            item['category'] = category
+            item['image'] = image
+            item['updated_at'] = updated_at
+            # self.menu[new_key] = item
+            # del self.menu[old_key]
+            return item
+
+    def del_menu(self, item_id):
+        item = self.get_item_by_id(item_id)
+        if item:
+            del self.menu[item['name']]
+            return True
+        return False

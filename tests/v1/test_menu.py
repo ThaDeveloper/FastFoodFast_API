@@ -68,7 +68,7 @@ class TestMenu(TestSetup):
         """Test if you can get a single menu.
         Register a single menu first"""
         resp = self.client.get(
-            '/api/v1/menu/1')
+            '/api/v1/menu/2')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
 
@@ -84,7 +84,7 @@ class TestMenu(TestSetup):
     def test_update_menu(self):
         """Tests a menu can be updated."""
         response = self.client.put(
-            "/api/v1/menu/1",
+            "/api/v1/menu/2",
             data=json.dumps(
                 self.new_menu),
             content_type="application/json",
@@ -108,7 +108,7 @@ class TestMenu(TestSetup):
     def test_updating_unauthorized_menu(self):
         """Tests error raised when normal user try update menu."""
         response = self.client.put(
-            "/api/v1/menu/1",
+            "/api/v1/menu/2",
             data=json.dumps(
                 self.new_menu),
             content_type="application/json",
@@ -130,7 +130,7 @@ class TestMenu(TestSetup):
                                               category="main")),
                          content_type="application/json",
                          headers={"x-access-token": self.token})
-        response = self.client.put("/api/v1/menu/1",
+        response = self.client.put("/api/v1/menu/2",
                                    data=json.dumps(self.menu),
                                    content_type="application/json",
                                    headers={
@@ -153,7 +153,7 @@ class TestMenu(TestSetup):
     def test_deleting_unauthorized_menu(self):
         """Tests error raised when deleting if not admin."""
         response = self.client.delete(
-            "/api/v1/menu/1",
+            "/api/v1/menu/3",
             content_type="application/json",
             headers={
                 "x-access-token": self.unkowntoken})
