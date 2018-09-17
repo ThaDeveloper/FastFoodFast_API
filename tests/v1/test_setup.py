@@ -2,6 +2,7 @@ import json
 import unittest
 from app import create_app
 from app.v1.models.order import Order
+from app.v1.models.menu import Menu
 from app.v1.models.user import User
 
 
@@ -15,9 +16,26 @@ class TestSetup(unittest.TestCase):
         self.order = {"items": {"burger": 2, "coffee": 1}}
         self.new_order = {"items": {"burger": 1, "coffee": 3}}
         self.empty_order = {"items": {}}
+        self.menu = {
+            "name": "rice",
+            "image": "rice.jpg",
+            "price": 800,
+            "category": "main"}
+        self.new_menu = {
+            "name": "beef steak",
+            "image": "beef.jpg",
+            "price": 1000,
+            "category": "main"}
+        self.empty_menu = {
+            "name": "",
+            "image": "",
+            "price": "",
+            "category": ""}
         order_inst = Order()
         user_inst = User()
+        menu_inst = Menu()
         self.orders = order_inst.orders
+        self.orders = menu_inst.menu
         self.users = user_inst.users
         self.user = {"first_name": "Justin",
                      "last_name": "Ndwiga",
@@ -57,4 +75,5 @@ class TestSetup(unittest.TestCase):
 
     def tearDown(self):
         self.orders.clear()
+        self.menu.clear()
         self.users.clear()

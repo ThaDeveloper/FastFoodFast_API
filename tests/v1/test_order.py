@@ -181,7 +181,7 @@ class TestOrder(TestSetup):
                 "x-access-token": self.token})
         self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("updated", response_msg["Message"])
+        self.assertIn("Order", response_msg["Message"])
 
     def test_invalid_update(self):
         """Error raised for invalid update request."""
