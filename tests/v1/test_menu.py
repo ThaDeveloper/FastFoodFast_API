@@ -27,7 +27,7 @@ class TestMenu(TestSetup):
                                     headers={"x-access-token": self.token})
         self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("menu", response_msg["Message"])
+        self.assertIn("added", response_msg["Message"])
 
     def test_empty_name(self):
         """Error raised for blank menu name.
@@ -38,7 +38,7 @@ class TestMenu(TestSetup):
                                     headers={"x-access-token": self.token})
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("required", response_msg["Message"])
+        self.assertIn("empty", response_msg["Message"])
 
     def test_duplicates_prevented(self):
         """
@@ -77,7 +77,7 @@ class TestMenu(TestSetup):
         Error raised for invalid menu request.
         """
         resp = self.client.get("/api/v1/menu/1000")
-        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(resp.status_code, 404)
         response_msg = json.loads(resp.data.decode("UTF-8"))
         self.assertIn("not found", response_msg["Message"])
 
@@ -108,7 +108,7 @@ class TestMenu(TestSetup):
     def test_updating_unauthorized_menu(self):
         """Tests error raised when normal user try update menu."""
         response = self.client.put(
-            "/api/v1/menus/1",
+            "/api/v1/menu/1",
             data=json.dumps(
                 self.new_menu),
             content_type="application/json",
@@ -130,7 +130,7 @@ class TestMenu(TestSetup):
                                               category="main")),
                          content_type="application/json",
                          headers={"x-access-token": self.token})
-        response = self.client.put("/api/v1/menus/1",
+        response = self.client.put("/api/v1/menu/1",
                                    data=json.dumps(self.menu),
                                    content_type="application/json",
                                    headers={
@@ -142,7 +142,7 @@ class TestMenu(TestSetup):
     def test_delete_menu(self):
         """Tests menu deletion."""
         response = self.client.delete(
-            "/api/v1/menus/1",
+            "/api/v1/menu/1",
             content_type="application/json",
             headers={
                 "x-access-token": self.token})

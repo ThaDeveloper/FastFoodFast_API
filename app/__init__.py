@@ -8,6 +8,7 @@ from config import app_config
 # Import order_api blueprint
 from . v1.views.order import order_v1 as order_blueprint
 from . v1.views.user import user_v1 as user_blueprint
+from . v1.views.menu import menu_v1 as menu_blueprint
 
 
 def create_app(env_name):
@@ -22,6 +23,7 @@ def create_app(env_name):
 
     app.register_blueprint(order_blueprint, url_prefix='/api/v1/orders')
     app.register_blueprint(user_blueprint, url_prefix='/api/v1/auth')
+    app.register_blueprint(menu_blueprint, url_prefix='/api/v1/menu')
 
     @app.route('/', methods=['GET'])
     def index():

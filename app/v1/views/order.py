@@ -1,4 +1,4 @@
-from flask import request, jsonify, Response, Blueprint
+from flask import request, jsonify, Blueprint
 import datetime
 
 from ..models.order import Order
@@ -6,7 +6,7 @@ from ..models.menu import Menu
 from ...shared.authentication import Auth
 from ...shared.validation import ValidationError
 
-# Bluepring app to handle our order resources
+# Blueprint app to handle our order resources
 order_v1 = Blueprint('order', __name__)
 order_inst = Order()
 all_orders = order_inst.orders
