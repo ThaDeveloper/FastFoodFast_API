@@ -58,6 +58,7 @@ class Menu:
         """Find price of a menu item by passing item name"""
         if self.menu:
             if item in self.menu:
+                print(self.menu[item]['price'])
                 return self.menu[item]['price']
 
     def edit_menu(

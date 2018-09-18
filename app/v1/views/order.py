@@ -25,14 +25,15 @@ def create_order(current_user):
     except ValidationError as e:
         return jsonify({"Message": str(e)}), 400
 
-    user = current_user['username']
     total = order_inst.total_cost(data['items'])
+    if total == False:
+        return jsonify({"Message": "Menu item not found"}), 400
+    user = current_user['username']
     order_inst.create_order(
         user,
         data['items'],
         total)
     return jsonify({'Message': 'Order Created'}), 201
-
 
 @order_v1.route('<int:order_id>', methods=['GET'])
 @Auth.token_required
@@ -45,7 +46,6 @@ def get_single_order(current_user, order_id):
         return jsonify({"Message": "Not authorized to view order"}), 401
 
     return jsonify({"Message": "Order not found"}), 404
-
 
 @order_v1.route('', methods=['GET'])
 @Auth.token_required
