@@ -22,12 +22,14 @@ def add_menu(current_user):
         return jsonify({"Message": str(e)}), 400
     if menu_inst.name in full_menu:
         return jsonify({"Message": "Menu item already exists"}), 400
-    menu_inst.add_menu(
-        menu_inst.name,
-        menu_inst.price,
-        menu_inst.category,
-        menu_inst.image)
-    return jsonify({'Message': 'Menu added'}), 201
+    if current_user['admin']:
+        menu_inst.add_menu(
+            menu_inst.name,
+            menu_inst.price,
+            menu_inst.category,
+            menu_inst.image)
+        return jsonify({'Message': 'Menu added'}), 201
+    return jsonify({"Message": "Not authorized to delete menu"}), 401
 
 @menu_v1.route('', methods=['GET'])
 def get_full_menu():
@@ -47,18 +49,21 @@ def get_single_item(item_id):
 def update_menu_item(current_user, item_id):
     data = request.get_json()
     new_time = datetime.datetime.now()
-    resp = menu_inst.edit_menu(item_id, data['name'], data['price'], data['category'], data['image'], new_time)
-   
-    if resp:
-        #after updating menu item we also want to update dict keys are
-        #represented by item name
-        return jsonify({"Message": "Item updated"}), 200
-    return jsonify({"Message": "Item not found"}), 404
+    if current_user['admin']:
+        if data['name'] in full_menu:
+            return jsonify({"Message": "Menu item already exists"}), 400
+        resp = menu_inst.edit_menu(item_id, data['name'], data['price'], data['category'], data['image'], new_time)
+        if resp:
+            return jsonify({"Message": "Item updated"}), 200
+        return jsonify({"Message": "Item not found"}), 404
+    return jsonify({"Message": "Not authorized to edit menu"}), 401
 
 @menu_v1.route('/<int:item_id>', methods=['DELETE'])
 @Auth.token_required
-def delete_men_item(current_user, item_id):
-    resp = menu_inst.del_menu(item_id)
-    if resp:
-        return jsonify({"Message": "Item deleted"}), 200
-    return jsonify({"Message": "Item not found"}), 404
+def delete_menu_item(current_user, item_id):
+    if current_user['admin']:
+        resp = menu_inst.del_menu(item_id)
+        if resp:
+            return jsonify({"Message": "Item deleted"}), 200
+        return jsonify({"Message": "Item not found"}), 404
+    return jsonify({"Message": "Not authorized to delete menu"}), 401

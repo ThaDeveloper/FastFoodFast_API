@@ -5,7 +5,7 @@ from ...shared.validation import ValidationError
 
 class Menu:
     def __init__(self):
-        """Initialize menu with few items"""
+        """Initialize menu with few items for testing"""
         self.menu = {
             'burger': {
                 'item_id': 1,
@@ -58,7 +58,6 @@ class Menu:
         """Find price of a menu item by passing item name"""
         if self.menu:
             if item in self.menu:
-                print(self.menu[item]['price'])
                 return self.menu[item]['price']
 
     def edit_menu(
