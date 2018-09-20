@@ -6,17 +6,22 @@ class Base(object):
     DEBUG = False
     CSRF_ENABLED = True
     SECRET = os.getenv('SECRET')
+    USER = os.getenv('USER')
+    PASSWORD = os.getenv('PASSWORD')
+    HOST = os.getenv('localhost')
 
 
 class Development(Base):
     """Development configurations."""
     DEBUG = True
+    DATABASE = os.getenv('DEV_DATABASE')
 
 
 class Testing(Base):
     """Configurations for Testing."""
     TESTING = True
     DEBUG = True
+    DATABASE = os.getenv('TEST_DATABASE')
 
 
 class Staging(Base):
