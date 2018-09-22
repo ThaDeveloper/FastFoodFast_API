@@ -96,9 +96,11 @@ def update_order_status(current_user, order_id):
     new_time = datetime.datetime.now()
     order = order_inst.find_order_by_id(order_id)
     if order:
-        response = order_inst.update_order(order_id, new_status, new_time)
-        if response:
-            return jsonify({'Message': 'Order {}'.format(new_status)}), 200
+        if current_user['admin']:
+            response = order_inst.update_order(order_id, new_status, new_time)
+            if response:
+                return jsonify({'Message': 'Order {}'.format(new_status)}), 200
+        return jsonify({"Message": "Not authorized to update order"}), 401 #test
     return jsonify({'Message': 'Order not found'}), 404
 
 
