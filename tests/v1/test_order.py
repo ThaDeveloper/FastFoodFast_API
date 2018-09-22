@@ -179,7 +179,7 @@ class TestOrder(TestSetup):
                     status="accepted")),
             content_type="application/json",
             headers={
-                "x-access-token": self.token})
+                "x-access-token": self.admintoken})
         self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Order", response_msg["Message"])

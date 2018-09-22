@@ -57,7 +57,7 @@ class Order:
             items,
             total,
             updated_at=datetime.datetime.now()):
-        """Update the status of an order"""
+        """Update order items"""
         order = self.find_order_by_id(order_id)
         if order:
             order['items'] = items
