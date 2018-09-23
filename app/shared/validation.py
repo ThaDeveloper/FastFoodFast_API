@@ -20,8 +20,8 @@ def validate_user(data):
                         "Must contain capital,number and special char"}), 400
     elif not  re.match("^[a-zA-Z_.-]{3,15}$", username):
         return jsonify({"Message":
-                        "Username must be 3-15 alpha-numeric"
-                        "chars (a-zA-Z_.-)"}), 400
+                        "Username must be a commbination of 3-15 letters plus special"
+                        " chars (a-zA-Z_.-)"}), 400
     elif not(validate_email(data["email"])):
         return jsonify({'Message':
                         'Enter a valid email'}), 400
