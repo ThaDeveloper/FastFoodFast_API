@@ -1,7 +1,5 @@
 from flask import Flask
-import os
-import sys
-import inspect
+from flask_cors import CORS
 
 from config import app_config
 
@@ -18,7 +16,8 @@ def create_app(env_name):
 
     # app initiliazation
     app = Flask(__name__, instance_relative_config=True)
-
+    #handling Cross Origin Resource Sharing 
+    CORS(app)
     app.config.from_object(app_config[env_name])
 
     app.register_blueprint(order_blueprint, url_prefix='/api/v1/orders')

@@ -4,10 +4,13 @@ from psycopg2.extras import RealDictCursor
 
 
 class Database:
-    '''constructor to set up database connection'''
-
+    """connecting to db, creating and droping database tables"""
     def __init__(self):
-        self.database = os.getenv('DEV_DATABASE')
+        """Initialize by setting up and connecting to database"""
+        if os.getenv('FLASK_ENV') == 'development':
+            self.database = os.getenv("DEV_DATABASE")
+        elif os.getenv('FLASK_ENV') == 'testing':
+            self.database= os.getenv("TEST_DATABASE")
         self.user = os.getenv('USER')
         self.password = os.getenv('PASSWORD')
         self.host = os.getenv('HOST')
@@ -19,9 +22,10 @@ class Database:
                 password=self.password)
         except:
             print("Can't connet to database")
-            
-    def tables(self):
-    
+
+    @staticmethod     
+    def tables():
+        """List of tables to be created"""
         queries = [
             'CREATE TABLE IF NOT EXISTS users (\
                     id SERIAL PRIMARY KEY,\
@@ -70,22 +74,43 @@ class Database:
         ]
         return queries
     
+    
     def cursor(self):
-        '''cursor method for executing queries
-        RealDictCursor - A cursor that uses a real dict as the base type for rows.'''
+        """cursor method for executing queries
+        RealDictCursor - A cursor that uses a real python dict as the base type for rows."""
         cur = self.connection.cursor(cursor_factory=RealDictCursor)
         return cur
     
     def commit(self):
-        '''save changes to db'''
+        """for saving changes permanently to db"""
         self.connection.commit()
     
     def create_tables(self):
-        cur = self.connection.cursor()
-        for table in self.tables():
-            cur.execute(table)
-            self.commit()
-        print('All tables created sucessfully')
+        """create all tables else return executuon error"""
+        cur = self.cursor()
+        try:
+            for table in self.tables():
+                cur.execute(table)
+                self.commit()
+            print('All tables created sucessfully')
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
 
-db = Database()
-db.create_tables()
+    def drop_tables(self):
+        """drop tables esle return exection error"""
+        cur = self.cursor()
+        table_drops = ["DROP TABLE IF EXISTS users CASCADE",
+                        "DROP TABLE IF EXISTS categories CASCADE",
+                        "DROP TABLE IF EXISTS menu",
+                        "DROP TABLE IF EXISTS orders",
+                        "DROP TABLE IF EXISTS tokens",
+                        "DROP TABLE IF EXISTS blacklist"
+                     ]
+      
+        try:
+            for table in table_drops:
+                cur.execute(table)
+                self.connection.commit()
+            print("All tables dropped successfully")
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)

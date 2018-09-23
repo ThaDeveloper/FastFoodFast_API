@@ -14,10 +14,7 @@ class Order:
             self,
             user_id,
             items={
-                "item*
-                
-                
-                ": 0},
+                "items": 0},
             total=0,
             status='pending'):
         """Adds a new order to the orders dictionary"""
