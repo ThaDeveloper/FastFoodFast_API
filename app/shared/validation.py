@@ -14,8 +14,8 @@ def validate_user(data):
                          a string"}), 400
     elif not  re.match("^[a-zA-Z_.-]{3,15}$", username):
         return jsonify({"Message":
-                        "Username must be a commbination of 3-15 letters plus special"
-                        " chars (a-zA-Z_.-)"}), 400
+                        "Username can only be 3-15 letters or combination of letters and _-."
+                        " (a-zA-Z_.-)"}), 400
     elif not  re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])"
     "(?=.*[@#$%^&+=*]).{6,}$",data['password']):
         return jsonify({"Message":
