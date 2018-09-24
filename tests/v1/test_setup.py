@@ -13,6 +13,13 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
+        self.order = {"items": {"burger": 2, "coffee": 1}}
+        self.new_order = {"items": {"burger": 1, "coffee": 3}}
+        self.empty_order = {"items": {}}
+        order_inst = Order()
+        user_inst = User()
+        self.orders = order_inst.orders
+        self.users = user_inst.users
         self.user = {"first_name": "Justin",
                      "last_name": "Ndwiga",
                      "username": "justin.ndwiga",
