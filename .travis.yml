@@ -1,0 +1,27 @@
+language: python
+python:
+  - "3.5"
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+script: 
+  - nosetests --with-coverage --cover-package=app
+  - coveralls
+branches:
+  except:
+  - master
+  - develop
+  - ft-user-views-160296771
+  - ft-order-views-160237681
+  - ft-data-models-160237610
+  - ch-unittest-160237591
+  - ch-environment-and-structure-160237646
+  only:
+  - challenge2
+after_success:
+ - coveralls
+notifications:
+  slack:
+    on_success: never
+    on_failure: never
+  email: false

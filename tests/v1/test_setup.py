@@ -1,8 +1,8 @@
 import json
 import unittest
-from app.v1.app import create_app
+from app import create_app
 from app.v1.models.order import Order
-from src.v1.models.user import User
+from app.v1.models.user import User
 
 
 class TestSetup(unittest.TestCase):
@@ -11,8 +11,8 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
-        self.order = {"owner": "justin", "items": {"burger": 2, "coffee": 1}}
-        self.empty_order = {"owner": "", "items": {}}
+        self.order = {"items": {"burger": 2, "coffee": 1}}
+        self.empty_order = {"items": {}}
         order_inst = Order()
         user_inst = User()
         self.orders = order_inst.orders
@@ -30,29 +30,28 @@ class TestSetup(unittest.TestCase):
                             "password": "password"}
 
         # Register and login a testuser
-        self.register = self.app.post('/api/v1/auth/register',
+        self.register = self.client.post('/api/v1/auth/register',
                                       data=json.dumps(self.user),
                                       headers={"content-type":
                                                "application/json"})
-        self.login = self.app.post('/api/v1/auth/login',
+        self.login = self.client.post('/api/v1/auth/login',
                                    data=json.dumps(self.user),
                                    content_type='application/json')
         self.data = json.loads(self.login.get_data(as_text=True))
         self.token = self.data['token']
 
         # Register and login a testunkownuser
-        self.app.post(
+        self.client.post(
             "/api/v1/auth/register",
             data=json.dumps(
                 self.unknownuser),
             content_type="application/json")
         
-        self.unkownlogin = self.app.post("/api/v1/auth/login",
+        self.unkownlogin = self.client.post("/api/v1/auth/login",
                                          data=json.dumps(self.unknownuser),
                                          content_type="application/json")
         self.data = json.loads(self.unkownlogin.get_data(as_text=True))
         self.unkowntoken = self.data['token']
-
 
     def tearDown(self):
         self.orders.clear()
