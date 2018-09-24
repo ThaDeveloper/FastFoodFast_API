@@ -5,7 +5,7 @@ from tests.v1.test_setup import TestSetup
 
 class TestOrder(TestSetup):
     """All test cases for Order class"""
-
+    
     def test_add_new_order(self):
         """Tests creating a new order."""
         response = self.client.post(
@@ -115,6 +115,7 @@ class TestOrder(TestSetup):
         self.assertEqual(resp.content_type, 'application/json')
 
     def test_unauthorized_get_order(self):
+        self.tearDown()
         """Test returns error for accessing someone elses business"""
         resp = self.client.get("/api/v1/orders/1",
                                headers={"x-access-token": self.unkowntoken})
@@ -181,7 +182,7 @@ class TestOrder(TestSetup):
                 "x-access-token": self.token})
         self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("ed", response_msg["Message"])
+        self.assertIn("Order", response_msg["Message"])
 
     def test_invalid_update(self):
         """Error raised for invalid update request."""
@@ -207,28 +208,7 @@ class TestOrder(TestSetup):
         self.assertEqual(response.status_code, 401)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("need to log in", response_msg["Message"])
-
-    def test_cancel_order(self):
-        """Tests cancel order."""
-        self.client.post(
-            '/api/v1/orders',
-            data=json.dumps(
-                dict(
-                    owner="user",
-                    items={
-                        "sausage": 2})),
-            content_type="application/json",
-            headers={
-                "x-access-token": self.token})
-        response = self.client.delete(
-            "/api/v1/orders/2",
-            content_type="application/json",
-            headers={
-                "x-access-token": self.token})
-        self.assertEqual(response.status_code, 200)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("cancelled", response_msg["Message"])
-
+    
     def test_cancel_invalid_order(self):
         """Tests cancel invalid order."""
         response = self.client.delete(
@@ -250,6 +230,27 @@ class TestOrder(TestSetup):
         self.assertEqual(response.status_code, 401)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Not authorized", response_msg["Message"])
+
+    def test_cancel_order(self):
+        """Tests cancel order."""
+        self.client.post(
+            '/api/v1/orders',
+            data=json.dumps(
+                dict(
+                    items={
+                        "burger": 2})),
+            content_type="application/json",
+            headers={
+                "x-access-token": self.token})
+        response = self.client.delete(
+            "/api/v1/orders/2",
+            content_type="application/json",
+            headers={
+                "x-access-token": self.token})
+        self.assertEqual(response.status_code, 200)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("cancelled", response_msg["Message"])
+
     
     def test_no_orders_found(self):
         """Test no orders in memory"""

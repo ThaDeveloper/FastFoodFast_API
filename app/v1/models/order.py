@@ -84,8 +84,10 @@ class Order:
     @staticmethod
     def total_cost(items):
         total = 0
-        menu_inst = Menu()
+        menu_inst = Menu()       
         for food, servings in items.items():
+            if food not in menu_inst.menu:
+                return False
             price = menu_inst.get_item_price(food)
             total += price * servings
         return total

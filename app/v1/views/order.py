@@ -1,4 +1,4 @@
-from flask import request, jsonify, Response, Blueprint
+from flask import request, jsonify, Blueprint
 import datetime
 
 from ..models.order import Order
@@ -6,7 +6,7 @@ from ..models.menu import Menu
 from ...shared.authentication import Auth
 from ...shared.validation import ValidationError
 
-# Bluepring app to handle our order resources
+# Blueprint app to handle our order resources
 order_v1 = Blueprint('order', __name__)
 order_inst = Order()
 all_orders = order_inst.orders
@@ -25,14 +25,15 @@ def create_order(current_user):
     except ValidationError as e:
         return jsonify({"Message": str(e)}), 400
 
-    user = current_user['username']
     total = order_inst.total_cost(data['items'])
+    if total == False:
+        return jsonify({"Message": "Menu item not found"}), 400
+    user = current_user['username']
     order_inst.create_order(
         user,
         data['items'],
         total)
     return jsonify({'Message': 'Order Created'}), 201
-
 
 @order_v1.route('<int:order_id>', methods=['GET'])
 @Auth.token_required
@@ -45,7 +46,6 @@ def get_single_order(current_user, order_id):
         return jsonify({"Message": "Not authorized to view order"}), 401
 
     return jsonify({"Message": "Order not found"}), 404
-
 
 @order_v1.route('', methods=['GET'])
 @Auth.token_required
