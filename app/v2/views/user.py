@@ -3,9 +3,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 import os
+from flask_restful import Resource, Api
 
 #Local imports
-from ...shared.authentication import Auth
+from .. authentication import Auth
 from ...shared.validation import validate_user
 from v2.models.user import User
 from v2.database import Database
@@ -59,4 +60,13 @@ def login():
 
     return jsonify({"Message": "Username not found!"}), 401
 
-    
+@user_v2.route('/logout', methods=['DELETE'])
+@Auth.token_required
+def logout(current_user):
+    if current_user:
+        log_token = request.headers['x-access-token']
+        query = "INSERT INTO blacklist(token) VALUES(%s);"
+        cur.execute(query, (log_token,))
+        db.connection.commit()
+        cur.close
+        return jsonify({"Message": "Successfully logged out"})
