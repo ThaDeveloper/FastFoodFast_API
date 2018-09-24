@@ -30,12 +30,13 @@ class Database:
         queries = [
             'CREATE TABLE IF NOT EXISTS users (\
                     id SERIAL PRIMARY KEY,\
-                    first_name VARCHAR(30),\
-                    last_name VARCHAR(30),\
-                    username VARCHAR(30),\
-                    email VARCHAR(90),\
-                    password VARCHAR(90),\
-                    admin bool\
+                    first_name VARCHAR(30) NOT NULL,\
+                    last_name VARCHAR(30) NOT NULL,\
+                    username VARCHAR(30) NOT NULL,\
+                    email VARCHAR(90) NOT NULL,\
+                    password VARCHAR(200) NOT NULL,\
+                    admin bool,\
+                    created_at TIMESTAMP\
                     )',
 
 
@@ -46,10 +47,10 @@ class Database:
 
             'CREATE TABLE IF NOT EXISTS menu (\
                     item_id SERIAL PRIMARY KEY,\
-                    name VARCHAR(70),\
-                    price DECIMAL(10, 2),\
+                    name VARCHAR(70) NOT NULL,\
+                    price DECIMAL(10, 2) NOT NULL,\
                     cat_id INTEGER REFERENCES categories(cat_id) ON DELETE CASCADE,\
-                    image VARCHAR(250),\
+                    image VARCHAR(250) NOT NULL,\
                     created_at TIMESTAMP,\
                     updated_at TIMESTAMP\
                     )',
@@ -57,20 +58,20 @@ class Database:
             'CREATE TABLE IF NOT EXISTS orders (\
                     order_id SERIAL PRIMARY KEY,\
                     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,\
-                    items VARCHAR(250),\
-                    total DECIMAL(10, 2),\
-                    status VARCHAR(10),\
+                    items VARCHAR(250) NOT NULL,\
+                    total DECIMAL(10, 2) NOT NULL,\
+                    status VARCHAR(10) NOT NULL,\
                     created_at TIMESTAMP,\
                     updated_at TIMESTAMP\
                     )',
 
             'CREATE TABLE IF NOT EXISTS tokens (\
                     token_id SERIAL PRIMARY KEY,\
-                    token VARCHAR(200)\
+                    token VARCHAR\
                     )',
             'CREATE TABLE IF NOT EXISTS blacklist (\
                     token_id SERIAL PRIMARY KEY,\
-                    token VARCHAR(200)\
+                    token VARCHAR\
                     )'
         ]
         return queries
