@@ -1,5 +1,5 @@
 from flask import jsonify
-from validate_email import validate_email
+import re
 
 
 class ValidationError(ValueError):
@@ -7,24 +7,26 @@ class ValidationError(ValueError):
 
 
 def validate_user(data):
-    if not isinstance(data['username'], str):
+    username = data['username']
+    if not isinstance(username, str):
         return jsonify({"Message":
-                        "Wrong username format: Can only be a string"}), 400
-    elif len(data['username'].strip()) == 0 or\
-            len(data['password'].strip()) == 0 or\
-            len(data['first_name'].strip()) == 0 or\
-            len(data['last_name'].strip()) == 0:
-        return jsonify({'Message':
-                        "All fields are required"}), 400
-    elif len(data['username'].strip()) < 3:
+                        "Wrong username format: Can only be\
+                         a string"}), 400
+    elif not  re.match("^[a-zA-Z_.-]{3,15}$", username):
         return jsonify({"Message":
-                        "Username must be 3 characters and above"}), 400
-
-    elif not(validate_email(data["email"])):
+                        "Username can only be 3-15 letters or combination of letters and _-."
+                        " (a-zA-Z_.-)"}), 400
+    elif not  re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])"
+    "(?=.*[@#$%^&+=*]).{6,}$",data['password']):
+        return jsonify({"Message":
+                        "Password must be 6-20 chars long:"
+                        "Must contain capital,number and special char"}), 400
+    elif not re.match("^[\w.-]+@([\w-]+)\.+\w{2,}$",data['email']):
         return jsonify({'Message':
                         'Enter a valid email'}), 400
+    elif not  re.match("^[a-zA-Z]{2,15}$", data['first_name'])\
+     or not re.match("^[a-zA-Z]{2,15}$", data['last_name']):
+        return jsonify({"Message":
+                        "Name can only be 2-15 letters"}), 400
     else:
-        for x in data['username']:
-            if x.isspace():
-                return jsonify({"Message":
-                                "Username can't contain spaces"}), 400
+        True

@@ -15,11 +15,11 @@ class TestUser(TestSetup):
                     last_name="username",
                     username="",
                     email="blank@gmail.com",
-                    password="password")),
+                    password="@Password5")),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("required", response_msg["Message"])
+        self.assertIn("3-15 letters", response_msg["Message"])
 
     def test_username_less_3_chars(self):
         """tests returns error if username less then 3 characters."""
@@ -30,11 +30,11 @@ class TestUser(TestSetup):
                     last_name="username",
                     username="us",
                     email="blank@gmail.com",
-                    password="password")),
+                    password="@Password2")),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("3 characters", response_msg["Message"])
+        self.assertIn("3-15 letters", response_msg["Message"])
 
     def test_missing_email(self):
         """Tests returns error if email is missing."""
@@ -45,7 +45,7 @@ class TestUser(TestSetup):
                     last_name="email",
                     username="blankemail",
                     email="",
-                    password="password")),
+                    password="$Uasswor4d")),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -66,7 +66,7 @@ class TestUser(TestSetup):
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("required", response_msg["Message"])
+        self.assertIn("6-20 chars", response_msg["Message"])
 
     def test_username_has_space(self):
         """Tests error raised when username contains spaces."""
@@ -78,12 +78,12 @@ class TestUser(TestSetup):
                     last_name="last",
                     username="first last",
                     email="firstlast@gmail.com",
-                    password="testpass"
+                    password="#testpassD3"
                 )),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("spaces", response_msg["Message"])
+        self.assertIn("a-zA-Z_.-", response_msg["Message"])
 
     def test_missing_first_or_last_name(self):
         """Tests error raised when first name or last name is missing."""
@@ -95,12 +95,12 @@ class TestUser(TestSetup):
                     last_name="",
                     username="testusername",
                     email="testusername@gmail.com",
-                    password="testpassword"
+                    password="&tD5estpassword"
                 )),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("required", response_msg["Message"])
+        self.assertIn("can only be 2-15", response_msg["Message"])
 
     def test_username_isstring(self):
         """Tests error raised when wrong username format is provided."""
@@ -112,7 +112,7 @@ class TestUser(TestSetup):
                     last_name="last",
                     username=1234,
                     email="firstlast@gmail.com",
-                    password="testpass"
+                    password="Y3#estpass"
                 )),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
@@ -131,7 +131,7 @@ class TestUser(TestSetup):
                     last_name="Ndwiga",
                     username="justin.ndwiga",
                     email="ndwigatest@gmail.com",
-                    password="password"
+                    password="!passWord3"
                 )),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
@@ -148,7 +148,7 @@ class TestUser(TestSetup):
                     last_name="Musk",
                     username="elon.musk",
                     email="elon.musk@gmail.com",
-                    password="password"
+                    password="@Yassword5"
                 )),
             content_type="application/json")
         self.assertEqual(response.status_code, 201)
@@ -166,7 +166,7 @@ class TestUser(TestSetup):
             content_type="application/json")
         self.assertEqual(response.status_code, 401)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("required", response_msg["Message"])
+        self.assertIn("Username and password", response_msg["Message"])
 
     def test_unkown_username_login(self):
         """Tests unauthorized error raised with invalid username."""

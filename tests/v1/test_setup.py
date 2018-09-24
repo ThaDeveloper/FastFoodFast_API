@@ -30,7 +30,7 @@ class TestSetup(unittest.TestCase):
                             "last_name": "User",
                             "username": "uknownuser",
                             "email": "uknown@gmail.com",
-                            "password": "password"}
+                            "password": "@Password2"}
         self.order = {"items": {"burger": 2, "pizza": 1}}
         self.new_order = {"items": {"burger": 1, "pizza": 3}}
         self.empty_order = {"items": {}}
