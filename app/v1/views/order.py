@@ -9,6 +9,7 @@ from ...shared.validation import ValidationError
 # Bluepring app to handle our order resources
 order_v1 = Blueprint('order', __name__)
 order_inst = Order()
+all_orders = order_inst.orders
 menu_inst = Menu()
 
 
@@ -38,7 +39,6 @@ def create_order(current_user):
 def get_single_order(current_user, order_id):
     """Returns a single order for the owner or admin"""
     order = order_inst.find_order_by_id(order_id)
-    print(current_user)
     if order:
         if current_user['username'] == order['user_id']:
             return jsonify({"Order": order}), 200
@@ -51,15 +51,46 @@ def get_single_order(current_user, order_id):
 @Auth.token_required
 def get_all_orders(current_user):
     """Returns all created orders"""
-    if not order_inst.orders:
+    if not all_orders:
         return jsonify({'Message': "No orders found"}), 200
-    return jsonify({"Orders": order_inst.orders}), 200
+    return jsonify({"Orders": all_orders}), 200
+
+
+@order_v1.route('/customer', methods=['GET'])
+@Auth.token_required
+def get_order_history(current_user):
+    """Returns all orders user made in the past"""
+    user_orders = []
+    for order in all_orders:
+        if all_orders[order]['user_id'] == current_user['username']:
+            user_orders.append(all_orders[order])
+    if user_orders:
+        return jsonify({"Your orders": user_orders}), 200
+    return jsonify({"Message": "You have 0 orders"}), 200
+
+
+@order_v1.route('<int:order_id>/edit', methods=['PUT'])
+@Auth.token_required
+def edit_order(current_user, order_id):
+    """Edits the order elements. Done by the user"""
+    data = request.get_json()
+    new_items = data['items']
+    new_total = order_inst.total_cost(data['items'])
+    new_time = datetime.datetime.now()
+    order = order_inst.find_order_by_id(order_id)
+    if order:
+        if current_user['username'] == order['user_id']:
+            order_inst.edit_order(order_id, new_items, new_total, new_time)
+            return jsonify({'Message': 'Order updated'}), 200
+        return jsonify(
+            {"Message": "Not authorized to edit this order"}), 401
+    return jsonify({'Message': 'Order not found'}), 404
 
 
 @order_v1.route('<int:order_id>', methods=['PUT'])
 @Auth.token_required
-def update_order(current_user, order_id):
-    """Updates the status of a given order"""
+def update_order_status(current_user, order_id):
+    """Updates the status of a given order. This is done by admin"""
     data = request.get_json()
     new_status = data['status']
     new_time = datetime.datetime.now()
@@ -67,7 +98,7 @@ def update_order(current_user, order_id):
     if order:
         response = order_inst.update_order(order_id, new_status, new_time)
         if response:
-            return jsonify({'Message': 'Order updated'}), 200
+            return jsonify({'Message': 'Order {}'.format(new_status)}), 200
     return jsonify({'Message': 'Order not found'}), 404
 
 
@@ -81,6 +112,6 @@ def cancel_order(current_user, order_id):
             order_inst.cancel_order(order_id)
             return jsonify({'Message': 'Order cancelled'}), 200
         return jsonify(
-            {"Message": "Not authorized to cancel this order"}), 401  # to test
+            {"Message": "Not authorized to cancel this order"}), 401
 
     return jsonify({'Message': 'Order not found'}), 404

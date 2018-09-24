@@ -18,6 +18,7 @@ branches:
   - ch-environment-and-structure-160237646
   only:
   - challenge2
+  - ft-order-history-160532780
 after_success:
  - coveralls
 notifications:
