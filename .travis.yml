@@ -19,6 +19,7 @@ branches:
   only:
   - challenge2
   - ft-menu-inventory-160543586
+  - ft-order-history-160532780
 after_success:
  - coveralls
 notifications:

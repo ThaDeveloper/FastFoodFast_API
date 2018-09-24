@@ -135,7 +135,7 @@ class TestOrder(TestSetup):
         self.assertIn("not found", response_msg["Message"])
     
     def test_edit_order(self):
-        """Tests a order can be editted."""
+        """Tests a order can be updated"""
         response = self.client.put(
             "/api/v1/orders/1/edit",
             data=json.dumps(self.new_order),
