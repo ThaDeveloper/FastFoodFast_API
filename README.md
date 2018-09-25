@@ -103,7 +103,8 @@ Available admin to test:
     }
 }
 ```
-
+##### Documentation
+Check out the full documentation of the FastFoodFast API on [Swagger Docs](https://app.swaggerhub.com/apis/justin.ndwiga/FastFoodFast/1.0.0)
 ## Running tests
 1. Check all passes - `$ pytest`
 2. Check coverage - `$nosetests --with-coverage --cover-package=app`
