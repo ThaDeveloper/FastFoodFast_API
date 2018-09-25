@@ -29,7 +29,7 @@ def add_menu(current_user):
             menu_inst.category,
             menu_inst.image)
         return jsonify({'Message': 'Menu added'}), 201
-    return jsonify({"Message": "Not authorized to delete menu"}), 401
+    return jsonify({"Message": "Not authorized to add menu"}), 401
 
 @menu_v1.route('', methods=['GET'])
 def get_full_menu():
