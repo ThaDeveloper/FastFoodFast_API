@@ -7,10 +7,133 @@
 
 A Restful API to power the Fast-Food-Fast delivery app.
 
-Built in:
-- Flask
+## Getting Started
 
-## Version 1
+To have this code on your local machine for running and testing, simply run:
+` $ git clone https://github.com/ThaDeveloper/FastFoodFast_API`
 
-Built in [python3 data structures](https://docs.python.org/3/tutorial/datastructures.html)
+### Prerequisites
 
+You need to have the following installed in your local machine:
+- [Python3](https://www.python.org/download/releases/3.0/)
+- [Pip3](https://pypi.org/project/pip/) - On linux run `sudo apt-get install python3-pip`
+- [virtual environment](http://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv) - on your terminal run `virtualenv  -p python3 venv`
+
+### Installing
+
+#### Version 1
+To install and run version 1 of FastFoodFast_API simply:
+`$ cd FastFoodFast_API`
+1. `$ source venv/bin/activate` To activate virtual environment
+2. `$ pip install -r requirements.txt` to install the dependencies
+3. Setup environment varibles. You need the following in your .env file:
+- export FLASK_APP=run.py
+- export FLASK_ENV=development
+- export SECRET='yoursecret'
+Activate the env variables by `$source .env`
+4. Using - run `$ python3 run.py`
+Launch [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en) and access the following endpoints:
+
+Order
+1. `POST: http://127.0.0.1:5000/api/v1/orders` - Post an order - user
+2. `GET: http://127.0.0.1:5000/api/v1/orders/order_id `- Get a specific order - user or admin
+3. `GET: http://127.0.0.1:5000/api/v1/orders` - Get all orders - admin
+4. `PUT: http://127.0.0.1:5000/api/v1/orders/order_id` - Update order status - admin
+5. `PUT: http://127.0.0.1:5000/api/v1/orders/order_id/edit` - Edit an order by user
+6. `DELETE: http://127.0.0.1:5000/api/v1/orders/order_id` - Delete an order by user
+7. `GET: http://127.0.0.1:5000/api/v1/orders/customer` - View user order history
+ 
+Menu
+1. `GET http://127.0.0.1:5000/api/v1/menu` - View full menu
+2. `GET http://127.0.0.1:5000/api/v1/menu/<int:id>` - Get single menu item
+3. `POST http://127.0.0.1:5000/api/v1/menu` - Add menu item
+4. `PUT http://127.0.0.1:5000/api/v1/menu/<int:id>` - Update menu item
+5. `PUT http://127.0.0.1:5000/api/v1/menu/<int:id>` - Delete menu item
+
+User
+1. `POST: /api/v1/auth/register`- User registration
+2. `POST: /api/v1/auth/login` - User login
+
+Or can simply test the hosted version by replacing `http://127.0.0.1:5000` with `https://fastfoodfast-api.herokuapp.com`
+
+*Sample input data*
+
+```
+Sample user register data:
+{
+"first_name": "Kunta",
+"last_name": "Kinte",
+"username": "kunta.kinte",
+"email": "kuntatest@gmail.com",
+"password": "#123pass"
+}
+
+Sample order data:
+
+{
+"items": {"burger": 2, "pizza": 3}
+}
+Available pre-added menu items to test:
+
+{
+    'burger': {
+        'item_id': 1,
+        'name': 'burger',
+        'image': 'burger.jpg',
+        'price': 800,
+        'category': 'snacks'},
+    'pizza': {
+        'item_id': 2,
+        'name': 'pizza',
+        'image': 'pizza.jpg',
+        'price': 1000,
+        'category': 'snacks'}
+}
+Available admin to test:
+{
+    'admin': {'id': 1,
+        'first_name': 'Super',
+        'last_name': 'User',
+        'username': 'admin',
+        'email': 'super.user@fastfood.com',
+        'password': 'password',
+        'admin': True
+    }
+}
+```
+
+## Running tests
+1. Check all passes - `$ pytest`
+2. Check coverage - `$nosetests --with-coverage --cover-package=app`
+
+## Deployment 
+Live on [heroku](https://fastfoodfast-api.herokuapp.com/)
+
+## Built With
+- [Flask](http://flask.pocoo.org/)
+
+## Authors
+[Justin Ndwiga](https://github.com/ThaDeveloper)
+
+## License
+MIT License
+
+Copyright (c) 2018 Justin Ndwiga
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+```THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.```
