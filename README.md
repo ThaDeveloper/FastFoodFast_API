@@ -17,14 +17,16 @@ To have this code on your local machine for running and testing, simply run:
 You need to have the following installed in your local machine:
 - [Python3](https://www.python.org/download/releases/3.0/)
 - [Pip3](https://pypi.org/project/pip/) - On linux run `sudo apt-get install python3-pip`
-- [virtual environment](http://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv) - on your terminal run `virtualenv  -p python3 venv`
+- [virtual environment](http://www.pythonforbeginners.com/basics/how-to-use-python-virtualenv) - on your terminal run `pip install virtualenv` 
 
 ### Installing
 
 #### Version 1
 To install and run version 1 of FastFoodFast_API simply:
 `$ cd FastFoodFast_API`
-1. `$ source venv/bin/activate` To activate virtual environment
+1. Create and activate virtual env
+- `virtualenv  -p python3 venv`
+- `$ source venv/bin/activate`
 2. `$ pip install -r requirements.txt` to install the dependencies
 3. Setup environment varibles. You need the following in your .env file:
 - export FLASK_APP=run.py
