@@ -22,6 +22,8 @@ branches:
   - ft-order-history-160532780
   - ft-menu-inventory-160543586
   - bg-bugs-and-refactoring-160621108
+  - develop
+  - ch-code-linting-160773903
 after_success:
  - coveralls
 notifications:

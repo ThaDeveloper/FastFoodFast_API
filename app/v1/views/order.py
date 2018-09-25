@@ -1,9 +1,9 @@
-from flask import request, jsonify, Blueprint
 import datetime
+from flask import request, jsonify, Blueprint
 
 from ..models.order import Order
 from ..models.menu import Menu
-from ...shared.authentication import Auth
+from ...v1.authentication import Auth
 from ...shared.validation import ValidationError
 
 # Blueprint app to handle our order resources
@@ -26,7 +26,7 @@ def create_order(current_user):
         return jsonify({"Message": str(e)}), 400
 
     total = order_inst.total_cost(data['items'])
-    if total == False:
+    if not total:
         return jsonify({"Message": "Menu item not found"}), 400
     user = current_user['username']
     order_inst.create_order(
@@ -34,6 +34,7 @@ def create_order(current_user):
         data['items'],
         total)
     return jsonify({'Message': 'Order Created'}), 201
+
 
 @order_v1.route('<int:order_id>', methods=['GET'])
 @Auth.token_required
@@ -46,6 +47,7 @@ def get_single_order(current_user, order_id):
         return jsonify({"Message": "Not authorized to view order"}), 401
 
     return jsonify({"Message": "Order not found"}), 404
+
 
 @order_v1.route('', methods=['GET'])
 @Auth.token_required
@@ -100,7 +102,8 @@ def update_order_status(current_user, order_id):
             response = order_inst.update_order(order_id, new_status, new_time)
             if response:
                 return jsonify({'Message': 'Order {}'.format(new_status)}), 200
-        return jsonify({"Message": "Not authorized to update order"}), 401 #test
+        return jsonify(
+            {"Message": "Not authorized to update order"}), 401  # test
         response = order_inst.update_order(order_id, new_status, new_time)
         if response:
             return jsonify({'Message': 'Order {}'.format(new_status)}), 200

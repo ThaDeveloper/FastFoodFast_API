@@ -1,3 +1,4 @@
+"""Test setup module"""
 import json
 import unittest
 from app import create_app
@@ -67,10 +68,14 @@ class TestSetup(unittest.TestCase):
         self.data = json.loads(self.login.get_data(as_text=True))
         self.token = self.data['token']
 
-        #login test admin
-        self.adminlogin = self.client.post('/api/v1/auth/login',
-                                           data=json.dumps(dict(username=self.users['admin']['username'], password='password')),
-                                           content_type='application/json')
+        # login test admin
+        self.adminlogin = self.client.post(
+            '/api/v1/auth/login',
+            data=json.dumps(
+                dict(
+                    username=self.users['admin']['username'],
+                    password='password')),
+            content_type='application/json')
 
         self.data = json.loads(self.adminlogin.get_data(as_text=True))
         self.admintoken = self.data['token']
