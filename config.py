@@ -1,3 +1,4 @@
+"""ENV configs module"""
 import os
 
 
