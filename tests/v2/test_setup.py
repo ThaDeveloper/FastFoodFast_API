@@ -13,7 +13,11 @@ class TestSetup(unittest.TestCase):
         self.app = create_app("testing")
         self.client = self.app.test_client()
         #fetch testing admin
+        # db.create_tables()
         cur = db.cursor()
+        # q = "insert into users(first_name,last_name,username,email,password,admin) values('Super','User','admin','super@admin.com','@Password1',true);"
+        # cur.execute(q)
+        # db.commit()
         cur.execute("SELECT * from users WHERE username = 'admin'")
         admin = cur.fetchone()
 

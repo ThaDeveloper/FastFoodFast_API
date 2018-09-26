@@ -5,7 +5,7 @@ import jwt
 
 
 # Local imports
-from . database import Database
+from .. database import Database
 db = Database()
 
 
@@ -25,18 +25,16 @@ class Auth(object):
 
             try:
                 data = jwt.decode(token, os.getenv('SECRET'))
-                print(data)
-                query = "SELECT id,first_name, last_name, username, email, passowrd from users WHERE username=%s;"
+                query = "SELECT id, first_name, last_name, username, email, password from users WHERE username=%s"
                 cur = db.cursor()
                 cur.execute(query, (data['username'],))
                 row = cur.fetchone()
-                print(row)
                 if row:
                     current_user = row
                 else:
                     return jsonify(
                         {"Message": "Token expired:Login again"}), 401
-            except BaseException:
+            except BaseException as e:
                 return jsonify({'Message': 'Invalid request!'}), 401
 
             return f(current_user, *args, **kwargs)

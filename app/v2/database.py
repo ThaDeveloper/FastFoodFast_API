@@ -32,8 +32,8 @@ class Database:
                     id SERIAL PRIMARY KEY,\
                     first_name VARCHAR(30) NOT NULL,\
                     last_name VARCHAR(30) NOT NULL,\
-                    username VARCHAR(30) NOT NULL,\
-                    email VARCHAR(90) NOT NULL,\
+                    username VARCHAR(30) UNIQUE NOT NULL,\
+                    email VARCHAR(90) UNIQUE NOT NULL,\
                     password VARCHAR(200) NOT NULL,\
                     admin bool,\
                     created_at TIMESTAMP\
@@ -67,10 +67,12 @@ class Database:
 
             'CREATE TABLE IF NOT EXISTS tokens (\
                     token_id SERIAL PRIMARY KEY,\
+                    user_id VARCHAR REFERENCES users(username) ON DELETE CASCADE,\
                     token VARCHAR\
                     )',
             'CREATE TABLE IF NOT EXISTS blacklist (\
                     token_id SERIAL PRIMARY KEY,\
+                    user_id VARCHAR REFERENCES users(username) ON DELETE CASCADE,\
                     token VARCHAR\
                     )'
         ]
