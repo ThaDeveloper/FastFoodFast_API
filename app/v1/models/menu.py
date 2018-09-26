@@ -1,9 +1,11 @@
+"""menu module"""
 import datetime
-from flask import jsonify
 from ...shared.validation import ValidationError
 
 
 class Menu:
+    """Menu model to hold menu details"""
+
     def __init__(self):
         """Initialize menu with few items for testing"""
         self.menu = {
@@ -19,7 +21,7 @@ class Menu:
                 'image': 'pizza.jpg',
                 'price': 1000,
                 'category': 'snacks'}
-            }
+        }
 
     def add_menu(self, name, price, category, image="food.jpg"):
         """Adds new menu item and returns all menus"""
@@ -47,13 +49,13 @@ class Menu:
         except KeyError as e:
             raise ValidationError("Invalid: Field required: " + e.args[0])
         return self
-    
+
     def get_item_by_id(self, item_id):
         """Returns a single menu item"""
         for item in self.menu:
             if self.menu[item].get('item_id') == item_id:
                 return self.menu[item]
-    
+
     def get_item_price(self, item):
         """Find price of a menu item by passing item name"""
         if self.menu:
@@ -83,6 +85,7 @@ class Menu:
             return item
 
     def del_menu(self, item_id):
+        """Delete menu by id"""
         item = self.get_item_by_id(item_id)
         if item:
             del self.menu[item['name']]

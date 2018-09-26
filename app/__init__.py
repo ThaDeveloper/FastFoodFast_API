@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_cors import CORS
-from flask_restful import Resource, Api
 
 from config import app_config
 
@@ -8,7 +7,7 @@ from config import app_config
 from . v1.views.order import order_v1 as order_blueprint
 from . v1.views.user import user_v1 as user_blueprint
 from . v1.views.menu import menu_v1 as menu_blueprint
-from . v2.views.user import user_v2 as v2_user_blueprint
+
 
 def create_app(env_name):
     """
@@ -17,14 +16,12 @@ def create_app(env_name):
 
     # app initiliazation
     app = Flask(__name__, instance_relative_config=True)
-    #handling Cross Origin Resource Sharing 
     CORS(app)
     app.config.from_object(app_config[env_name])
 
     app.register_blueprint(order_blueprint, url_prefix='/api/v1/orders')
     app.register_blueprint(user_blueprint, url_prefix='/api/v1/auth')
     app.register_blueprint(menu_blueprint, url_prefix='/api/v1/menu')
-    app.register_blueprint(v2_user_blueprint, url_prefix='/api/v2/auth')
 
     @app.route('/', methods=['GET'])
     def index():

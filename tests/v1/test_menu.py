@@ -1,9 +1,12 @@
+"""Test menu module"""
 import json
 import unittest
 from tests.v1.test_setup import TestSetup
 
 
 class TestMenu(TestSetup):
+    """Include all the Menu test methods"""
+
     def test_menu_access_with_invalid_token(self):
         """Raise unauthorized error invalid token."""
         response = self.client.post("/api/v1/menu",
@@ -21,10 +24,13 @@ class TestMenu(TestSetup):
 
     def test_add_new_menu(self):
         """Tests creating a new menu."""
-        response = self.client.post('/api/v1/menu',
-                                    data=json.dumps(self.menu_item),
-                                    content_type="application/json",
-                                    headers={"x-access-token": self.admintoken})
+        response = self.client.post(
+            '/api/v1/menu',
+            data=json.dumps(
+                self.menu_item),
+            content_type="application/json",
+            headers={
+                "x-access-token": self.admintoken})
         print(json.dumps(self.menu))
         self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -61,6 +67,7 @@ class TestMenu(TestSetup):
         self.assertIn("already exists", response_msg["Message"])
 
     def test_menu_list(self):
+        """Test returns list of menua available"""
         resp = self.client.get('/api/v1/menu')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
@@ -158,9 +165,11 @@ class TestMenu(TestSetup):
 
     def test_invalid_delete(self):
         """Error raised for invalid delete request."""
-        response = self.client.delete("/api/v1/menu/1000",
-                                      content_type="application/json",
-                                      headers={"x-access-token": self.admintoken})
+        response = self.client.delete(
+            "/api/v1/menu/1000",
+            content_type="application/json",
+            headers={
+                "x-access-token": self.admintoken})
         self.assertEqual(response.status_code, 404)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("not found", response_msg["Message"])

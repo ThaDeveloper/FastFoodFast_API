@@ -1,3 +1,4 @@
+"""Test user module"""
 import unittest
 import json
 from tests.v1.test_setup import TestSetup
@@ -19,7 +20,7 @@ class TestUser(TestSetup):
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("3-15 alpha-numeric", response_msg["Message"])
+        self.assertIn("3-15 letters", response_msg["Message"])
 
     def test_username_less_3_chars(self):
         """tests returns error if username less then 3 characters."""
@@ -34,7 +35,7 @@ class TestUser(TestSetup):
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("3-15 alpha-numeric", response_msg["Message"])
+        self.assertIn("3-15 letters", response_msg["Message"])
 
     def test_missing_email(self):
         """Tests returns error if email is missing."""
