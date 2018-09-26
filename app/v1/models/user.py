@@ -1,21 +1,23 @@
+"""User module"""
 import uuid
 from werkzeug.security import generate_password_hash
 
-class User(object):
+
+class User:
     """Store user data in dictionaries"""
 
     def __init__(self):
         """initialize user dictionary with a single user for testing purposes"""
         self.users = {
             'admin': {'id': 1,
-                'first_name': 'Super',
-                'last_name': 'User',
-                'username': 'admin',
-                'email': 'super.user@fastfood.com',
-                'password': generate_password_hash('password'),
-                'admin': True
-            }
-            }
+                      'first_name': 'Super',
+                      'last_name': 'User',
+                      'username': 'admin',
+                      'email': 'super.user@fastfood.com',
+                      'password': generate_password_hash('password'),
+                      'admin': True
+                      }
+        }
         self.u_token = {}
 
     def create_user(
