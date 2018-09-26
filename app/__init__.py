@@ -16,6 +16,7 @@ def create_app(env_name):
 
     # app initiliazation
     app = Flask(__name__, instance_relative_config=True)
+    #handling Cross Origin Resource Sharing 
     CORS(app)
     app.config.from_object(app_config[env_name])
 
