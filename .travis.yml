@@ -4,6 +4,12 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install coveralls
+services:
+  - postgresql
+before_script:
+  - psql -c "CREATE ROLE fast_food with createdb login password 'fast_food'" postgres
+  - psql -c "CREATE DATABASE fast_food_fast_prod owner fast_food" postgres
+  - python3 manage.py create_db
 script: 
   - nosetests --with-coverage --cover-package=app
   - coveralls
@@ -18,6 +24,12 @@ branches:
   - ch-environment-and-structure-160237646
   only:
   - challenge2
+  - ft-menu-inventory-160543586
+  - ft-order-history-160532780
+  - ft-menu-inventory-160543586
+  - bg-bugs-and-refactoring-160621108
+  - develop
+  - ch-code-linting-160773903
 after_success:
  - coveralls
 notifications:

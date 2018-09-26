@@ -25,7 +25,7 @@ class Auth(object):
 
             try:
                 data = jwt.decode(token, os.getenv('SECRET'))
-                query = "SELECT id, first_name, last_name, username, email, password from users WHERE username=%s"
+                query = "SELECT * from users WHERE username=%s"
                 cur = db.cursor()
                 cur.execute(query, (data['username'],))
                 row = cur.fetchone()

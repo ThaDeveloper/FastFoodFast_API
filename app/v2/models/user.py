@@ -1,6 +1,7 @@
+from datetime import datetime
 import uuid
 from werkzeug.security import generate_password_hash
-from datetime import datetime
+
 
 #Local import
 from .. database import Database

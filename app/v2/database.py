@@ -49,7 +49,7 @@ class Database:
                     item_id SERIAL PRIMARY KEY,\
                     name VARCHAR(70) NOT NULL,\
                     price DECIMAL(10, 2) NOT NULL,\
-                    cat_id INTEGER REFERENCES categories(cat_id) ON DELETE CASCADE,\
+                    category VARCHAR(200),\
                     image VARCHAR(250) NOT NULL,\
                     created_at TIMESTAMP,\
                     updated_at TIMESTAMP\
