@@ -1,11 +1,11 @@
-from flask import request, jsonify, session, Blueprint
+"""User View"""
+import os
+import datetime
+from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
-import datetime
-import os
 
-from ...shared.authentication import user_inst
-from ...shared.authentication import Auth
+from ...v1.authentication import user_inst
 from ...shared.validation import validate_user
 
 user_v1 = Blueprint('user', __name__)
@@ -45,7 +45,7 @@ def login():
         # session['username'] = auth['username']
         token = jwt.encode({'username': user['username'],
                             'exp': datetime.datetime.utcnow() +
-                            datetime.timedelta(minutes=30)},
+                                   datetime.timedelta(minutes=30)},
                            os.getenv('SECRET'))
         user_inst.u_token[user['username']] = token
         # decode to string since python3 returns token in bytes
