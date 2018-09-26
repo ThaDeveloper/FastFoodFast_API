@@ -1,5 +1,5 @@
+"""order module"""
 import datetime
-from flask import jsonify
 from .menu import Menu
 from ...shared.validation import ValidationError
 
@@ -66,6 +66,7 @@ class Order:
             return order
 
     def cancel_order(self, order_id):
+        """deletes order from database"""
         order = self.find_order_by_id(order_id)
         if order:
             del self.orders[order['order_id']]
@@ -83,8 +84,9 @@ class Order:
 
     @staticmethod
     def total_cost(items):
+        """calucate total order cost"""
         total = 0
-        menu_inst = Menu()       
+        menu_inst = Menu()
         for food, servings in items.items():
             if food not in menu_inst.menu:
                 return False

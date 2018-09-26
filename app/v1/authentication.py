@@ -2,13 +2,8 @@ from flask import jsonify, request
 from functools import wraps
 import jwt
 import os
-import sys
-import inspect
-currentdir = os.path.dirname(os.path.abspath(
-    inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
-from v1.models.user import User
+
+from .models.user import User
 
 user_inst = User()
 

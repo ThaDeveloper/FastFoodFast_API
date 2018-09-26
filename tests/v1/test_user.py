@@ -1,3 +1,4 @@
+"""Test user module"""
 import unittest
 import json
 from tests.v1.test_setup import TestSetup
