@@ -10,10 +10,11 @@ from ...shared.validation import ValidationError
 
 DB = Database()
 
+
 class Order:
     """constructor and methods for the Order model"""
 
-    def __init__(self, user_id=1, items={}, total=0.00,status='pending'):
+    def __init__(self, user_id=1, items={}, total=0.00, status='pending'):
         self.user_id = user_id
         self.items = items
         self.total = total
@@ -26,7 +27,15 @@ class Order:
         try:
             query = "INSERT INTO orders(user_id,items, total,status,created_at, updated_at)\
             VALUES(%s,%s,%s,%s,%s,%s)"
-            self.CUR.execute(query,(self.user_id,json.dumps(self.items),self.total,self.status, self.created_at,self.updated_at))
+            self.CUR.execute(
+                query,
+                (self.user_id,
+                 json.dumps(
+                     self.items),
+                    self.total,
+                    self.status,
+                    self.created_at,
+                    self.updated_at))
             DB.connection.commit()
             self.CUR.close()
         except ValueError as e:
@@ -53,6 +62,21 @@ class Order:
             return row
         return False
 
+    def edit_order(
+            self,
+            order_id,
+            items,
+            total,
+            updated_at):
+        """Update order items"""
+        order = self.find_order_by_id(order_id)
+        if order:
+            query = "UPDATE orders SET items=%s, total=%s, updated_at=%s WHERE order_id=order_id"
+            self.CUR.execute(query, (json.dumps(items), total, updated_at))
+            DB.connection.commit()
+            return True
+        return False
+
     @staticmethod
     def total_cost(items):
         """calucate total order cost"""
@@ -62,7 +86,7 @@ class Order:
         cur.execute(query)
         full_menu = cur.fetchall()
         foods = []
-        for item in full_menu: 
+        for item in full_menu:
             foods.append(item['name'])
         for food, servings in items.items():
             if food not in foods:

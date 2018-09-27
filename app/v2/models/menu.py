@@ -97,8 +97,9 @@ class Menu:
         item = self.get_item_by_id(item_id)
         if item:
             try:
-                query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s"
-                self.CUR.execute(query, (name, price, category, image, updated_at))
+                query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s WHERE item_id=item_id"
+                self.CUR.execute(
+                    query, (name, price, category, image, updated_at))
                 DB.connection.commit()
                 return True
             except (Exception, psycopg2.InternalError) as e:
