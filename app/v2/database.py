@@ -22,7 +22,7 @@ class Database:
                 host=self.host,
                 password=self.password)
         except BaseException:
-            print("Can't connet to database")
+            print("Can't connect to database")
 
     @staticmethod
     def tables():
@@ -48,7 +48,7 @@ class Database:
             'CREATE TABLE IF NOT EXISTS menu (\
                     item_id SERIAL PRIMARY KEY,\
                     name VARCHAR(70) NOT NULL,\
-                    price DECIMAL(10, 2) NOT NULL,\
+                    price numeric(10, 2) NOT NULL,\
                     category VARCHAR(200),\
                     image VARCHAR(250) NOT NULL,\
                     created_at TIMESTAMP,\
@@ -59,7 +59,7 @@ class Database:
                     order_id SERIAL PRIMARY KEY,\
                     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,\
                     items VARCHAR(250) NOT NULL,\
-                    total DECIMAL(10, 2) NOT NULL,\
+                    total numeric(10, 2) NOT NULL,\
                     status VARCHAR(10) NOT NULL,\
                     created_at TIMESTAMP,\
                     updated_at TIMESTAMP\

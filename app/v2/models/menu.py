@@ -52,3 +52,51 @@ class Menu:
         except KeyError as e:
             raise ValidationError("Invalid: Field required: " + e.args[0])
         return self
+
+    def get_item_by_id(self, item_id):
+        """Returns a single menu item"""
+        query = "SELECT  * FROM menu WHERE item_id='%s'"
+        self.cur.execute(query, (item_id,))
+        row = self.cur.fetchone()
+        if row:
+            return row
+        return False
+
+    
+    def get_item_price(self, item):
+        """Find price of a menu item by passing item name"""
+        query = "SELECT price FROM WHERE name='%s'"
+        self.cur.execute(query, (item,))
+        row = self.cur.fetchone()
+        if row:
+            self.cur.close()
+            return row
+        return False
+
+    def edit_menu(
+            self,
+            item_id,
+            name,
+            price,
+            category,
+            image,
+            updated_at= datetime.now()):
+        item = self.get_item_by_id(item_id)
+        if item:
+            query = "UPDATE menu SET name='%s', price='%s', category='%s', image='%s', updated_at='%s'"
+            self.cur.execute(query, (name, price, category, image, updated_at))
+            db.connection.commit()
+            self.cur.close()
+            return True
+        return False
+
+    def del_menu(self, item_id):
+        """Delete menu by id"""
+        item = self.get_item_by_id(item_id)
+        if item:
+            query = "DELETE FROM menu WHERE item_id='%s'"
+            self.cur.execute(query, (item_id,))
+            db.connection.commit()
+            self.cur.close()
+            return True
+        return False

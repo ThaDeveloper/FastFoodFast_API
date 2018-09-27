@@ -29,10 +29,19 @@ def add_menu(current_user):
     if current_user['admin']:
         try:
             success= menu_inst.save_menu()
-            print(success)
             if not success:
                 raise ValueError
             return jsonify({'Message': 'Menu added'}), 201
         except ValueError:
             return jsonify({"Message": "Menu already exists"}), 400
     return jsonify({"Message": "Not authorized to add menu"}), 401
+
+@menu_v2.route('', methods=['GET'])
+def get_full_menu():
+    query = "SELECT * FROM menu"
+    cur.execute(query)
+    menu = cur.fetchall()
+    print (menu)
+    if menu:
+        return jsonify({"Full Menu": menu}), 200
+    return jsonify({"Message": "No menu found"}), 200
