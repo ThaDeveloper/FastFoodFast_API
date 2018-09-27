@@ -3,7 +3,6 @@ import unittest
 from app import create_app
 from app.v2.database import Database
 
-db = Database()
 
 class TestSetup(unittest.TestCase):
     """Initialize the app with test data
@@ -11,16 +10,10 @@ class TestSetup(unittest.TestCase):
 
     def setUp(self):
         self.app = create_app("testing")
+        # print(self.app.config)
         self.client = self.app.test_client()
-        #fetch testing admin
+        self.db = Database()
         # db.create_tables()
-        cur = db.cursor()
-        # q = "insert into users(first_name,last_name,username,email,password,admin) values('Super','User','admin','super@admin.com','@Password1',true);"
-        # cur.execute(q)
-        # db.commit()
-        cur.execute("SELECT * from users WHERE username = 'admin'")
-        admin = cur.fetchone()
-
         self.user = {"first_name": "Justin",
                      "last_name": "Ndwiga",
                      "username": "justin.ndwiga",
@@ -32,6 +25,11 @@ class TestSetup(unittest.TestCase):
                             "username": "uknownuser",
                             "email": "uknown@gmail.com",
                             "password": "@Password2"}
+        self.admin = {"first_name": "Super",
+                            "last_name": "User",
+                            "username": "admin",
+                            "email": "admin@fast.com",
+                            "password": "@Password1"}
         self.order = {"items": {"burger": 2, "pizza": 1}}
         self.new_order = {"items": {"burger": 1, "pizza": 3}}
         self.empty_order = {"items": {}}
@@ -62,9 +60,13 @@ class TestSetup(unittest.TestCase):
         self.data = json.loads(self.login.get_data(as_text=True))
         self.token = self.data['token']
 
-        #login test admin
+        #Resgister and login test admin
+        self.register = self.client.post('/api/v2/auth/register',
+                                         data=json.dumps(self.admin),
+                                         headers={"content-type":
+                                                  "application/json"})
         self.adminlogin = self.client.post('/api/v2/auth/login',
-                                           data=json.dumps(dict(username=admin['username'], password=admin['password'])),
+                                           data=json.dumps(self.admin),
                                            content_type='application/json')
 
         self.data = json.loads(self.adminlogin.get_data(as_text=True))
@@ -84,4 +86,7 @@ class TestSetup(unittest.TestCase):
         self.unkowntoken = self.data['token']
 
     def tearDown(self):
-        db.drop_tables()
+        self.db.drop_tables()
+        
+if __name__ == "__main__":
+    unittest.main()
