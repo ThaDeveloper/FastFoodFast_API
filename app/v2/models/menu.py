@@ -69,7 +69,6 @@ class Menu:
         self.cur.execute(query, (item,))
         row = self.cur.fetchone()
         if row:
-            self.cur.close()
             return row
         return False
 
@@ -83,10 +82,9 @@ class Menu:
             updated_at= datetime.now()):
         item = self.get_item_by_id(item_id)
         if item:
-            query = "UPDATE menu SET name='%s', price='%s', category='%s', image='%s', updated_at='%s'"
+            query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s"
             self.cur.execute(query, (name, price, category, image, updated_at))
             db.connection.commit()
-            self.cur.close()
             return True
         return False
 
@@ -97,6 +95,5 @@ class Menu:
             query = "DELETE FROM menu WHERE item_id='%s'"
             self.cur.execute(query, (item_id,))
             db.connection.commit()
-            self.cur.close()
             return True
         return False
