@@ -1,14 +1,15 @@
+"""Flask app initialization"""
 from flask import Flask
 from flask_cors import CORS
 
-from config import app_config
+from config import APP_CONFIG
 
 # Import blueprints
 from . v1.views.order import order_v1 as order_blueprint
 from . v1.views.user import user_v1 as user_blueprint
 from . v1.views.menu import menu_v1 as menu_blueprint
-from . v2.views.user import user_v2 as v2_user_blueprint
-from . v2.views.menu import menu_v2 as v2_menu_blueprint
+from . v2.views.user import USER_V2 as v2_user_blueprint
+from . v2.views.menu import MENU_V2 as v2_menu_blueprint
 
 
 def create_app(env_name):
@@ -19,7 +20,7 @@ def create_app(env_name):
     # app initiliazation
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
-    app.config.from_object(app_config[env_name])
+    app.config.from_object(APP_CONFIG[env_name])
 
     app.register_blueprint(order_blueprint, url_prefix='/api/v1/orders')
     app.register_blueprint(user_blueprint, url_prefix='/api/v1/auth')

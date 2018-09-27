@@ -1,3 +1,4 @@
+"""Authentication class"""
 import os
 from functools import wraps
 from flask import jsonify, request
@@ -6,10 +7,10 @@ import jwt
 
 # Local imports
 from .. database import Database
-db = Database()
+DB = Database()
 
 
-class Auth(object):
+class Auth:
     """Creates a decorator for all the endpoints that needs authentication"""
     @staticmethod
     def token_required(f):
@@ -26,7 +27,7 @@ class Auth(object):
             try:
                 data = jwt.decode(token, os.getenv('SECRET'))
                 query = "SELECT * from users WHERE username=%s"
-                cur = db.cursor()
+                cur = DB.cursor()
                 cur.execute(query, (data['username'],))
                 row = cur.fetchone()
                 if row:

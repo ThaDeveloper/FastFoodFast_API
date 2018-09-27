@@ -1,24 +1,31 @@
-import os
+"""MENUendpoints"""
 from datetime import datetime
-import jwt
 from flask import request, jsonify, Blueprint
 
 # #Local imports
+from app.v2.database import Database
+from app.v2.models.menu import Menu
 from .. utils.authentication import Auth
 from ...shared.validation import ValidationError
-from app.v2.models.menu import Menu
-from app.v2.database import Database
 
-menu_v2 = Blueprint('v2_menu', __name__)
-db = Database()
-cur = db.cursor()
-menu = Menu()
 
-@menu_v2.route('', methods=['POST'])
+MENU_V2 = Blueprint('v2_menu', __name__)
+DB = Database()
+CUR = DB.cursor()
+MENU = Menu()
+
+
+@MENU_V2.route('', methods=['POST'])
 @Auth.token_required
 def add_menu(current_user):
+    """Add Menu item
+    Current user must be admin"""
     data = request.get_json()
-    menu_inst = Menu(data['name'], data['price'], data['image'], data['category'])
+    menu_inst = Menu(
+        data['name'],
+        data['price'],
+        data['image'],
+        data['category'])
     try:
         sanitized = menu_inst.import_data(data)
         if sanitized == "Invalid":
@@ -28,7 +35,7 @@ def add_menu(current_user):
         return jsonify({"Message": str(e)}), 400
     if current_user['admin']:
         try:
-            success= menu_inst.save_menu()
+            success = menu_inst.save_menu()
             if not success:
                 raise ValueError
             return jsonify({'Message': 'Menu added'}), 201
@@ -36,11 +43,13 @@ def add_menu(current_user):
             return jsonify({"Message": "Menu already exists"}), 400
     return jsonify({"Message": "Not authorized to add menu"}), 401
 
-@menu_v2.route('', methods=['GET'])
+
+@MENU_V2.route('', methods=['GET'])
 def get_full_menu():
+    """Get the full list of availabe menu"""
     query = "SELECT * FROM menu"
-    cur.execute(query)
-    menus = cur.fetchall()
+    CUR.execute(query)
+    menus = CUR.fetchall()
     if menus:
         return jsonify({
             "Full Menu": [
@@ -53,13 +62,15 @@ def get_full_menu():
                     'updated_at': menu['updated_at']
                 } for menu in menus
             ]
-            
-        }), 200
-    return jsonify({"Message": "No menu found"}), 200
 
-@menu_v2.route('/<int:item_id>', methods=['GET'])
+        }), 200
+    return jsonify({"Message": "No Menu found"}), 200
+
+
+@MENU_V2.route('/<int:item_id>', methods=['GET'])
 def get_single_menu_item(item_id):
-    item = menu.get_item_by_id(item_id)
+    """Return specific item by id"""
+    item = MENU.get_item_by_id(item_id)
     if item:
         return jsonify({
             'Item': [
@@ -75,23 +86,33 @@ def get_single_menu_item(item_id):
         }), 200
     return jsonify({"Message": "Meal item not found"}), 404
 
-@menu_v2.route('/<int:item_id>', methods=['PUT'])
+
+@MENU_V2.route('/<int:item_id>', methods=['PUT'])
 @Auth.token_required
 def edit_menu_item(current_user, item_id):
+    """edit item by specified id"""
     data = request.get_json()
     new_time = datetime.now()
     if current_user['admin']:
-        response = menu.edit_menu(item_id, data['name'], data['price'],data['category'], data['image'], new_time)
+        response = MENU.edit_menu(
+            item_id,
+            data['name'],
+            data['price'],
+            data['category'],
+            data['image'],
+            new_time)
         if response:
             return jsonify({"Message": "Menu updated"}), 201
         return jsonify({"Message": "Meal item not found"}), 404
     return jsonify({"Message": "Not authorized to edit menu"}), 401
 
-@menu_v2.route('/<int:item_id>', methods=['DELETE'])
+
+@MENU_V2.route('/<int:item_id>', methods=['DELETE'])
 @Auth.token_required
 def delete_menu_item(current_user, item_id):
+    """Delete Menu by specific id"""
     if current_user['admin']:
-        response = menu.del_menu(item_id)
+        response = MENU.del_menu(item_id)
         if response:
             return jsonify({"Message": "Menu deleted"}), 200
         return jsonify({"Message": "Meal item not found"}), 404
