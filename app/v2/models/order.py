@@ -44,6 +44,15 @@ class Order:
             raise ValidationError("Invalid: Field required: " + e.args[0])
         return self
 
+    def find_order_by_id(self, order_id):
+        """Find an order by specific id"""
+        query = "SELECT * FROM orders WHERE order_id=%s"
+        self.CUR.execute(query, (order_id,))
+        row = self.CUR.fetchone()
+        if row:
+            return row
+        return False
+
     @staticmethod
     def total_cost(items):
         """calucate total order cost"""
@@ -52,18 +61,13 @@ class Order:
         cur = DB.cursor()
         cur.execute(query)
         full_menu = cur.fetchall()
-        print(full_menu)
         foods = []
         for item in full_menu: 
             foods.append(item['name'])
-        print(items.items())
         for food, servings in items.items():
-            print(food)
-            print(foods)
             if food not in foods:
                 return False
             menu_inst = Menu()
             price = menu_inst.get_item_price(food)
-            print(price)
             total += Decimal(price) * servings
         return total
