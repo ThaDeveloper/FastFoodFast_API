@@ -1,0 +1,42 @@
+"""Order endpoints"""
+from datetime import datetime
+import psycopg2
+from flask import request, jsonify, Blueprint
+
+# #Local imports
+from app.v2.database import Database
+from app.v2.models.order import Order
+from .. utils.authentication import Auth
+from ...shared.validation import ValidationError
+
+
+ORDER_V2 = Blueprint('v2_order', __name__)
+DB = Database()
+CUR = DB.cursor()
+ORDER = Order()
+
+@ORDER_V2.route('', methods=['POST'])
+@Auth.token_required
+def place_order(current_user):
+    """Add order
+    Needs to be logged in"""
+    data = request.get_json()
+    user = current_user['id']
+    order_inst = Order()
+    total = order_inst.total_cost(data['items'])
+    if not total:
+        return jsonify({"Message": "Menu item not found"}), 400
+    order_inst = Order(
+        user,
+        data['items'],
+        total)
+    try:
+        sanitized = order_inst.import_data(data)
+        if sanitized == "Invalid":
+            return jsonify({'Message': 'Order cannot be empty'}), 400
+    except ValidationError as e:
+        return jsonify({"Message": str(e)}), 400
+    success = order_inst.create_order()
+    if not success:
+        raise ValueError
+    return jsonify({'Message': 'Order added'}), 201

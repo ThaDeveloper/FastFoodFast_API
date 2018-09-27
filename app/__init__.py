@@ -10,7 +10,7 @@ from . v1.views.user import user_v1 as user_blueprint
 from . v1.views.menu import menu_v1 as menu_blueprint
 from . v2.views.user import USER_V2 as v2_user_blueprint
 from . v2.views.menu import MENU_V2 as v2_menu_blueprint
-
+from . v2.views.order import ORDER_V2 as v2_order_blueprint
 
 def create_app(env_name):
     """
@@ -27,6 +27,7 @@ def create_app(env_name):
     app.register_blueprint(menu_blueprint, url_prefix='/api/v1/menu')
     app.register_blueprint(v2_user_blueprint, url_prefix='/api/v2/auth')
     app.register_blueprint(v2_menu_blueprint, url_prefix='/api/v2/menu')
+    app.register_blueprint(v2_order_blueprint, url_prefix='/api/v2/orders')
 
     @app.route('/', methods=['GET'])
     def index():

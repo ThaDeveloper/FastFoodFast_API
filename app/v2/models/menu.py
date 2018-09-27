@@ -78,11 +78,11 @@ class Menu:
 
     def get_item_price(self, item):
         """Find price of a menu item by passing item name"""
-        query = "SELECT price FROM WHERE name='%s'"
+        query = "SELECT price FROM menu WHERE name=%s;"
         self.CUR.execute(query, (item,))
         row = self.CUR.fetchone()
         if row:
-            return row
+            return row['price']
         return False
 
     def edit_menu(

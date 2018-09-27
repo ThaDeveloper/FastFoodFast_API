@@ -1,4 +1,4 @@
-"""MENUendpoints"""
+"""Menu endpoints"""
 from datetime import datetime
 import psycopg2
 from flask import request, jsonify, Blueprint
