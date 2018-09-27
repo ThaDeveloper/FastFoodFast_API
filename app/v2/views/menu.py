@@ -3,7 +3,6 @@ import datetime
 import jwt
 from flask import request, jsonify, Blueprint
 
-
 # #Local imports
 from .. utils.authentication import Auth
 from ...shared.validation import ValidationError
@@ -40,8 +39,20 @@ def add_menu(current_user):
 def get_full_menu():
     query = "SELECT * FROM menu"
     cur.execute(query)
-    menu = cur.fetchall()
-    print (menu)
-    if menu:
-        return jsonify({"Full Menu": menu}), 200
+    menus = cur.fetchall()
+    if menus:
+        return jsonify({
+            "Full Menu": [
+                {
+                    'id': menu['item_id'],
+                    'name': menu['name'],
+                    'price': '%.*f' % (2, menu['price']),
+                    'category': menu['category'],
+                    'created_at': menu['created_at'],
+                    'updated_at': menu['updated_at']
+                } for menu in menus
+            ]
+            
+        }), 200
     return jsonify({"Message": "No menu found"}), 200
+
