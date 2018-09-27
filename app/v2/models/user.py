@@ -23,8 +23,8 @@ class User:
 
     def check_user_exists(self, username):
         """Check if user exists"""
-        query = "SELECT username FROM users WHERE username = '%s'" % (username)
-        self.cur.execute(query)
+        query = "SELECT username FROM users WHERE username = %s;"
+        self.cur.execute(query, (username,))
         return self.cur.fetchone() is not None
 
     def save_user(self):

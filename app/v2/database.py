@@ -34,7 +34,7 @@ class Database:
                     first_name VARCHAR(30) NOT NULL,\
                     last_name VARCHAR(30) NOT NULL,\
                     username VARCHAR(30) UNIQUE NOT NULL,\
-                    email VARCHAR(90) UNIQUE NOT NULL,\
+                    email VARCHAR(90) NOT NULL,\
                     password VARCHAR(200) NOT NULL,\
                     admin bool,\
                     created_at TIMESTAMP\
@@ -48,7 +48,7 @@ class Database:
 
             'CREATE TABLE IF NOT EXISTS menu (\
                     item_id SERIAL PRIMARY KEY,\
-                    name VARCHAR(70) NOT NULL,\
+                    name VARCHAR(70) UNIQUE NOT NULL,\
                     price numeric(10, 2) NOT NULL,\
                     category VARCHAR(200),\
                     image VARCHAR(250) NOT NULL,\
@@ -102,14 +102,20 @@ class Database:
             print(error)
 
     def drop_tables(self):
-        """drop tables esle return exection error"""
+        """drop tables else return exection error"""
         cur = self.cursor()
-        table_drops = ["DROP TABLE IF EXISTS users CASCADE",
-                       "DROP TABLE IF EXISTS categories CASCADE",
-                       "DROP TABLE IF EXISTS menu",
-                       "DROP TABLE IF EXISTS orders",
-                       "DROP TABLE IF EXISTS tokens",
-                       "DROP TABLE IF EXISTS blacklist"
+        table_drops = ["DELETE FROM users CASCADE",
+                       "DELETE FROM categories CASCADE",
+                       "DELETE FROM menu",
+                       "DELETE FROM orders",
+                       "DELETE FROM tokens",
+                       "DELETE FROM blacklist",
+                       "ALTER SEQUENCE users_id_seq RESTART WITH 1;",
+                       "ALTER SEQUENCE categories_cat_id_seq RESTART WITH 1;",
+                       "ALTER SEQUENCE menu_item_id_seq RESTART WITH 1;"
+                       "ALTER SEQUENCE orders_order_id_seq RESTART WITH 1;"
+                       "ALTER SEQUENCE tokens_token_id_seq RESTART WITH 1;"
+                       "ALTER SEQUENCE blacklist_token_id_seq RESTART WITH 1;"
                        ]
 
         try:

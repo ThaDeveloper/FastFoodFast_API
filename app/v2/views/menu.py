@@ -1,5 +1,6 @@
 """MENUendpoints"""
 from datetime import datetime
+import psycopg2
 from flask import request, jsonify, Blueprint
 
 # #Local imports
@@ -94,16 +95,20 @@ def edit_menu_item(current_user, item_id):
     data = request.get_json()
     new_time = datetime.now()
     if current_user['admin']:
-        response = MENU.edit_menu(
-            item_id,
-            data['name'],
-            data['price'],
-            data['category'],
-            data['image'],
-            new_time)
-        if response:
-            return jsonify({"Message": "Menu updated"}), 201
-        return jsonify({"Message": "Meal item not found"}), 404
+        try:
+            response = MENU.edit_menu(
+                item_id,
+                data['name'],
+                data['price'],
+                data['category'],
+                data['image'],
+                new_time)
+            if response:
+                return jsonify({"Message": "Menu updated"}), 201
+            return jsonify({"Message": "Meal item not found"}), 404
+        except (Exception, psycopg2.InternalError) as e:
+            return jsonify({"Message": str(e)}), 400
+            
     return jsonify({"Message": "Not authorized to edit menu"}), 401
 
 

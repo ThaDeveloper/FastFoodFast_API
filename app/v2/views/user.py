@@ -79,15 +79,22 @@ def logout(current_user):
     query = "SELECT token FROM blacklist WHERE user_id=%s;"
     CUR.execute(query, (current_user['username'],))
     row = CUR.fetchone()
+    def del_from_tokens(token):
+            q = "DELETE FROM tokens WHERE token=%s;"
+            CUR.execute(q, (token,))
+            return DB.connection.commit()
     if row:
         if log_token == row['token']:
             return jsonify({"Message": "Already logged out"}), 400
         query = "UPDATE blacklist SET token=%s WHERE user_id=%s"
         CUR.execute(query, (log_token, current_user['username']))
         DB.connection.commit()
+        #delete the token from tokens table
+        del_from_tokens(log_token)
         return jsonify({"Message": "Successfully logged out"}), 200
     query = "INSERT INTO blacklist(user_id, token) VALUES(%s, %s);"
     CUR.execute(query, (current_user['username'], log_token,))
     DB.connection.commit()
+    del_from_tokens(log_token)
     CUR.close
     return jsonify({"Message": "Successfully logged out"}), 200

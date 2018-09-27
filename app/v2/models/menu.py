@@ -1,6 +1,6 @@
 """menu module"""
 from datetime import datetime
-
+import psycopg2
 # local
 from ...shared.validation import ValidationError
 from .. database import Database
@@ -96,10 +96,13 @@ class Menu:
         """Edit menu by specific"""
         item = self.get_item_by_id(item_id)
         if item:
-            query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s"
-            self.CUR.execute(query, (name, price, category, image, updated_at))
-            DB.connection.commit()
-            return True
+            try:
+                query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s"
+                self.CUR.execute(query, (name, price, category, image, updated_at))
+                DB.connection.commit()
+                return True
+            except (Exception, psycopg2.InternalError) as e:
+                raise ValidationError("Invalid: Name exists: " + e.args[0])
         return False
 
     def del_menu(self, item_id):
