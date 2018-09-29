@@ -74,10 +74,13 @@ class Order:
     def import_data(self, data):
         """validates the input json data"""
         try:
-            if len(data['items']) == 0:
-                return "Invalid"
-            else:
-                self.items = data['items']
+            try:
+                if len(data['items']) == 0:
+                    return "Invalid"
+                else:
+                    self.items = data['items']
+            except TypeError as e:
+                    raise ValidationError("Invalid data fromat: Item need to be of format {}")
         except KeyError as e:
             raise ValidationError("Invalid: Field required: " + e.args[0])
         return self

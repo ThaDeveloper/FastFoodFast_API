@@ -6,6 +6,24 @@ from tests.v1.test_setup import TestSetup
 
 class TestOrder(TestSetup):
     """All test cases for Order class"""
+    def test_404(self):
+        response = self.client.post(
+            '/api/v1/not_found',
+            content_type="application/json")
+        self.assertEqual(response.status_code, 404)
+
+    def test_method_not_found(self):
+        response = self.client.patch(
+            '/api/v1/orders',data=json.dumps(dict(items={})),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 405)  
+
+    def test_bad_request(self):
+        response = self.client.post(
+            '/api/v1/orders',data=json.dumps(dict(items=0)),
+            content_type="application/json", headers={
+                "x-access-token": self.admintoken})
+        self.assertEqual(response.status_code, 400)  
 
     def test_add_new_order(self):
         """Tests creating a new order."""
