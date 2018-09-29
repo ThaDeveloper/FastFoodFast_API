@@ -1,6 +1,5 @@
 """menu module"""
 from datetime import datetime
-import psycopg2
 # local
 from ...shared.validation import ValidationError
 from .. database import Database

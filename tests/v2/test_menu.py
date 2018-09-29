@@ -1,9 +1,11 @@
+"""Menu Test module"""
 import json
 import unittest
 from tests.v2.test_setup import TestSetup
 
 
 class TestMenu(TestSetup):
+    """Menu Test class"""
     def test_menu_access_with_invalid_token(self):
         """Raise unauthorized error invalid token."""
         response = self.client.post("/api/v2/menu",
@@ -33,7 +35,8 @@ class TestMenu(TestSetup):
         """Error raised for blank menu name.
         A menu must have  a name."""
         response = self.client.post("/api/v2/menu",
-                                    data=json.dumps(dict(name="", price=200.00,image="empty.jpg", category="none")),
+                                    data=json.dumps(dict(name="", price=200.00, \
+                                    image="empty.jpg", category="none")),
                                     content_type="application/json",
                                     headers={"x-access-token": self.token})
         self.assertEqual(response.status_code, 400)
@@ -60,6 +63,7 @@ class TestMenu(TestSetup):
         self.assertIn("already exists", response_msg["Message"])
 
     def test_menu_list(self):
+        """Test returns full menu"""
         resp = self.client.get('/api/v2/menu')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')

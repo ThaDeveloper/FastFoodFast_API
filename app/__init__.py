@@ -10,6 +10,7 @@ from . v1.views.user import user_v1 as user_blueprint
 from . v1.views.menu import menu_v1 as menu_blueprint
 from . v2.views.user import USER_V2 as v2_user_blueprint
 from . v2.views.menu import MENU_V2 as v2_menu_blueprint
+from . v2.utils.error_handling import *
 
 
 def create_app(env_name):
@@ -27,6 +28,10 @@ def create_app(env_name):
     app.register_blueprint(menu_blueprint, url_prefix='/api/v1/menu')
     app.register_blueprint(v2_user_blueprint, url_prefix='/api/v2/auth')
     app.register_blueprint(v2_menu_blueprint, url_prefix='/api/v2/menu')
+    app.register_error_handler(404, page_404)
+    app.register_error_handler(400, bad_request)
+    app.register_error_handler(405, method_not_found)
+
 
     @app.route('/', methods=['GET'])
     def index():

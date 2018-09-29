@@ -1,3 +1,4 @@
+"""Test setup module"""
 import json
 import unittest
 from app import create_app
@@ -24,10 +25,10 @@ class TestSetup(unittest.TestCase):
                             "email": "uknown@gmail.com",
                             "password": "@Password2"}
         self.admin = {"first_name": "Super",
-                            "last_name": "User",
-                            "username": "admin",
-                            "email": "admin@fast.com",
-                            "password": "@Password1"}
+                      "last_name": "User",
+                      "username": "admin",
+                      "email": "admin@fast.com",
+                      "password": "@Password1"}
         self.order = {"items": {"burger": 2, "pizza": 1}}
         self.new_order = {"items": {"burger": 1, "pizza": 3}}
         self.empty_order = {"items": {}}
@@ -89,6 +90,6 @@ class TestSetup(unittest.TestCase):
 
     def tearDown(self):
         self.db.drop_tables()
-        
+       
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,5 @@
 """Menu endpoints"""
 from datetime import datetime
-import psycopg2
 from flask import request, jsonify, Blueprint
 
 # #Local imports
@@ -22,11 +21,14 @@ def add_menu(current_user):
     """Add Menu item
     Current user must be admin"""
     data = request.get_json()
-    menu_inst = Menu(
-        data['name'],
-        data['price'],
-        data['image'],
-        data['category'])
+    try:
+        menu_inst = Menu(
+            data['name'],
+            data['price'],
+            data['image'],
+            data['category'])
+    except KeyError as e:
+        return jsonify({"Message": str(e) + "field is missing"}), 500
     try:
         sanitized = menu_inst.import_data(data)
         if sanitized == "Invalid":
@@ -106,12 +108,11 @@ def edit_menu_item(current_user, item_id):
         except KeyError as e:
             return jsonify(str(e) + " field is missing"), 500
         if response == "exists":
-            return jsonify({"Message": "Item name exists"}), 400 
+            return jsonify({"Message": "Item name exists"}), 400
         if response:
             return jsonify({"Message": "Menu updated"}), 201
-        return jsonify({"Message": "Meal item not found"}), 404           
+        return jsonify({"Message":"Meal item not found"}), 404
     return jsonify({"Message": "Not authorized to edit menu"}), 401
-
 
 @MENU_V2.route('/<int:item_id>', methods=['DELETE'])
 @Auth.token_required
