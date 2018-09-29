@@ -28,13 +28,15 @@ class Menu:
 
     def check_menu_exists(self, name):
         """Check if menu exists"""
-        query = "SELECT name FROM menu WHERE name = '%s'" % (name)
+        query = "SELECT * FROM menu WHERE name = '%s'" % (name)
         self.CUR.execute(query)
-        return self.CUR.fetchone() is not None
+        row = self.CUR.fetchone()
+        return row
 
     def save_menu(self):
         """Adds new menu item and returns all menus"""
-        if self.check_menu_exists(self.name):
+        row = self.check_menu_exists(self.name)
+        if row:
             return False
         try:
             query = "INSERT INTO menu(name,price,category, image, created_at, updated_at)\
@@ -78,11 +80,11 @@ class Menu:
 
     def get_item_price(self, item):
         """Find price of a menu item by passing item name"""
-        query = "SELECT price FROM WHERE name='%s'"
+        query = "SELECT price FROM menu WHERE name=%s;"
         self.CUR.execute(query, (item,))
         row = self.CUR.fetchone()
         if row:
-            return row
+            return row['price']
         return False
 
     def edit_menu(
@@ -96,13 +98,14 @@ class Menu:
         """Edit menu by specific"""
         item = self.get_item_by_id(item_id)
         if item:
-            try:
-                query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s"
-                self.CUR.execute(query, (name, price, category, image, updated_at))
-                DB.connection.commit()
-                return True
-            except (Exception, psycopg2.InternalError) as e:
-                raise ValidationError("Invalid: Name exists: " + e.args[0])
+            row = self.check_menu_exists(name)
+            if row and item_id != row['item_id']:
+                return "exists"
+            query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s WHERE item_id=%s"
+            self.CUR.execute(
+                query, (name, price, category, image, updated_at, item_id))
+            DB.connection.commit()
+            return True
         return False
 
     def del_menu(self, item_id):

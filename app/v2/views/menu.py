@@ -1,4 +1,4 @@
-"""MENUendpoints"""
+"""Menu endpoints"""
 from datetime import datetime
 import psycopg2
 from flask import request, jsonify, Blueprint
@@ -103,12 +103,13 @@ def edit_menu_item(current_user, item_id):
                 data['category'],
                 data['image'],
                 new_time)
-            if response:
-                return jsonify({"Message": "Menu updated"}), 201
-            return jsonify({"Message": "Meal item not found"}), 404
-        except (Exception, psycopg2.InternalError) as e:
-            return jsonify({"Message": str(e)}), 400
-            
+        except KeyError as e:
+            return jsonify(str(e) + " field is missing"), 500
+        if response == "exists":
+            return jsonify({"Message": "Item name exists"}), 400 
+        if response:
+            return jsonify({"Message": "Menu updated"}), 201
+        return jsonify({"Message": "Meal item not found"}), 404           
     return jsonify({"Message": "Not authorized to edit menu"}), 401
 
 
