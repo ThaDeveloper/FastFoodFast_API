@@ -63,7 +63,7 @@ class TestSetup(unittest.TestCase):
                                          data=json.dumps(self.admin),
                                          headers={"content-type":
                                                   "application/json"})
-        #make the user admin
+        #make the user admin and login
         q = "UPDATE users SET admin='true' WHERE username=%s;"
         self.db.cursor().execute(q, (self.admin['username'],))
         self.db.connection.commit()

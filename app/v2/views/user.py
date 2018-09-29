@@ -8,13 +8,17 @@ from werkzeug.security import check_password_hash
 # #Local imports
 from app.v2.database import Database
 from app.v2.models.user import User
+from app.v2.models.order import Order
 from .. utils.authentication import Auth
 from ...shared.validation import validate_user
+from ...shared.validation import ValidationError
 
 
 USER_V2 = Blueprint('v2_user', __name__)
 DB = Database()
 CUR = DB.cursor()
+ORDER = Order()
+order_inst = Order()
 
 
 @USER_V2.route('/register', methods=['POST'])
@@ -98,3 +102,72 @@ def logout(current_user):
     del_from_tokens(log_token)
     CUR.close
     return jsonify({"Message": "Successfully logged out"}), 200
+
+@USER_V2.route('/users/orders', methods=['POST'])
+@Auth.token_required
+def place_order(current_user):
+    """Add order
+    Needs to be logged in"""
+    data = request.get_json()
+    user = current_user['id']
+    order_inst = Order()
+    total = order_inst.total_cost(data['items'])
+    if not total:
+        return jsonify({"Message": "Menu item not found"}), 400
+    order_inst = Order(
+        user,
+        data['items'],
+        total)
+    try:
+        sanitized = order_inst.import_data(data)
+        if sanitized == "Invalid":
+            return jsonify({'Message': 'Order cannot be empty'}), 400
+    except ValidationError as e:
+        return jsonify({"Message": str(e)}), 400
+    success = order_inst.create_order()
+    if not success:
+        raise ValueError
+    return jsonify({'Message': 'Order added'}), 201
+
+@USER_V2.route('/users/orders', methods=['GET'])
+@Auth.token_required
+def view_orders(current_user):
+    """Returns order history of logged in user"""
+    query = "SELECT * FROM orders WHERE user_id=%s"
+    CUR.execute(query, (current_user['id'],))
+    orders = CUR.fetchall()
+    if orders:
+        return jsonify({
+            "Orders": [
+                {
+                    'id': order['order_id'],
+                    'user_id': order['user_id'],
+                    'items': order['items'],
+                    'total': '%.*f' % (2, order['total']),
+                    'status': order['status'],
+                    'created_at': order['created_at'],
+                    'updated_at':order['updated_at']
+                } for order in orders
+            ]
+
+        }), 200
+    return jsonify({"Message": "You have 0 orders"}), 200
+  
+@USER_V2.route('/users/orders/<int:order_id>', methods=['PUT'])
+@Auth.token_required
+def edit_order(current_user, order_id):
+    """edit order by specified id"""
+    data = request.get_json()
+    new_time = datetime.datetime.now()
+    new_total = order_inst.total_cost(data['items'])
+    order = order_inst. find_order_by_id(order_id)
+    if current_user['id'] == order['user_id']:
+        response = ORDER.edit_order(
+            order_id,
+            data['items'],
+            new_total,
+            new_time)
+        if response:
+            return jsonify({"Message": "Order updated"}), 201
+        return jsonify({"Message": "Order not found"}), 404
+    return jsonify({"Message": "Not authorized to edit order"}), 401
