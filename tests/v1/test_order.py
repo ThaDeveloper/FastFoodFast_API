@@ -74,7 +74,7 @@ class TestOrder(TestSetup):
         resp = self.client.get(
             '/api/v1/orders',
             headers={
-                "x-access-token": self.token})
+                "x-access-token": self.admintoken})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
 
@@ -255,7 +255,7 @@ class TestOrder(TestSetup):
         resp = self.client.get(
             '/api/v1/orders',
             headers={
-                "x-access-token": self.token})
+                "x-access-token": self.admintoken})
         self.assertEqual(resp.status_code, 200)
 
 

@@ -42,9 +42,9 @@ def get_single_order(current_user, order_id):
     """Returns a single order for the owner or admin"""
     order = order_inst.find_order_by_id(order_id)
     if order:
-        if current_user['username'] == order['user_id']:
+        if current_user['username'] == order['user_id'] or current_user['admin']:
             return jsonify({"Order": order}), 200
-        return jsonify({"Message": "Not authorized to view order"}), 401
+        return jsonify({"Message": "Not authorized: Can only view your order"}), 401
 
     return jsonify({"Message": "Order not found"}), 404
 
@@ -53,10 +53,11 @@ def get_single_order(current_user, order_id):
 @Auth.token_required
 def get_all_orders(current_user):
     """Returns all created orders"""
-    if not all_orders:
-        return jsonify({'Message': "No orders found"}), 200
-    return jsonify({"Orders": all_orders}), 200
-
+    if current_user['admin']:
+        if not all_orders:
+            return jsonify({'Message': "No orders found"}), 200
+        return jsonify({"Orders": all_orders}), 200
+    return jsonify({"Message": "Not authorized to view all orders"}), 401
 
 @order_v1.route('/customer', methods=['GET'])
 @Auth.token_required
