@@ -1,7 +1,8 @@
-from flask import jsonify, request
-from functools import wraps
-import jwt
+"""Authentication module"""
 import os
+from functools import wraps
+from flask import jsonify, request
+import jwt
 
 from ..models.user import User
 

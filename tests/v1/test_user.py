@@ -155,7 +155,7 @@ class TestUser(TestSetup):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("registered", response_msg["Message"])
         self.assertEqual(response.status_code, 201)
-        
+
     def test_2_email_already_taken(self):
         """Tests returns error if email is already registered."""
         response = self.client.post(
@@ -170,7 +170,7 @@ class TestUser(TestSetup):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("already registered", response_msg["Message"])
         self.assertEqual(response.status_code, 400)
-        
+
     def test_missing_credentials(self):
         """Tests error raised for missing auth details."""
         response = self.client.post(

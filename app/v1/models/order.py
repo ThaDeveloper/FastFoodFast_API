@@ -80,7 +80,8 @@ class Order:
                 else:
                     self.items = data['items']
             except TypeError as e:
-                    raise ValidationError("Invalid data fromat: Item need to be of format {}")
+                raise ValidationError(
+                    "Invalid data fromat: Item need to be of format {}")
         except KeyError as e:
             raise ValidationError("Invalid: Field required: " + e.args[0])
         return self
