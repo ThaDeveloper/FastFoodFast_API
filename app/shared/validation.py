@@ -13,11 +13,11 @@ def validate_user(data):
         return jsonify({"Message":
                         "Wrong username format: Can only be"
                             "a string"}), 400
-    if not re.match(r"^[a-zA-Z_.-]{3,15}$", username):
+    if not re.match(r"^(?=.*[a-z])[a-zA-Z0-9_.-]{3,15}$", username.lower()):
         return jsonify(
             {
-                "Message": "Username can only be 3-15 letters or combination of letters and _-."
-                           " (a-zA-Z_.-)"}), 400
+                "Message": "Username can only be 3-15 letters or combination of letters,"
+                "numbers and _-."}), 400
     if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])"
                     "(?=.*[@#$%^&+=*]).{6,}$", data['password']):
         return jsonify({"Message":

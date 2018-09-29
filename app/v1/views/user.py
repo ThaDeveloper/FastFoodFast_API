@@ -18,6 +18,9 @@ def register_user():
     password_hash = generate_password_hash(data['password'], method='sha256')
     if data['username'] in user_inst.users:
         return jsonify({'Message': "User already exists"}), 400
+    email_list = [user['email'] for user in list(user_inst.users.values())]
+    if data['email'] in email_list:
+        return jsonify({'Message': "Email already registered"}), 400
     if validate_user(data):
         return validate_user(data)
     data = user_inst.create_user(
@@ -41,8 +44,6 @@ def login():
 
     user = user_inst.users[auth['username']]
     if check_password_hash(user['password'], auth['password']):
-        # session['loggedin'] = True
-        # session['username'] = auth['username']
         token = jwt.encode({'username': user['username'],
                             'exp': datetime.datetime.utcnow() +
                                    datetime.timedelta(minutes=30)},
