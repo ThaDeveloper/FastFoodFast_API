@@ -132,7 +132,7 @@ class TestUser(TestSetup):
                     last_name="Ndwiga",
                     username="justin.ndwiga",
                     email="ndwigatest@gmail.com",
-                    password="!passWord3"
+                    password="@passWord3"
                 )),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)

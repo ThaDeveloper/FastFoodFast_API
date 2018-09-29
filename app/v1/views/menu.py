@@ -2,7 +2,7 @@ import datetime
 from flask import request, jsonify, Blueprint
 
 from ..models.menu import Menu
-from ...v1.authentication import Auth
+from ..utils.authentication import Auth
 from ...shared.validation import ValidationError
 
 # Blueprint app to handle our menu resources
@@ -57,18 +57,21 @@ def update_menu_item(current_user, item_id):
     data = request.get_json()
     new_time = datetime.datetime.now()
     if current_user['admin']:
-        if data['name'] in full_menu:
-            return jsonify({"Message": "Menu item already exists"}), 400
-        resp = menu_inst.edit_menu(
-            item_id,
-            data['name'],
-            data['price'],
-            data['category'],
-            data['image'],
-            new_time)
-        if resp:
-            return jsonify({"Message": "Item updated"}), 200
-        return jsonify({"Message": "Item not found"}), 404
+        try:
+            if data['name'] in full_menu:
+                return jsonify({"Message": "Menu item already exists"}), 400
+            resp = menu_inst.edit_menu(
+                item_id,
+                data['name'],
+                data['price'],
+                data['category'],
+                data['image'],
+                new_time)
+            if resp:
+                return jsonify({"Message": "Item updated"}), 200
+            return jsonify({"Message": "Item not found"}), 404
+        except KeyError as e:
+            return jsonify(str(e) + " field is missing"), 500
     return jsonify({"Message": "Not authorized to edit menu"}), 401
 
 

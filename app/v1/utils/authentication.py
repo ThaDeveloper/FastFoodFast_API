@@ -3,7 +3,7 @@ from functools import wraps
 import jwt
 import os
 
-from .models.user import User
+from ..models.user import User
 
 user_inst = User()
 
