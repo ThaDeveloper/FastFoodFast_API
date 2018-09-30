@@ -48,7 +48,7 @@ class Database:
 
             'CREATE TABLE IF NOT EXISTS menu (\
                     item_id SERIAL PRIMARY KEY,\
-                    name VARCHAR(70) UNIQUE NOT NULL,\
+                    name VARCHAR(70) NOT NULL,\
                     price numeric(10, 2) NOT NULL,\
                     category VARCHAR(200),\
                     image VARCHAR(250) NOT NULL,\

@@ -1,7 +1,7 @@
 """order module"""
 from datetime import datetime
-import psycopg2
 from decimal import Decimal
+import psycopg2
 from flask import json
 
 from .menu import Menu
@@ -32,10 +32,10 @@ class Order:
                 (self.user_id,
                  json.dumps(
                      self.items),
-                    self.total,
-                    self.status,
-                    self.created_at,
-                    self.updated_at))
+                 self.total,
+                 self.status,
+                 self.created_at,
+                 self.updated_at))
             DB.connection.commit()
             self.CUR.close()
         except ValueError as e:
@@ -73,7 +73,6 @@ class Order:
         self.CUR.execute(query, (json.dumps(items), total, updated_at))
         DB.connection.commit()
         return True
-        
 
     def update_order_status(
             self,
@@ -94,7 +93,7 @@ class Order:
         self.CUR.execute(query, (order_id,))
         DB.connection.commit()
         return True
-        
+
     @staticmethod
     def total_cost(items):
         """calucate total order cost"""

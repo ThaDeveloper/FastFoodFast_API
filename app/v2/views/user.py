@@ -85,9 +85,9 @@ def logout(current_user):
     CUR.execute(query, (current_user['username'],))
     row = CUR.fetchone()
     def del_from_tokens(token):
-            q = "DELETE FROM tokens WHERE token=%s;"
-            CUR.execute(q, (token,))
-            return DB.connection.commit()
+        q = "DELETE FROM tokens WHERE token=%s;"
+        CUR.execute(q, (token,))
+        return DB.connection.commit()
     if row:
         if log_token == row['token']:
             return jsonify({"Message": "Already logged out"}), 400
@@ -112,19 +112,22 @@ def place_order(current_user):
     data = request.get_json()
     user = current_user['id']
     order_inst = Order()
-    total = order_inst.total_cost(data['items'])
-    if not total:
-        return jsonify({"Message": "Menu item not found"}), 400
-    order_inst = Order(
-        user,
-        data['items'],
-        total)
     try:
         sanitized = order_inst.import_data(data)
         if sanitized == "Invalid":
             return jsonify({'Message': 'Order cannot be empty'}), 400
     except ValidationError as e:
         return jsonify({"Message": str(e)}), 400
+    total = order_inst.total_cost(data['items'])
+    if not total:
+        return jsonify({"Message": "Menu item not found"}), 400
+    try:
+        order_inst = Order(
+            user,
+            data['items'],
+            total)
+    except KeyError as e:
+        return jsonify({'Message': e.args[0] + ' field is required'}), 500
     success = order_inst.create_order()
     if not success:
         raise ValueError
@@ -153,14 +156,17 @@ def view_orders(current_user):
 
         }), 200
     return jsonify({"Message": "You have 0 orders"}), 200
-  
+
 @USER_V2.route('/users/orders/<int:order_id>', methods=['PUT'])
 @Auth.token_required
 def edit_order(current_user, order_id):
     """edit order by specified id"""
     data = request.get_json()
     new_time = datetime.datetime.now()
-    new_total = order_inst.total_cost(data['items'])
+    try:
+        new_total = order_inst.total_cost(data['items'])
+    except KeyError as e:
+        return jsonify({'Message': e.args[0] + ' field is required'}), 500
     order = order_inst. find_order_by_id(order_id)
     if order:
         if current_user['id'] == order['user_id']:

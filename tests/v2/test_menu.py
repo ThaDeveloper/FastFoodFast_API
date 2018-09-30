@@ -25,9 +25,10 @@ class TestMenu(TestSetup):
                                     data=json.dumps(self.menu_item),
                                     content_type="application/json",
                                     headers={"x-access-token": self.admintoken})
-        self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("added", response_msg["Message"])
+        self.assertEqual(response.status_code, 201)
+        
 
     def test_empty_name(self):
         """Error raised for blank menu name.
@@ -49,8 +50,8 @@ class TestMenu(TestSetup):
                          content_type="application/json",
                          headers={"x-access-token": self.admintoken})
         response = self.client.post("/api/v2/menu",
-                                    data=json.dumps(dict(name="rice",
-                                                         image="rice.jpg",
+                                    data=json.dumps(dict(name="fajita",
+                                                         image="fajita.jpg",
                                                          price=800,
                                                          category="main")),
                                     content_type="application/json",

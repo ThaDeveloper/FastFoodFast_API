@@ -1,3 +1,4 @@
+import os
 import json
 import unittest
 from app import create_app
@@ -28,12 +29,12 @@ class TestSetup(unittest.TestCase):
                             "username": "admin",
                             "email": "admin@fast.com",
                             "password": "@Password1"}
-        self.order = {"items": {"burger": 2, "pizza": 1}}
-        self.new_order = {"items": {"burger": 1, "pizza": 3}}
+        self.order = {"items": {"pizza": 2}}
+        self.new_order = {"items": {"pizza": 10}}
         self.empty_order = {"items": {}}
         self.menu_item = {
-            "name": "rice",
-            "image": "rice.jpg",
+            "name": "fajita",
+            "image": "fajita.jpg",
             "price": 800,
             "category": "main"}
         self.new_menu_item = {
@@ -86,6 +87,11 @@ class TestSetup(unittest.TestCase):
                                             content_type="application/json")
         self.data = json.loads(self.unkownlogin.get_data(as_text=True))
         self.unkowntoken = self.data['token']
+
+        #add one menu item to db
+        q = "INSERT INTO menu(name, price, category, image) VALUES(%s,%s,%s,%s);"
+        self.db.cursor().execute(q, ('pizza',900.00, 'snacks', 'image'))
+        self.db.connection.commit()
 
     def tearDown(self):
         self.db.drop_tables()

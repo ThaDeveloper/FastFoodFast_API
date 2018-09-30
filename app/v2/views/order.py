@@ -6,7 +6,6 @@ from flask import request, jsonify, Blueprint
 from app.v2.database import Database
 from app.v2.models.order import Order
 from .. utils.authentication import Auth
-from ...shared.validation import ValidationError
 from .. utils.constants import *
 
 
@@ -20,6 +19,7 @@ order_inst = Order()
 @ORDER_V2.route('', methods=['GET'])
 @Auth.token_required
 def view_orders(current_user):
+    """View list of all placed orders"""
     if current_user['admin']:
         query = "SELECT * FROM orders"
         CUR.execute(query)
