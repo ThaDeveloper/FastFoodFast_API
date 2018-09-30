@@ -1,4 +1,5 @@
 """Order endpoints"""
+import datetime
 from flask import request, jsonify, Blueprint
 
 # #Local imports
@@ -64,3 +65,24 @@ def get_single_order(current_user, order_id):
         return jsonify({"Message": "Not authorized to view this order"}), 401
     return jsonify({"Message": "Order not found"}), 404
 
+@ORDER_V2.route('<int:order_id>', methods=['PUT'])
+@Auth.token_required
+def update_order_status(current_user, order_id):
+    """Updates the status of a given order. This is done by admin"""
+    data = request.get_json()
+    try:
+        new_status = data['status']
+        new_time = datetime.datetime.now()
+        order = order_inst.find_order_by_id(order_id)
+    except KeyError as e:
+        return jsonify({"Message": e.args[0] +" field is required"}), 500
+    if order:
+        if current_user['admin']:
+            if new_status == order['status']:
+                return jsonify({"Message": "Order already {}".format(new_status)}), 400
+            response = order_inst.update_order_status(order_id, new_status, new_time)
+            if response:
+                return jsonify({'Message': 'Order {}'.format(new_status)}), 200
+        return jsonify(
+            {"Message": "Not authorized to update order"}), 401
+    return jsonify({'Message': 'Order not found'}), 404

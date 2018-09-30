@@ -14,7 +14,7 @@ DB = Database()
 class Order:
     """constructor and methods for the Order model"""
 
-    def __init__(self, user_id=1, items={}, total=0.00, status='pending'):
+    def __init__(self, user_id=1, items={}, total=0.00, status='New'):
         self.user_id = user_id
         self.items = items
         self.total = total
@@ -73,6 +73,20 @@ class Order:
         if order:
             query = "UPDATE orders SET items=%s, total=%s, updated_at=%s WHERE order_id=order_id"
             self.CUR.execute(query, (json.dumps(items), total, updated_at))
+            DB.connection.commit()
+            return True
+        return False
+
+    def update_order_status(
+            self,
+            order_id,
+            status,
+            updated_at):
+        """updates the status of a given order"""
+        order = self.find_order_by_id(order_id)
+        if order:
+            query = "UPDATE orders SET status=%s, updated_at=%s WHERE order_id=order_id"
+            self.CUR.execute(query, (status, updated_at))
             DB.connection.commit()
             return True
         return False
