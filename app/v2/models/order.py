@@ -69,13 +69,11 @@ class Order:
             total,
             updated_at):
         """Update order items"""
-        order = self.find_order_by_id(order_id)
-        if order:
-            query = "UPDATE orders SET items=%s, total=%s, updated_at=%s WHERE order_id=order_id"
-            self.CUR.execute(query, (json.dumps(items), total, updated_at))
-            DB.connection.commit()
-            return True
-        return False
+        query = "UPDATE orders SET items=%s, total=%s, updated_at=%s WHERE order_id=order_id"
+        self.CUR.execute(query, (json.dumps(items), total, updated_at))
+        DB.connection.commit()
+        return True
+        
 
     def update_order_status(
             self,
@@ -83,14 +81,20 @@ class Order:
             status,
             updated_at):
         """updates the status of a given order"""
-        order = self.find_order_by_id(order_id)
-        if order:
-            query = "UPDATE orders SET status=%s, updated_at=%s WHERE order_id=order_id"
-            self.CUR.execute(query, (status, updated_at))
-            DB.connection.commit()
-            return True
-        return False
+        query = "UPDATE orders SET status=%s, updated_at=%s WHERE order_id=order_id"
+        self.CUR.execute(query, (status, updated_at))
+        DB.connection.commit()
+        return True
 
+    def delete_order(
+            self,
+            order_id):
+        """Deletes  a given order"""
+        query = "DELETE FROM orders WHERE order_id=%s"
+        self.CUR.execute(query, (order_id,))
+        DB.connection.commit()
+        return True
+        
     @staticmethod
     def total_cost(items):
         """calucate total order cost"""
