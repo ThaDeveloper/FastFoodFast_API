@@ -12,6 +12,7 @@ from app.v2.models.order import Order
 from .. utils.authentication import Auth
 from ...shared.validation import validate_user
 from ...shared.validation import ValidationError
+from .. utils.constants import *
 
 
 USER_V2 = Blueprint('v2_user', __name__)
@@ -171,7 +172,7 @@ def edit_order(current_user, order_id):
             if response:
                 return jsonify({"Message": "Order updated"}), 201
         return jsonify({"Message": "Not authorized to edit order"}), 401
-    return jsonify({"Message": "Order not found"}), 404
+    return jsonify({"Message": MESSAGES['order_404']}), 404
 
 
 @USER_V2.route('/users/orders/<int:order_id>', methods=['DELETE'])
@@ -185,4 +186,4 @@ def cancel_order(current_user, order_id):
             return jsonify({'Message': 'Order cancelled'}), 200
         return jsonify(
             {"Message": "Not authorized to cancel this order"}), 401
-    return jsonify({'Message': 'Order not found'}), 404
+    return jsonify({"Message": MESSAGES['order_404']}), 404

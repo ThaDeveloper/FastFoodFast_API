@@ -7,6 +7,7 @@ from app.v2.database import Database
 from app.v2.models.order import Order
 from .. utils.authentication import Auth
 from ...shared.validation import ValidationError
+from .. utils.constants import *
 
 
 ORDER_V2 = Blueprint('v2_order', __name__)
@@ -63,7 +64,7 @@ def get_single_order(current_user, order_id):
                 ]
             }), 200
         return jsonify({"Message": "Not authorized to view this order"}), 401
-    return jsonify({"Message": "Order not found"}), 404
+    return jsonify({"Message": MESSAGES['order_404']}), 404
 
 @ORDER_V2.route('<int:order_id>', methods=['PUT'])
 @Auth.token_required
@@ -85,4 +86,4 @@ def update_order_status(current_user, order_id):
                 return jsonify({'Message': 'Order {}'.format(new_status)}), 200
         return jsonify(
             {"Message": "Not authorized to update order"}), 401
-    return jsonify({'Message': 'Order not found'}), 404
+    return jsonify({"Message": MESSAGES['order_404']}), 404
