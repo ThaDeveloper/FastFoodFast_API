@@ -10,7 +10,7 @@ DB = Database()
 
 class User:
     """Methods of the User model"""
-    def __init__(self, first_name, last_name, username, email, password, admin=False):
+    def __init__(self, first_name="Super", last_name="User", username="superuser", email="dev@fastfood.com", password="password", admin=False):
         """initialize user model"""
         self.first_name = first_name
         self.last_name = last_name
@@ -21,6 +21,12 @@ class User:
         self.created_at = datetime.now()
         self.cur = DB.cursor()
 
+    def get_user_by_id(self, id):
+        query = "SELECT * FROM users WHERE id = %s;"
+        self.cur.execute(query, (id,))
+        user = self.cur.fetchone()
+        return user
+        
     def check_user_exists(self, username):
         """Check if user exists"""
         query = "SELECT username FROM users WHERE username = %s;"

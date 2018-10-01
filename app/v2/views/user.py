@@ -98,3 +98,21 @@ def logout(current_user):
     del_from_tokens(log_token)
     CUR.close
     return jsonify({"Message": "Successfully logged out"}), 200
+
+
+@USER_V2.route('/users/<int:id>/promote', methods=['PUT'])
+@Auth.token_required
+def promote_user(current_user, id):
+    """Change normal user to admin - Only preadded Superuser
+    can access this route. Not available to public"""
+    if current_user['username'] == 'superuser':
+        user_inst = User()
+        user = user_inst.get_user_by_id(id)
+        if user:
+            query = "UPDATE users SET admin=%s WHERE id=%s"
+            CUR.execute(query, (True, id))
+            DB.connection.commit()
+            return jsonify({"Message": "User is now an admin!"}), 200
+        return jsonify({"Message": "User not found!"}), 404
+
+    return jsonify({"Message": "Sorry that route is not available to you!"}), 401
