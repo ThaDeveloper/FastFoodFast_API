@@ -21,14 +21,17 @@ CUR = DB.cursor()
 def register_user():
     """Adds user to the database, data must be serialized"""
     data = request.get_json()
-    if validate_user(data):
-        return validate_user(data)
-    user_inst = User(
-        data['first_name'],
-        data['last_name'],
-        data['username'],
-        data['email'],
-        data['password'])
+    try:
+        if validate_user(data):
+            return validate_user(data)
+        user_inst = User(
+            data['first_name'],
+            data['last_name'],
+            data['username'],
+            data['email'],
+            data['password'])
+    except KeyError as e:
+        return jsonify({"Message": str(e) + " field is missing"}), 500
     try:
         success = user_inst.save_user()
         if not success:
@@ -42,15 +45,15 @@ def register_user():
 def login():
     """Log in and generate token"""
     auth = request.get_json()
-    if not auth or not auth['username'] or not auth['password']:
-        return jsonify({"Message": "Username and password required!"}), 401
-
     try:
+        if not auth or not auth['username'] or not auth['password']:
+            return jsonify({"Message": "Username and password required!"}), 401
         query = "SELECT username, password FROM users WHERE username=%s;"
         CUR.execute(query, (auth['username'],))
         row = CUR.fetchone()
-    except Exception as e:
-        return str(e)
+    except KeyError as e:
+        return jsonify({"Message": str(e) + " field is missing"}), 500
+        
     if row:
         if check_password_hash(row['password'], auth['password']):
             u_token = jwt.encode({'username': row['username'],
@@ -64,9 +67,7 @@ def login():
             # decode to string since python3 returns token in bytes
             return jsonify({"Message": "Login Success",
                             "token": u_token}), 200
-
         return jsonify({"Message": "login invalid!"}), 401
-
     return jsonify({"Message": "Username not found!"}), 401
 
 
@@ -96,7 +97,6 @@ def logout(current_user):
     CUR.execute(query, (current_user['username'], log_token,))
     DB.connection.commit()
     del_from_tokens(log_token)
-    CUR.close
     return jsonify({"Message": "Successfully logged out"}), 200
 
 
