@@ -1,3 +1,4 @@
+"""User validation module"""
 import re
 from flask import jsonify
 

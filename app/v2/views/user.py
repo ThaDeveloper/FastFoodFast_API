@@ -53,7 +53,7 @@ def login():
         row = CUR.fetchone()
     except KeyError as e:
         return jsonify({"Message": str(e) + " field is missing"}), 500
-        
+
     if row:
         if check_password_hash(row['password'], auth['password']):
             u_token = jwt.encode({'username': row['username'],
@@ -81,9 +81,9 @@ def logout(current_user):
     CUR.execute(query, (current_user['username'],))
     row = CUR.fetchone()
     def del_from_tokens(token):
-            q = "DELETE FROM tokens WHERE token=%s;"
-            CUR.execute(q, (token,))
-            return DB.connection.commit()
+        q = "DELETE FROM tokens WHERE token=%s;"
+        CUR.execute(q, (token,))
+        return DB.connection.commit()
     if row:
         if log_token == row['token']:
             return jsonify({"Message": "Already logged out"}), 400
