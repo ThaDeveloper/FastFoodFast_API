@@ -13,6 +13,7 @@ class TestSetup(unittest.TestCase):
         self.app = create_app("testing")
         self.client = self.app.test_client()
         self.db = Database()
+        self.db.create_tables()
         self.user = {"first_name": "Justin",
                      "last_name": "Ndwiga",
                      "username": "justin.ndwiga",
