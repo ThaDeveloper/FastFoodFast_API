@@ -100,7 +100,8 @@ class Menu:
             row = self.check_menu_exists(name)
             if row and item_id != row['item_id']:
                 return "exists"
-            query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s WHERE item_id=%s"
+            query = "UPDATE menu SET name=%s, price=%s, category=%s,\
+            image=%s, updated_at=%s WHERE item_id=%s"
             self.CUR.execute(
                 query, (name, price, category, image, updated_at, item_id))
             DB.connection.commit()
