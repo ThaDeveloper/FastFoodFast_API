@@ -35,7 +35,6 @@ def create_order(current_user):
         total)
     return jsonify({'Message': 'Order Created'}), 201
 
-
 @ORDER_V1.route('<int:order_id>', methods=['GET'])
 @Auth.token_required
 def get_single_order(current_user, order_id):
@@ -48,7 +47,6 @@ def get_single_order(current_user, order_id):
             {"Message": "Not authorized: Can only view your order"}), 401
 
     return jsonify({"Message": "Order not found"}), 404
-
 
 @ORDER_V1.route('', methods=['GET'])
 @Auth.token_required

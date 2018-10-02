@@ -1,3 +1,4 @@
+"""User validation module"""
 import re
 from flask import jsonify
 
@@ -20,6 +21,7 @@ def validate_user(data):
                 "numbers and _-."}), 400
     if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])"
                     "(?=.*[@#$%^&+=*!]).{6,}$", data['password']):
+
         return jsonify({"Message":
                         "Password must be 6-20 chars long:"
                         "Must contain capital,number and special char"}), 400

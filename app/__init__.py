@@ -16,16 +16,17 @@ def create_app(env_name):
 
     # app initiliazation
     app = Flask(__name__, instance_relative_config=True)
-    #handling Cross Origin Resource Sharing 
     CORS(app)
     app.config.from_object(app_config[env_name])
 
     app.register_blueprint(order_blueprint, url_prefix='/api/v1/orders')
     app.register_blueprint(user_blueprint, url_prefix='/api/v1/auth')
     app.register_blueprint(menu_blueprint, url_prefix='/api/v1/menu')
+    app.register_blueprint(v2_user_blueprint, url_prefix='/api/v2/auth')
     app.register_error_handler(404, page_404)
     app.register_error_handler(400, bad_request)
     app.register_error_handler(405, method_not_found)
+
 
     @app.route('/', methods=['GET'])
     def index():
