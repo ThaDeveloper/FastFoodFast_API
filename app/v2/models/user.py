@@ -1,7 +1,7 @@
 """User class module"""
+import os
 from datetime import datetime
 from werkzeug.security import generate_password_hash
-
 
 #Local import
 from .. database import Database
@@ -11,7 +11,8 @@ DB = Database()
 class User:
     """Methods of the User model"""
     def __init__(self, first_name="Super", last_name="User",\
-     username="superuser", email="dev@fastfood.com", password="password", admin=False):
+     username="superuser", email="dev@fastfood.com", \
+     password=os.getenv('SU_PASS'), admin=False):
         """initialize user model"""
         self.first_name = first_name
         self.last_name = last_name
