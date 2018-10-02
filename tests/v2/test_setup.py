@@ -95,6 +95,7 @@ class TestSetup(unittest.TestCase):
         self.db.connection.commit()
 
     def tearDown(self):
+        """Clear data after testing"""
         self.db.drop_tables()
         
 if __name__ == "__main__":
