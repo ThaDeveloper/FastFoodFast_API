@@ -6,6 +6,27 @@ from tests.v1.test_setup import TestSetup
 
 class TestOrder(TestSetup):
     """All test cases for Order class"""
+    def test_404(self):
+        """Tests wrong endpoint"""
+        response = self.client.post(
+            '/api/v1/not_found',
+            content_type="application/json")
+        self.assertEqual(response.status_code, 404)
+
+    def test_method_not_found(self):
+        """Tests 405"""
+        response = self.client.patch(
+            '/api/v1/orders', data=json.dumps(dict(items={})),
+            content_type="application/json")
+        self.assertEqual(response.status_code, 405)
+
+    def test_bad_request(self):
+        """Test for bad requests"""
+        response = self.client.post(
+            '/api/v1/orders', data=json.dumps(dict(items=0)),
+            content_type="application/json", headers={
+                "x-access-token": self.admintoken})
+        self.assertEqual(response.status_code, 400)
 
     def test_add_new_order(self):
         """Tests creating a new order."""
@@ -74,7 +95,7 @@ class TestOrder(TestSetup):
         resp = self.client.get(
             '/api/v1/orders',
             headers={
-                "x-access-token": self.token})
+                "x-access-token": self.admintoken})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
 
@@ -255,7 +276,7 @@ class TestOrder(TestSetup):
         resp = self.client.get(
             '/api/v1/orders',
             headers={
-                "x-access-token": self.token})
+                "x-access-token": self.admintoken})
         self.assertEqual(resp.status_code, 200)
 
 
