@@ -132,7 +132,12 @@ def place_order(current_user):
     success = order_inst.create_order()
     if not success:
         raise ValueError
-    return jsonify({'Message': 'Order added'}), 201
+    return jsonify({
+            'Message': 'Order added',
+            'Data':{
+                'Items': data['items']
+            } 
+        }), 201
 
 @USER_V2.route('/users/orders', methods=['GET'])
 @Auth.token_required
