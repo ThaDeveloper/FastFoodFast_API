@@ -163,7 +163,7 @@ class TestOrder(TestSetup):
                                    headers={
                                         "x-access-token": self.unkowntoken})
 
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Not authorized", response_msg["Message"])
 
@@ -236,7 +236,7 @@ class TestOrder(TestSetup):
             headers={
                 "x-access-token": self.unkowntoken})
 
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Not authorized", response_msg["Message"])
 

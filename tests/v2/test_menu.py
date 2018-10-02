@@ -56,7 +56,7 @@ class TestMenu(TestSetup):
                                                          category="main")),
                                     content_type="application/json",
                                     headers={"x-access-token": self.admintoken})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 409)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("already exists", response_msg["Message"])
 
@@ -124,7 +124,7 @@ class TestMenu(TestSetup):
             headers={
                 "x-access-token": self.token})
 
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Not authorized", response_msg["Message"])
 
@@ -152,7 +152,7 @@ class TestMenu(TestSetup):
             headers={
                 "x-access-token": self.unkowntoken})
 
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Not authorized", response_msg["Message"])
 

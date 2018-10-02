@@ -1,6 +1,5 @@
 """Menu endpoints"""
 from datetime import datetime
-import psycopg2
 from flask import request, jsonify, Blueprint
 
 # #Local imports
@@ -22,11 +21,14 @@ def add_menu(current_user):
     """Add Menu item
     Current user must be admin"""
     data = request.get_json()
-    menu_inst = Menu(
-        data['name'],
-        data['price'],
-        data['image'],
-        data['category'])
+    try:
+        menu_inst = Menu(
+            data['name'],
+            data['price'],
+            data['image'],
+            data['category'])
+    except KeyError as e:
+        return jsonify({"Message": str(e) + "field is missing"}), 500
     try:
         sanitized = menu_inst.import_data(data)
         if sanitized == "Invalid":
@@ -41,8 +43,8 @@ def add_menu(current_user):
                 raise ValueError
             return jsonify({'Message': 'Menu added'}), 201
         except ValueError:
-            return jsonify({"Message": "Menu already exists"}), 400
-    return jsonify({"Message": "Not authorized to add menu"}), 401
+            return jsonify({"Message": "Menu already exists"}), 409 #conflict
+    return jsonify({"Message": "Not authorized to add menu"}), 403 #forbidden
 
 
 @MENU_V2.route('', methods=['GET'])
@@ -103,13 +105,14 @@ def edit_menu_item(current_user, item_id):
                 data['category'],
                 data['image'],
                 new_time)
-            if response:
-                return jsonify({"Message": "Menu updated"}), 201
-            return jsonify({"Message": "Meal item not found"}), 404
-        except (Exception, psycopg2.InternalError) as e:
-            return jsonify({"Message": str(e)}), 400
-            
-    return jsonify({"Message": "Not authorized to edit menu"}), 401
+        except KeyError as e:
+            return jsonify(str(e) + " field is missing"), 500
+        if response == "exists":
+            return jsonify({"Message": "Item name exists"}), 409
+        if response:
+            return jsonify({"Message": "Menu updated"}), 201
+        return jsonify({"Message":"Meal item not found"}), 404
+    return jsonify({"Message": "Not authorized to edit menu"}), 403
 
 
 @MENU_V2.route('/<int:item_id>', methods=['DELETE'])
@@ -121,4 +124,4 @@ def delete_menu_item(current_user, item_id):
         if response:
             return jsonify({"Message": "Menu deleted"}), 200
         return jsonify({"Message": "Meal item not found"}), 404
-    return jsonify({"Message": "Not authorized to delete menu"}), 401
+    return jsonify({"Message": "Not authorized to delete menu"}), 403

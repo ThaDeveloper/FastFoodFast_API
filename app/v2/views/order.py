@@ -40,7 +40,7 @@ def view_orders(current_user):
 
             }), 200
         return jsonify({"Message": "No orders found"}), 200
-    return jsonify({"Message": "Not authorized to view orders"}), 401
+    return jsonify({"Message": "Not authorized to view orders"}), 403
 
 
 @ORDER_V2.route('/<int:order_id>', methods=['GET'])
@@ -63,7 +63,7 @@ def get_single_order(current_user, order_id):
                     }
                 ]
             }), 200
-        return jsonify({"Message": "Not authorized to view this order"}), 401
+        return jsonify({"Message": "Not authorized to view this order"}), 403
     return jsonify({"Message": MESSAGES['order_404']}), 404
 
 @ORDER_V2.route('<int:order_id>', methods=['PUT'])
@@ -85,5 +85,5 @@ def update_order_status(current_user, order_id):
             if response:
                 return jsonify({'Message': 'Order {}'.format(new_status)}), 200
         return jsonify(
-            {"Message": "Not authorized to update order"}), 401
+            {"Message": "Not authorized to update order"}), 403
     return jsonify({"Message": MESSAGES['order_404']}), 404

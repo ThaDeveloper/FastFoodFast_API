@@ -184,7 +184,7 @@ def edit_order(current_user, order_id):
                 new_time)
             if response:
                 return jsonify({"Message": "Order updated"}), 201
-        return jsonify({"Message": "Not authorized to edit order"}), 401
+        return jsonify({"Message": "Not authorized to edit order"}), 403
     return jsonify({"Message": MESSAGES['order_404']}), 404
 
 
@@ -198,5 +198,5 @@ def cancel_order(current_user, order_id):
             order_inst.delete_order(order_id)
             return jsonify({'Message': 'Order cancelled'}), 200
         return jsonify(
-            {"Message": "Not authorized to cancel this order"}), 401
+            {"Message": "Not authorized to cancel this order"}), 403
     return jsonify({"Message": MESSAGES['order_404']}), 404
