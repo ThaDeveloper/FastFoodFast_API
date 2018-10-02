@@ -1,6 +1,5 @@
 """menu module"""
 from datetime import datetime
-import psycopg2
 # local
 from ...shared.validation import ValidationError
 from .. database import Database
@@ -28,13 +27,15 @@ class Menu:
 
     def check_menu_exists(self, name):
         """Check if menu exists"""
-        query = "SELECT name FROM menu WHERE name = '%s'" % (name)
+        query = "SELECT * FROM menu WHERE name = '%s'" % (name)
         self.CUR.execute(query)
-        return self.CUR.fetchone() is not None
+        row = self.CUR.fetchone()
+        return row
 
     def save_menu(self):
         """Adds new menu item and returns all menus"""
-        if self.check_menu_exists(self.name):
+        row = self.check_menu_exists(self.name)
+        if row:
             return False
         try:
             query = "INSERT INTO menu(name,price,category, image, created_at, updated_at)\
@@ -96,14 +97,15 @@ class Menu:
         """Edit menu by specific"""
         item = self.get_item_by_id(item_id)
         if item:
-            try:
-                query = "UPDATE menu SET name=%s, price=%s, category=%s, image=%s, updated_at=%s WHERE item_id=item_id"
-                self.CUR.execute(
-                    query, (name, price, category, image, updated_at))
-                DB.connection.commit()
-                return True
-            except (Exception, psycopg2.InternalError) as e:
-                raise ValidationError("Invalid: Name exists: " + e.args[0])
+            row = self.check_menu_exists(name)
+            if row and item_id != row['item_id']:
+                return "exists"
+            query = "UPDATE menu SET name=%s, price=%s, category=%s,\
+            image=%s, updated_at=%s WHERE item_id=%s"
+            self.CUR.execute(
+                query, (name, price, category, image, updated_at, item_id))
+            DB.connection.commit()
+            return True
         return False
 
     def del_menu(self, item_id):

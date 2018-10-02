@@ -119,13 +119,14 @@ def place_order(current_user):
     except ValidationError as e:
         return jsonify({"Message": str(e)}), 400
     total = order_inst.total_cost(data['items'])
-    if not total:
-        return jsonify({"Message": "Menu item not found"}), 400
+    if len(total[1]) > 0:
+        return jsonify({"Message": "Some item(s) are out of stock:" + ','.join(total[1])+\
+        ". Please edit your order to something else"}), 406 #Not acceptable
     try:
         order_inst = Order(
             user,
-            data['items'],
-            total)
+            str(data['items']),
+            total[0])
     except KeyError as e:
         return jsonify({'Message': e.args[0] + ' field is required'}), 500
     success = order_inst.create_order()
@@ -164,16 +165,22 @@ def edit_order(current_user, order_id):
     data = request.get_json()
     new_time = datetime.datetime.now()
     try:
+        for item in data['items']:
+                if len(item) == 0:
+                    return jsonify({"Message": "Order items cannot be empty"}), 406
         new_total = order_inst.total_cost(data['items'])
     except KeyError as e:
         return jsonify({'Message': e.args[0] + ' field is required'}), 500
-    order = order_inst. find_order_by_id(order_id)
+    if len(new_total[1]) > 0:
+        return jsonify({"Message": "Some item(s) are out of stock:" + ','.join(new_total[1])+\
+        ". Please edit your order to something else"}), 406 #Not acceptable
+    order = order_inst.find_order_by_id(order_id)
     if order:
         if current_user['id'] == order['user_id']:
             response = ORDER.edit_order(
                 order_id,
-                data['items'],
-                new_total,
+                str(data['items']),
+                new_total[0],
                 new_time)
             if response:
                 return jsonify({"Message": "Order updated"}), 201

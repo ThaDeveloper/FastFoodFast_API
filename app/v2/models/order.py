@@ -14,7 +14,7 @@ DB = Database()
 class Order:
     """constructor and methods for the Order model"""
 
-    def __init__(self, user_id=1, items={}, total=0.00, status='New'):
+    def __init__(self, user_id=1, items=[], total=0.00, status='New'):
         self.user_id = user_id
         self.items = items
         self.total = total
@@ -30,8 +30,7 @@ class Order:
             self.CUR.execute(
                 query,
                 (self.user_id,
-                 json.dumps(
-                     self.items),
+                self.items,
                  self.total,
                  self.status,
                  self.created_at,
@@ -47,6 +46,9 @@ class Order:
         try:
             if len(data['items']) == 0:
                 return "Invalid"
+            for item in data['items']:
+                if len(item) == 0:
+                    return "Invalid"
             else:
                 self.items = data['items']
         except KeyError as e:
@@ -70,7 +72,7 @@ class Order:
             updated_at):
         """Update order items"""
         query = "UPDATE orders SET items=%s, total=%s, updated_at=%s WHERE order_id=order_id"
-        self.CUR.execute(query, (json.dumps(items), total, updated_at))
+        self.CUR.execute(query, (items, total, updated_at))
         DB.connection.commit()
         return True
 
@@ -103,12 +105,15 @@ class Order:
         cur.execute(query)
         full_menu = cur.fetchall()
         foods = []
+        missing_foods = []
         for item in full_menu:
             foods.append(item['name'])
-        for food, servings in items.items():
-            if food not in foods:
-                return False
-            menu_inst = Menu()
-            price = menu_inst.get_item_price(food)
-            total += Decimal(price) * servings
-        return total
+        for order_item in items:
+            for food, servings in order_item.items():
+                if food not in foods:
+                    missing_foods.append(food)
+                else:
+                    menu_inst = Menu()
+                    price = menu_inst.get_item_price(food)
+                    total += Decimal(price) * servings
+        return total, missing_foods
