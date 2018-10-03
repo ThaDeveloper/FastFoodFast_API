@@ -2,7 +2,8 @@
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from config import APP_CONFIG
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT 
+from .check_if_db import check_db_exists
 
 
 class Database:
@@ -10,13 +11,31 @@ class Database:
 
     def __init__(self):
         """Initialize by setting up and connecting to database"""
-        if os.getenv('FLASK_ENV') == 'development':
-            self.database = os.getenv("DEV_DATABASE")
-        elif os.getenv('FLASK_ENV') == 'testing':
-            self.database = os.getenv("TEST_DATABASE")
         self.user = os.getenv('USER')
         self.password = os.getenv('PASSWORD')
         self.host = os.getenv('HOST')
+        con = psycopg2.connect(dbname='postgres',
+        user=self.user, host=self.host,
+        password=self.password)
+        #All other transactions are stopped and no commit() or rollback() is required
+        con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = con.cursor()
+        if os.getenv('FLASK_ENV') == 'development':
+            self.database = os.getenv("DEV_DATABASE")
+            db_connected = check_db_exists(self.database)
+            if db_connected[0]:
+                print("Dev database already created")
+                self.connection = db_connected[1]
+            else:
+                cur.execute("CREATE DATABASE {};".format(self.database))
+        elif os.getenv('FLASK_ENV') == 'testing':
+            self.database = os.getenv("TEST_DATABASE")
+            db_connected = check_db_exists(self.database)
+            if db_connected[0]:
+                print("Test database already created")
+                self.connection = db_connected[1]
+            else:
+                cur.execute("CREATE DATABASE {};".format(self.database))
         try:
             self.connection = psycopg2.connect(
                 database=self.database,

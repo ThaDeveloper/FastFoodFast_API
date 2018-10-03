@@ -130,11 +130,11 @@ class TestUser(TestSetup):
                     first_name="Justin",
                     last_name="Ndwiga",
                     username="justin.ndwiga",
-                    email="ndwigatest@gmail.com",
+                    email="dupuser@gmail.com",
                     password="@passWord3"
                 )),
             content_type="application/json")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 409)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("already exists", response_msg["Message"])
 

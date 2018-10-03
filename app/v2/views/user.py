@@ -45,7 +45,7 @@ def register_user():
             raise ValueError
         return jsonify({"Message": "User registered successfully"}), 201
     except ValueError:
-        return jsonify({"Message": "User already exists"}), 400
+        return jsonify({"Message": "User already exists"}), 409
 
 
 @USER_V2.route('/login', methods=['POST'])
