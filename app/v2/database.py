@@ -14,7 +14,7 @@ class Database:
         self.user = os.getenv('USER')
         self.password = os.getenv('PASSWORD')
         self.host = os.getenv('HOST')
-        con = psycopg2.connect(dbname='postgres',
+        con = psycopg2.connect(dbname=os.getenv('DEFAULT_DB'),
                                user=self.user, host=self.host,
                                password=self.password)
         #All other transactions are stopped and no commit() or rollback() is required
