@@ -33,7 +33,7 @@ def add_menu(current_user):
         sanitized = menu_inst.import_data(data)
         if sanitized == "Invalid":
             return jsonify(
-                {'Message': 'Menu name/price/category cannot be empty'}), 400
+                {'Message': 'Menu name/price/category cannot be empty and must be valid'}), 400
     except ValidationError as e:
         return jsonify({"Message": str(e)}), 400
     if current_user['admin']:

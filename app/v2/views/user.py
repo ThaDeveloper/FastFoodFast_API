@@ -178,7 +178,7 @@ def place_order(current_user):
     try:
         sanitized = order_inst.import_data(data)
         if sanitized == "Invalid":
-            return jsonify({'Message': 'Order cannot be empty'}), 400
+            return jsonify({'Message': 'Order cannot be empty and must be a list'}), 400
     except ValidationError as e:
         return jsonify({"Message": str(e)}), 400
     total = order_inst.total_cost(data['items'])

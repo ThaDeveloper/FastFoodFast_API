@@ -44,7 +44,7 @@ class Order:
     def import_data(self, data):
         """validates the input json data"""
         try:
-            if len(data['items']) == 0:
+            if type(data['items']) != list or len(data['items']) == 0:
                 return "Invalid"
             for item in data['items']:
                 if len(item) == 0:

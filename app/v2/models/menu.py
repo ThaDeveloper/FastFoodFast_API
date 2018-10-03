@@ -1,5 +1,6 @@
 """menu module"""
 from datetime import datetime
+import re
 # local
 from ...shared.validation import ValidationError
 from .. database import Database
@@ -57,7 +58,9 @@ class Menu:
     def import_data(self, data):
         """validates the input json data"""
         try:
-            if len(data['name']) == 0 or data['price'] == "":
+            if not re.match(r"^[a-zA-Z]{4,500}$", data['name']) or\
+            not re.match(r"^[a-zA-Z]{4,200}$", data['category'])  or \
+            not re.match(r"^[0-9]{4,200}$", data['price']) :
                 return "Invalid"
             else:
                 self.name = data['name']
