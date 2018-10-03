@@ -1,2 +1,2 @@
 web gunicorn run:app
-worker: python3 manage.py create_db
+release: python manage.py create_db
