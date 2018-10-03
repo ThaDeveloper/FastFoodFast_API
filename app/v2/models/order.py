@@ -30,7 +30,7 @@ class Order:
             self.CUR.execute(
                 query,
                 (self.user_id,
-                self.items,
+                 self.items,
                  self.total,
                  self.status,
                  self.created_at,

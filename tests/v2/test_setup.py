@@ -1,3 +1,4 @@
+"""Tests setup module"""
 import os
 import json
 import unittest
@@ -26,10 +27,10 @@ class TestSetup(unittest.TestCase):
                             "email": "uknown@gmail.com",
                             "password": "@Password2"}
         self.admin = {"first_name": "Super",
-                            "last_name": "User",
-                            "username": "admin",
-                            "email": "admin@fast.com",
-                            "password": "@Password1"}
+                      "last_name": "User",
+                      "username": "admin",
+                      "email": "admin@fast.com",
+                      "password": "@Password1"}
         self.order = {"items": [{"pizza": 2}]}
         self.new_order = {"items": [{"pizza": 10}]}
         self.empty_order = {"items": [{}]}
@@ -91,12 +92,12 @@ class TestSetup(unittest.TestCase):
 
         #add one menu item to db
         q = "INSERT INTO menu(name, price, category, image) VALUES(%s,%s,%s,%s);"
-        self.db.cursor().execute(q, ('pizza',900.00, 'snacks', 'image'))
+        self.db.cursor().execute(q, ('pizza', 900.00, 'snacks', 'image'))
         self.db.connection.commit()
 
     def tearDown(self):
         """Clear data after testing"""
         self.db.drop_tables()
-        
+
 if __name__ == "__main__":
     unittest.main()

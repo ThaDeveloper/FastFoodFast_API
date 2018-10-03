@@ -12,7 +12,6 @@ from app.v2.models.order import Order
 from .. utils.authentication import Auth
 from ...shared.validation import validate_user
 from ...shared.validation import ValidationError
-from .. utils.constants import *
 
 
 USER_V2 = Blueprint('v2_user', __name__)
@@ -109,6 +108,23 @@ def logout(current_user):
     CUR.close
     return jsonify({"Message": "Successfully logged out"}), 200
 
+@USER_V2.route('/users/<int:id>/promote', methods=['PUT'])
+@Auth.token_required
+def promote_user(current_user, id):
+    """Change normal user to admin - Only preadded Superuser
+    can access this route. Not available to public"""
+    if current_user['username'] == 'superuser':
+        user_inst = User()
+        user = user_inst.get_user_by_id(id)
+        if user:
+            query = "UPDATE users SET admin=%s WHERE id=%s"
+            CUR.execute(query, (True, id))
+            DB.connection.commit()
+            return jsonify({"Message": "User is now an admin!"}), 200
+        return jsonify({"Message": "User not found!"}), 404
+
+    return jsonify({"Message": "Sorry that route is not available to you!"}), 401
+
 @USER_V2.route('/users/orders', methods=['POST'])
 @Auth.token_required
 def place_order(current_user):
@@ -138,10 +154,10 @@ def place_order(current_user):
     if not success:
         raise ValueError
     return jsonify({
-            'Message': 'Order added',
-            'Data':{
-                'Items': data['items']
-            } 
+        'Message': 'Order added',
+        'Data':{
+            'Items': data['items']
+        }
         }), 201
 
 @USER_V2.route('/users/orders', methods=['GET'])
@@ -176,8 +192,8 @@ def edit_order(current_user, order_id):
     new_time = datetime.datetime.now()
     try:
         for item in data['items']:
-                if len(item) == 0:
-                    return jsonify({"Message": "Order items cannot be empty"}), 406
+            if len(item) == 0:
+                return jsonify({"Message": "Order items cannot be empty"}), 406
         new_total = order_inst.total_cost(data['items'])
     except KeyError as e:
         return jsonify({'Message': e.args[0] + ' field is required'}), 500

@@ -2,7 +2,7 @@
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT 
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from .check_if_db import check_db_exists
 
 
@@ -15,8 +15,8 @@ class Database:
         self.password = os.getenv('PASSWORD')
         self.host = os.getenv('HOST')
         con = psycopg2.connect(dbname='postgres',
-        user=self.user, host=self.host,
-        password=self.password)
+                               user=self.user, host=self.host,
+                               password=self.password)
         #All other transactions are stopped and no commit() or rollback() is required
         con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
         cur = con.cursor()

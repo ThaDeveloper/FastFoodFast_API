@@ -1,4 +1,4 @@
-"""Flaks environment configurations"""
+"""Flask environment configurations module"""
 import os
 
 

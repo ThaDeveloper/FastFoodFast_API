@@ -36,7 +36,7 @@ class Auth:
                     return jsonify(
                         {"Message": "Token expired:Login again"}), 401
             except BaseException as e:
-                return jsonify({'Message': 'Invalid request!'}), 401
+                return jsonify({'Message': 'Invalid request:' + str(e)}), 401
 
             return f(current_user, *args, **kwargs)
 

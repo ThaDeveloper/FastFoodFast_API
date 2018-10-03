@@ -1,3 +1,4 @@
+"""User tests module"""
 import unittest
 import json
 from tests.v2.test_setup import TestSetup
@@ -151,7 +152,6 @@ class TestUser(TestSetup):
                     password="@Yassword5"
                 )),
             content_type="application/json")
-        
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("registered", response_msg["Message"])
         self.assertEqual(response.status_code, 201)

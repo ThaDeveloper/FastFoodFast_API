@@ -1,4 +1,5 @@
 """User class module"""
+import os
 from datetime import datetime
 from werkzeug.security import generate_password_hash
 
@@ -10,8 +11,9 @@ DB = Database()
 
 class User:
     """Methods of the User model"""
-    def __init__(self, first_name, last_name, username, email, password, admin=False):
-        """initialize user model"""
+    def __init__(self, first_name="Super", last_name="User",\
+     username="superuser", email="dev@fastfood.com", \
+     password=os.getenv('SU_PASS'), admin=False):
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -20,6 +22,13 @@ class User:
         self.admin = admin
         self.created_at = datetime.now()
         self.cur = DB.cursor()
+
+    def get_user_by_id(self, id):
+        """returns user with the specific id"""
+        query = "SELECT * FROM users WHERE id = %s;"
+        self.cur.execute(query, (id,))
+        user = self.cur.fetchone()
+        return user
 
     def check_user_exists(self, username):
         """Check if user exists"""

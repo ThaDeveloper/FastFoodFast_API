@@ -6,7 +6,6 @@ from flask import request, jsonify, Blueprint
 from app.v2.database import Database
 from app.v2.models.order import Order
 from .. utils.authentication import Auth
-from .. utils.constants import *
 
 
 ORDER_V2 = Blueprint('v2_order', __name__)
