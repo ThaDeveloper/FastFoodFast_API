@@ -24,7 +24,6 @@ class Database:
             self.database = os.getenv("DEV_DATABASE")
             db_connected = check_db_exists(self.database)
             if db_connected[0]:
-                print("Dev database already created")
                 self.connection = db_connected[1]
             else:
                 cur.execute("CREATE DATABASE {};".format(self.database))
@@ -32,7 +31,6 @@ class Database:
             self.database = os.getenv("TEST_DATABASE")
             db_connected = check_db_exists(self.database)
             if db_connected[0]:
-                print("Test database already created")
                 self.connection = db_connected[1]
             else:
                 cur.execute("CREATE DATABASE {};".format(self.database))
@@ -40,7 +38,6 @@ class Database:
             self.database = os.getenv("PROD_DATABASE")
             db_connected = check_db_exists(self.database)
             if db_connected[0]:
-                print("Production database already created")
                 self.connection = db_connected[1]
             else:
                 cur.execute("CREATE DATABASE {};".format(self.database))

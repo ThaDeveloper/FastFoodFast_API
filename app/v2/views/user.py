@@ -25,14 +25,18 @@ order_inst = Order()
 def register_user():
     """Adds user to the database, data must be serialized"""
     data = request.get_json()
-    if validate_user(data):
-        return validate_user(data)
-    user_inst = User(
-        data['first_name'],
-        data['last_name'],
-        data['username'],
-        data['email'],
-        data['password'])
+    try:
+        if validate_user(data):
+            return validate_user(data)
+        user_inst = User(
+            data['first_name'],
+            data['last_name'],
+            data['username'],
+            data['email'],
+            data['password'])
+    
+    except KeyError as e:
+        return jsonify({"Message": str(e) + " field is missing"}), 500
     try:
         query = "SELECT email from users where email=%s"
         CUR.execute(query, (data['email'],))
