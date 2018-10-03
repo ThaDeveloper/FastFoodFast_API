@@ -46,7 +46,7 @@ def register_user():
         success = user_inst.save_user()
         if not success:
             raise ValueError
-        return jsonify({"Message": "User registered successfully"}), 201
+        return jsonify({"Message": data['username']+" registered successfully"}), 201
     except ValueError:
         return jsonify({"Message": "User already exists"}), 409
 
@@ -120,14 +120,52 @@ def promote_user(current_user, id):
     if current_user['username'] == 'superuser':
         user_inst = User()
         user = user_inst.get_user_by_id(id)
+        print(user)
         if user:
-            query = "UPDATE users SET admin=%s WHERE id=%s"
-            CUR.execute(query, (True, id))
-            DB.connection.commit()
-            return jsonify({"Message": "User is now an admin!"}), 200
+            if user['admin'] == 'True':
+                query = "UPDATE users SET admin=%s WHERE id=%s"
+                CUR.execute(query, (True, id))
+                DB.connection.commit()
+                q = "SELECT * FROM users WHERE id=%s"
+                CUR.execute(q, (id,))
+                promote_user = CUR.fetchone()
+                return jsonify({"Message": user['username']+" is now an admin!",
+                                "User Details": {
+                                    "id": promote_user['id'],
+                                    "username": promote_user['username'],
+                                    "email": promote_user["email"],
+                                    "admin": promote_user['admin']
+                                }
+                }), 200
+            return jsonify({"Message": user['username']+" is already an admin"})
         return jsonify({"Message": "User not found!"}), 404
 
     return jsonify({"Message": "Sorry that route is not available to you!"}), 401
+
+@USER_V2.route('/users', methods=['GET'])
+@Auth.token_required
+def get_users(current_user):
+    """View list of all registered users"""
+    if current_user['username'] == 'superuser':
+        query = "SELECT * FROM users"
+        CUR.execute(query)
+        users = CUR.fetchall()
+        if users:
+            return jsonify({
+                "Users": [
+                    {
+                        'id': user['id'],
+                        'first_name': user['first_name'],
+                        'last_name': user['last_name'],
+                        'username': user['username'],
+                        'email': user['email'],
+                        'created_at': user['created_at']
+                    } for user in users
+                ]
+
+            }), 200
+        return jsonify({"Message": "No users found"}), 200
+    return jsonify({"Message": "Not authorized to view users"}), 403
 
 @USER_V2.route('/users/orders', methods=['POST'])
 @Auth.token_required
