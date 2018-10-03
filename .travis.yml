@@ -31,6 +31,7 @@ branches:
   - develop
   - ch-code-linting-160773903
   - ft-v2-order-crud-160834260
+  - bg-challenge3-feedback-160935067
 after_success:
  - coveralls
 notifications:

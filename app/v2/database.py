@@ -36,6 +36,14 @@ class Database:
                 self.connection = db_connected[1]
             else:
                 cur.execute("CREATE DATABASE {};".format(self.database))
+        elif os.getenv('FLASK_ENV') == 'production':
+            self.database = os.getenv("PROD_DATABASE")
+            db_connected = check_db_exists(self.database)
+            if db_connected[0]:
+                print("Production database already created")
+                self.connection = db_connected[1]
+            else:
+                cur.execute("CREATE DATABASE {};".format(self.database))
         try:
             self.connection = psycopg2.connect(
                 database=self.database,
