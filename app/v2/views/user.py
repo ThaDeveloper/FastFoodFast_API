@@ -209,7 +209,7 @@ def place_order(current_user):
 
 @USER_V2.route('/users/orders', methods=['GET'])
 @Auth.token_required
-def view_orders(current_user):
+def view_order_history(current_user):
     """Returns order history of logged in user"""
     query = "SELECT * FROM orders WHERE user_id=%s"
     CUR.execute(query, (current_user['id'],))
@@ -246,7 +246,7 @@ def edit_order(current_user, order_id):
         return jsonify({'Message': e.args[0] + ' field is required'}), 500
     if len(new_total[1]) > 0:
         return jsonify({"Message": "Some item(s) are out of stock:" + ','.join(new_total[1])+\
-        ". Please edit your order to something else"}), 406 #Not acceptable
+        ". Please edit your order to something else"}), 207 #multiple status code
     order = order_inst.find_order_by_id(order_id)
     if order:
         if current_user['id'] == order['user_id']:
@@ -268,6 +268,8 @@ def cancel_order(current_user, order_id):
     order = order_inst.find_order_by_id(order_id)
     if order:
         if current_user['id'] == order['user_id']:
+            if order['status'].lower() != "new":
+                return jsonify({'Message': 'Cannot cancel this order,it has already started processing'}), 406
             order_inst.delete_order(order_id)
             return jsonify({'Message': 'Order cancelled'}), 200
         return jsonify(
