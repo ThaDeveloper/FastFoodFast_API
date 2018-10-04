@@ -260,7 +260,14 @@ def edit_order(current_user, order_id):
                 new_total[0],
                 new_time)
             if response:
-                return jsonify({"Message": "Order updated"}), 201
+                return jsonify({"Message": "Order updated",
+                                "Data": {
+                                        "Order_id": order_id,
+                                        "Items": data['items'],
+                                        "Total": '%.*f' % (2, new_total[0]),
+                                        "Updated_at": new_time
+                        }
+                }), 201
         return jsonify({"Message": "Not authorized to edit order"}), 403
     return jsonify({"Message": "Order not found"}), 404
 

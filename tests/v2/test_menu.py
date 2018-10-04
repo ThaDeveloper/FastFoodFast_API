@@ -102,7 +102,7 @@ class TestMenu(TestSetup):
             content_type="application/json",
             headers={
                 "x-access-token": self.admintoken})
-        self.assertEqual(response.status_code, 201)#should be 200
+        self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("updated", response_msg["Message"])
 

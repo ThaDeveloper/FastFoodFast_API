@@ -126,7 +126,16 @@ def edit_menu_item(current_user, item_id):
             return jsonify(
                 {'Message': 'Menu name/price/category cannot be empty and must be valid'}), 400
         if response:
-            return jsonify({"Message": "Menu updated"}), 201
+            return jsonify({"Message": "Menu updated",
+                        'Data': {
+                            'Item_id': item_id,
+                            'Name': str(data['name']).strip(" ").lower(),
+                            'Price': '%.*f' % (2, data['price']),
+                            'Category': str(data['category']).strip(" ").lower(),
+                            'Image': str(data['image']).strip(" ").lower(),
+                            'Update_at': new_time
+                    }
+            }), 201
         return jsonify({"Message":"Meal item not found"}), 404
     return jsonify({"Message": "Not authorized to edit menu"}), 403
 
