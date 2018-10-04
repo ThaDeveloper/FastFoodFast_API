@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<title>FastFoodFast:: v2</title>
+  	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='swagger-ui.css') }}">
+  	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+  </head>
+  <body>
+  	<div id="swagger-ui"></div>
+  	{% block body %}{% endblock %}
+	</body>
+</html>

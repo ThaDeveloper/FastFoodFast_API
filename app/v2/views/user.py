@@ -122,7 +122,7 @@ def promote_user(current_user, id):
         user = user_inst.get_user_by_id(id)
         print(user)
         if user:
-            if user['admin'] == 'True':
+            if user['admin'] != True:
                 query = "UPDATE users SET admin=%s WHERE id=%s"
                 CUR.execute(query, (True, id))
                 DB.connection.commit()
@@ -159,6 +159,7 @@ def get_users(current_user):
                         'last_name': user['last_name'],
                         'username': user['username'],
                         'email': user['email'],
+                        "admin": user['admin'],
                         'created_at': user['created_at']
                     } for user in users
                 ]

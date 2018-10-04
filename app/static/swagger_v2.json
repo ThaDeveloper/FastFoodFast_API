@@ -1,0 +1,612 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the FastFoodFast API documentation..",
+    "version": "2.0.0",
+    "title": "FastFoodFast",
+    "contact": {
+      "email": "ndwigajustin@gmail.com",
+      "name": "Justin Ndwiga",
+      "url": "https://github.com/ThaDeveloper"
+    }
+  },
+  "host": "fastfoodfast-api.herokuapp.com",
+  "basePath": "/api/v2",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Creates a new user",
+        "description": "The auth/register endpoint creates new users on the weconnect platform. On success the response code is `201` for `Created`.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "description": "The user to create.",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "User already exists"
+          }
+        },
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Log in user",
+        "description": "The auth/login endpoint authenticates users to use FastFoodFasr API. The endpoint accpets two string parameters `username` and `password` as a JSON object. On successful login the user gets a JWT token, else the user will get an error response in JSON object",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "login",
+            "description": "login user.",
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "log in successful, Token generated"
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          }
+        },
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "delete": {
+        "summary": "Log out the user",
+        "description": "The endpoint `auth/logout` will logout the currently logged in user",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logged out"
+          }
+        },
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/auth/users/{id}/promote": {
+      "put": {
+        "summary": "Promote User",
+        "description": "The reset user endpoints allows the superuser to promote a normal user to admin. This end point requires the superuser to pass an `access-token` header with the value of the header as the auth key received",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id of order to list details for",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User is now an admin"
+          },
+          "403": {
+            "description": "Not authorized to promote user"
+          }
+        },
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/menu": {
+      "post": {
+        "summary": "Add a new menu",
+        "description": "This endpoint accepts menu details in a json objects, creates a menu and returns a json response Auth token is required to add a menu",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "menu",
+            "description": "menu name.",
+            "schema": {
+              "$ref": "#/definitions/Menu"
+            }
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Menu created"
+          },
+          "401": {
+            "description": "Error occured"
+          }
+        },
+        "tags": [
+          "Menu"
+        ]
+      },
+      "get": {
+        "summary": "Get the full menu",
+        "description": "This endpoint will return a json object of all menu items.",
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "return full menu"
+          }
+        },
+        "tags": [
+          "Menu"
+        ]
+      }
+    },
+    "/menu/{menu_id}": {
+      "get": {
+        "summary": "Get single menu details",
+        "description": "This endpoint returns a json object of a specific menu",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "description": "Id of menu to list details for",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Menu not found"
+          }
+        },
+        "tags": [
+          "Menu"
+        ]
+      },
+      "put": {
+        "summary": "Update menu details",
+        "description": "This endpoint acccepts a json object. You can only update a menu if you're admin.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "menu data",
+            "description": "menu name.",
+            "schema": {
+              "$ref": "#/definitions/Menu"
+            }
+          },
+          {
+            "name": "menu_id",
+            "in": "path",
+            "description": "Id of menu to update details for",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Update menu"
+          },
+          "401": {
+            "description": "Error occured"
+          }
+        },
+        "tags": [
+          "Menu"
+        ]
+      },
+      "delete": {
+        "summary": "Delete a menu",
+        "description": "This end point will delete the menu. To delete a menu you must be an admin",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "description": "Id of menu to delete",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Menu"
+        ]
+      }
+    },
+    "/auth/users/orders": {
+      "post": {
+        "summary": "Add a new Order",
+        "description": "This endpoint accepts orders details in an json objects, creates a order and returns a json response. Auth token is required to an order",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "items",
+            "description": "order items.",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Order placed"
+          },
+          "401": {
+            "description": "Error occured"
+          }
+        },
+        "tags": [
+          "Order"
+        ]
+      },
+      "get": {
+        "summary": "Get order history",
+        "description": "This endpoint will return a json object of all placed orders.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "return all orders"
+          }
+        },
+        "tags": [
+          "Order"
+        ]
+      }
+    },
+    "/auth/users/orders/{order_id}": {
+      "delete": {
+        "summary": "Delete an order",
+        "description": "This end point will cancel the order. to cancel an order you must be the owner.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "description": "Id of order to delete",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Order"
+        ]
+      },
+      "put": {
+        "summary": "Edit an order",
+        "description": "This endpoint will edit the details of an order if order exists and the user is looged in",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "items",
+            "description": "order items.",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          {
+            "in": "path",
+            "name": "order_id",
+            "description": "Id of order to edit",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "x-access-token",
+            "description": "authentication token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "Order"
+        ]
+      }
+    },
+    "/Orders": {
+      "get": {
+        "summary": "Get all placed orders",
+        "description": "This admin endpoint will return a json object of all orders placed by all users.",
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "return all user orders"
+          }
+        },
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Order"
+        ]
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "summary": "Get single order details",
+        "description": "This admin endpoint returns a json object of a specific order.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "description": "Id of order to list details for",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Order not found"
+          }
+        },
+        "tags": [
+          "Order"
+        ]
+      },
+      "put": {
+        "summary": "Updates order status",
+        "description": "This endpoint acccepts a json object. You can only update order if you're admin.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "status",
+            "description": "order status.",
+            "schema": {
+              "$ref": "#/definitions/Order"
+            }
+          },
+          {
+            "name": "order_id",
+            "in": "path",
+            "description": "Id of order to update status for",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Update order"
+          },
+          "401": {
+            "description": "Error occured"
+          }
+        },
+        "tags": [
+          "Order"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "Login": {
+      "type": "object",
+      "required": [
+        "password",
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Order": {
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "items": {
+          "type": "object"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": [
+        "first_name",
+        "last_name",
+        "username",
+        "email",
+        "password"
+      ],
+      "properties": {
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Menu": {
+      "type": "object",
+      "required": [
+        "name",
+        "price",
+        "category",
+        "image"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "category": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

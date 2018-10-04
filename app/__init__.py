@@ -1,7 +1,6 @@
 """Flask app initialization"""
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
-
 from config import APP_CONFIG
 from . shared.error_handling import *
 
@@ -22,7 +21,7 @@ def create_app(env_name):
     app = Flask(__name__, instance_relative_config=True)
     CORS(app)
     app.config.from_object(APP_CONFIG[env_name])
-
+    app.url_map.strict_slashes = False
     app.register_blueprint(order_blueprint, url_prefix='/api/v1/orders')
     app.register_blueprint(user_blueprint, url_prefix='/api/v1/auth')
     app.register_blueprint(menu_blueprint, url_prefix='/api/v1/menu')
@@ -35,27 +34,29 @@ def create_app(env_name):
     app.register_error_handler(504, timeout_504)
 
     @app.route('/', methods=['GET'])
+    @app.route('/favicon.png', methods=['GET'])
     def index():
         """Home endpoint"""
-        return '<h2 style="color: yellow;">Welcome to Fast-Food-Fast API<h2>\
-        <h3>Endpoints (All order endpoints require auth):</h3>\
-            <i>(To be tested on postman)<i><br><br>\
-            <h5>USER:</h5>\
-            POST: /api/v1/auth/register<br>POST: /api/v1/auth/login<br>\
-            <h5>ORDER:</h5>\
-            POST: /api/v1/orders<br>GET: /api/v1/orders/order_id<br>\
-            GET: /api/v1/orders<br>PUT: /api/v1/orders/order_id<br>\
-            PUT: /api/v1/orders/order_id/edit<br>DELETE: /api/v1/orders/order_id<br><br>\
-            GET: /api/v1/orders/customer<br>\
-            <h5>MENU<h5>\
-            POST: /api/v1/menu<br>GET: /api/v1/menu<br>\
-            GET: /api/v1/menu/menu_id<br>PUT: /api/v1/menu/menu_id<br>\
-            DELETE: /api/v1/menu/menu_id<br>\
-            <h4>Sample user register data:</h4>\
-            {<br>"first_name": "Kunta",<br>"last_name": "Kinte",<br>"username": "kunta.kinte",<br>\
-            "email": "kuntatest@gmail.com",<br>"password": "#123pass"<br>\
-            }<br><br><h4>Sample order data:</h4>{<br>"items": {"burger": 2, "pizza": 3}<br>\
-            }<br><h4>Available pre-added menu items:</h4>\
-            {<br>"burger": 800,<br>"pizza": 1000<br>\
-            }'
+        # return '<h2 style="color: yellow;">Welcome to Fast-Food-Fast API<h2>\
+        # <h3>Endpoints (All order endpoints require auth):</h3>\
+        #     <i>(To be tested on postman)<i><br><br>\
+        #     <h5>USER:</h5>\
+        #     POST: /api/v1/auth/register<br>POST: /api/v1/auth/login<br>\
+        #     <h5>ORDER:</h5>\
+        #     POST: /api/v1/orders<br>GET: /api/v1/orders/order_id<br>\
+        #     GET: /api/v1/orders<br>PUT: /api/v1/orders/order_id<br>\
+        #     PUT: /api/v1/orders/order_id/edit<br>DELETE: /api/v1/orders/order_id<br><br>\
+        #     GET: /api/v1/orders/customer<br>\
+        #     <h5>MENU<h5>\
+        #     POST: /api/v1/menu<br>GET: /api/v1/menu<br>\
+        #     GET: /api/v1/menu/menu_id<br>PUT: /api/v1/menu/menu_id<br>\
+        #     DELETE: /api/v1/menu/menu_id<br>\
+        #     <h4>Sample user register data:</h4>\
+        #     {<br>"first_name": "Kunta",<br>"last_name": "Kinte",<br>"username": "kunta.kinte",<br>\
+        #     "email": "kuntatest@gmail.com",<br>"password": "#123pass"<br>\
+        #     }<br><br><h4>Sample order data:</h4>{<br>"items": {"burger": 2, "pizza": 3}<br>\
+        #     }<br><h4>Available pre-added menu items:</h4>\
+        #     {<br>"burger": 800,<br>"pizza": 1000<br>\
+        #     }'
+        return render_template('version2.html')
     return app

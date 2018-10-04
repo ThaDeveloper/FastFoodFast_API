@@ -42,11 +42,11 @@ def add_menu(current_user):
             if not success:
                 raise ValueError
             query = "SELECT * FROM menu WHERE name=%s"
-            CUR.execute(query, (data['name'],))
-            menu = CUR.fetchone()
+            CUR.execute(query, (data['name'].strip(" ").lower(),))
         except ValueError:
             return jsonify({
                 "Message": "Menu already exists"}), 409 #conflict
+        menu = CUR.fetchone()
         return jsonify({
                 "Message": "Menu added",
                 "Data": {
@@ -135,7 +135,7 @@ def edit_menu_item(current_user, item_id):
                             'Image': str(data['image']).strip(" ").lower(),
                             'Update_at': new_time
                     }
-            }), 201
+            }), 200
         return jsonify({"Message":"Meal item not found"}), 404
     return jsonify({"Message": "Not authorized to edit menu"}), 403
 
