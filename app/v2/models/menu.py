@@ -58,15 +58,15 @@ class Menu:
     def import_data(self, data):
         """validates the input json data"""
         try:
-            if not re.match(r"^[a-zA-Z]{4,500}$", data['name']) or\
-            not re.match(r"^[a-zA-Z]{4,200}$", data['category'])  or \
+            if not re.match(r"^[a-zA-Z]{4,500}$", str(data['name']).strip(" ").lower()) or\
+            not re.match(r"^[a-zA-Z]{4,200}$", str(data['category']).strip(" ").lower())  or \
             not re.match(r"^[0-9.]{5,15}$", str(data['price'])) :
                 return "Invalid"
             else:
-                self.name = data['name']
+                self.name = str(data['name']).strip(" ").lower()
                 self.price = data['price']
-                self.category = data['category']
-                self.image = data['image']
+                self.category = str(data['category']).strip(" ").lower()
+                self.image = str(data['image']).strip(" ").lower()
         except KeyError as e:
             raise ValidationError("Invalid: Field required: " + e.args[0])
         return self
@@ -103,10 +103,15 @@ class Menu:
             row = self.check_menu_exists(name)
             if row and item_id != row['item_id']:
                 return "exists"
+            if not re.match(r"^[a-zA-Z]{4,500}$", str(name).strip(" ").lower()) or\
+            not re.match(r"^[a-zA-Z]{4,200}$", str(category).strip(" ").lower())  or \
+            not re.match(r"^[0-9.]{5,15}$", str(price)) :
+                return "Invalid"
             query = "UPDATE menu SET name=%s, price=%s, category=%s,\
             image=%s, updated_at=%s WHERE item_id=%s"
             self.CUR.execute(
-                query, (name, price, category, image, updated_at, item_id))
+                query, (str(name).strip(" ").lower(), price, str(category).strip(" ").lower(),\
+                 str(image).strip(" ").lower(), updated_at, item_id))
             DB.connection.commit()
             return True
         return False

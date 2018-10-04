@@ -106,7 +106,7 @@ class Order:
         full_menu = cur.fetchall()
         foods = []
         missing_foods = []
-        for item in full_menu:
+        for item in full_menu:#list of dictionaries
             foods.append(item['name'])
         for order_item in items:
             for food, servings in order_item.items():

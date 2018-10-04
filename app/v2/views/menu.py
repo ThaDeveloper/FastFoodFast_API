@@ -122,6 +122,9 @@ def edit_menu_item(current_user, item_id):
             return jsonify(str(e) + " field is missing"), 500
         if response == "exists":
             return jsonify({"Message": "Item name exists"}), 409
+        if response== "Invalid":
+            return jsonify(
+                {'Message': 'Menu name/price/category cannot be empty and must be valid'}), 400
         if response:
             return jsonify({"Message": "Menu updated"}), 201
         return jsonify({"Message":"Meal item not found"}), 404

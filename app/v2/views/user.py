@@ -182,6 +182,8 @@ def place_order(current_user):
     except ValidationError as e:
         return jsonify({"Message": str(e)}), 400
     total = order_inst.total_cost(data['items'])
+    if total == "NaN":
+            return jsonify({"Message": "Quantity must be a number"}), 406
     if len(total[1]) > 0:
         return jsonify({"Message": "Some item(s) are out of stock:" + ','.join(total[1])+\
         ". Please edit your order to something else"}), 406 #Not acceptable
@@ -244,6 +246,8 @@ def edit_order(current_user, order_id):
         new_total = order_inst.total_cost(data['items'])
     except KeyError as e:
         return jsonify({'Message': e.args[0] + ' field is required'}), 500
+    if new_total== "NaN":
+        return jsonify({"Message": "Quantity must be a number"}), 406
     if len(new_total[1]) > 0:
         return jsonify({"Message": "Some item(s) are out of stock:" + ','.join(new_total[1])+\
         ". Please edit your order to something else"}), 207 #multiple status code
