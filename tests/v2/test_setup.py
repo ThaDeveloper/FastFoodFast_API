@@ -37,12 +37,12 @@ class TestSetup(unittest.TestCase):
         self.menu_item = {
             "name": "fajita",
             "image": "fajita.jpg",
-            "price": 800,
+            "price": 800.00,
             "category": "main"}
         self.new_menu_item = {
             "name": "beef steak",
             "image": "beef.jpg",
-            "price": 1000,
+            "price": 1000.00,
             "category": "main"}
         self.empty_menu_item = {
             "name": "",

@@ -60,7 +60,7 @@ class Menu:
         try:
             if not re.match(r"^[a-zA-Z]{4,500}$", data['name']) or\
             not re.match(r"^[a-zA-Z]{4,200}$", data['category'])  or \
-            not re.match(r"^[0-9]{4,200}$", data['price']) :
+            not re.match(r"^[0-9.]{5,15}$", str(data['price'])) :
                 return "Invalid"
             else:
                 self.name = data['name']

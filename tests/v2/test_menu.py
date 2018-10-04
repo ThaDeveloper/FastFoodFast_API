@@ -54,7 +54,7 @@ class TestMenu(TestSetup):
         response = self.client.post("/api/v2/menu",
                                     data=json.dumps(dict(name="fajita",
                                                          image="fajita.jpg",
-                                                         price=800,
+                                                         price=800.00,
                                                          category="main")),
                                     content_type="application/json",
                                     headers={"x-access-token": self.admintoken})

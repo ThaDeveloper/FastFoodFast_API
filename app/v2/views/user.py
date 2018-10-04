@@ -195,10 +195,15 @@ def place_order(current_user):
     success = order_inst.create_order()
     if not success:
         raise ValueError
+    query = "SELECT * FROM orders WHERE items=%s"
+    CUR.execute(query, (str(data['items']),))
+    order = CUR.fetchone()
     return jsonify({
         'Message': 'Order added',
         'Data':{
-            'Items': data['items']
+            'Order Id': order['order_id'],
+            'Items': order['items'],
+            'Total': '%.*f' % (2, order['total'])
         }
         }), 201
 

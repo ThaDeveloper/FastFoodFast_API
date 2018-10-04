@@ -41,18 +41,22 @@ def add_menu(current_user):
             success = menu_inst.save_menu()
             if not success:
                 raise ValueError
-            return jsonify({
-                "Message": "Menu added",
-                "Data": {
-                    "Name": data['name'],
-                    "Price": data['price'],
-                    "Image": data['image'],
-                    "Category": data['category']
-                }
-                }), 201
+            query = "SELECT * FROM menu WHERE name=%s"
+            CUR.execute(query, (data['name'],))
+            menu = CUR.fetchone()
         except ValueError:
             return jsonify({
                 "Message": "Menu already exists"}), 409 #conflict
+        return jsonify({
+                "Message": "Menu added",
+                "Data": {
+                    "Menu id": menu['item_id'],
+                    "Name": menu['name'],
+                    "Price": '%.*f' % (2, menu['price']),
+                    "Image": menu['image'],
+                    "Category": menu['category']
+                }
+                }), 201
     return jsonify({"Message": "Not authorized to add menu"}), 403 #forbidden
 
 
