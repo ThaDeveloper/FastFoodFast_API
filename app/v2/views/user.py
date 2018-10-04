@@ -29,12 +29,11 @@ def register_user():
         if validate_user(data):
             return validate_user(data)
         user_inst = User(
-            data['first_name'],
-            data['last_name'],
-            data['username'],
-            data['email'],
+            str(data['first_name']).strip(" ").lower(),
+            str(data['last_name']).strip(" ").lower(),
+            str(data['username']).strip(" ").lower(),
+            str(data['email']).strip(" ").lower(),
             data['password'])
-    
     except KeyError as e:
         return jsonify({"Message": str(e) + " field is missing"}), 500
     try:
@@ -136,7 +135,7 @@ def promote_user(current_user, id):
                                     "email": promote_user["email"],
                                     "admin": promote_user['admin']
                                 }
-                }), 200
+                                }), 200
             return jsonify({"Message": user['username']+" is already an admin"})
         return jsonify({"Message": "User not found!"}), 404
 
@@ -184,12 +183,12 @@ def place_order(current_user):
         return jsonify({"Message": str(e)}), 400
     total = order_inst.total_cost(data['items'])
     if total == "NaN":
-            return jsonify({"Message": "Quantity must be a number"}), 406
+        return jsonify({"Message": "Quantity must be a number"}), 406
     if len(total[1]) > 0 and not total[0] > 1:
         return jsonify({"Message": "All item(s) are out of stock:" + ','.join(total[1])+\
         ". Please edit your order to something else"}), 406 #Not acceptable
     if len(total[1]) > 0 and total[0] > 1:
-        try:                   
+        try:
             order_inst = Order(
                 user,
                 str(data['items']),
@@ -197,7 +196,8 @@ def place_order(current_user):
         except KeyError as e:
             return jsonify({'Message': e.args[0] + ' field is required'}), 500
         success = order_inst.create_order()
-        return jsonify({"Message": "Order made but some item(s) are out of stock:" + ','.join(total[1])}), 207
+        return jsonify({"Message": "Order made but some item(s) are out of stock:" \
+        + ','.join(total[1])}), 207
     try:
         order_inst = Order(
             user,
@@ -257,7 +257,7 @@ def edit_order(current_user, order_id):
         new_total = order_inst.total_cost(data['items'])
     except KeyError as e:
         return jsonify({'Message': e.args[0] + ' field is required'}), 500
-    if new_total== "NaN":
+    if new_total == "NaN":
         return jsonify({"Message": "Quantity must be a number"}), 406
     if len(new_total[1]) > 0:
         return jsonify({"Message": "Some item(s) are out of stock:" + ','.join(new_total[1])+\
@@ -273,12 +273,12 @@ def edit_order(current_user, order_id):
             if response:
                 return jsonify({"Message": "Order updated",
                                 "Data": {
-                                        "Order_id": order_id,
-                                        "Items": data['items'],
-                                        "Total": '%.*f' % (2, new_total[0]),
-                                        "Updated_at": new_time
-                        }
-                }), 201
+                                    "Order_id": order_id,
+                                    "Items": data['items'],
+                                    "Total": '%.*f' % (2, new_total[0]),
+                                    "Updated_at": new_time
+                                }
+                                }), 201
         return jsonify({"Message": "Not authorized to edit order"}), 403
     return jsonify({"Message": "Order not found"}), 404
 
@@ -291,7 +291,8 @@ def cancel_order(current_user, order_id):
     if order:
         if current_user['id'] == order['user_id']:
             if order['status'].lower() != "new":
-                return jsonify({'Message': 'Cannot cancel this order,it has already started processing'}), 406
+                return jsonify({'Message':'Cannot cancel this order, '
+                                          'it has already started processing'}), 406
             order_inst.delete_order(order_id)
             return jsonify({'Message': 'Order cancelled'}), 200
         return jsonify(

@@ -35,6 +35,12 @@ class Auth:
                 else:
                     return jsonify(
                         {"Message": "Token expired:Login again"}), 401
+                q = "SELECT * FROM tokens WHERE token=%s"
+                cur.execute(q, (token,))
+                result = cur.fetchone()
+                if not result:
+                    return jsonify(
+                        {"Message": "Already logged out"}), 401
             except BaseException as e:
                 return jsonify({'Message': 'Invalid request:' + str(e)}), 401
 

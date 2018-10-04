@@ -11,8 +11,8 @@ info:
 host: "fastfoodfast-api.herokuapp.com"
 basePath: "/api/v2"
 schemes:
-  - "http"
   - "https"
+  - "http"
 
 paths:
   /auth/register:
@@ -99,6 +99,24 @@ paths:
           description: "User is now an admin" 
         403:
           description: "Not authorized to promote user"
+      tags:
+        - User
+  
+  /auth/users:
+    get:
+      summary: Get all registered users
+      description: This admin endpoint will return a json object of all registered users. Endpoint only avilable to superuser.
+      consumes:
+        - application/json
+      responses:
+        200:
+          description: return all registered users
+      parameters:
+        - name: x-access-token
+          in: header
+          description: an authorization header
+          required: true
+          type: string
       tags:
         - User
   /menu:
@@ -216,7 +234,7 @@ paths:
   /auth/users/orders:
     post:
       summary: Add a new Order
-      description: This endpoint accepts orders details in an json objects, creates a order and returns a json response.
+      description: This endpoint accepts orders details in an json objects with key, value for item name and quantity respectively, creates a order and returns a json response.
         Auth token is required to an order
       consumes:
         - application/json
@@ -308,7 +326,7 @@ paths:
           description: OK
       tags:
         - Order
-  /Orders:
+  /orders:
     get:
       summary: Get all placed orders 
       description: This admin endpoint will return a json object of all orders placed by all users.
@@ -364,7 +382,7 @@ paths:
         description: order status.
         schema:
           $ref: "#/definitions/Order"
-          
+      
       - name: order_id
         in: path
         description: Id of order to update status for
@@ -374,9 +392,8 @@ paths:
       - name: x-access-token
         in: header
         description: an authorization header
-        required: true
         type: string
-              
+      
       responses:
         201:
           description: Update order
@@ -404,8 +421,11 @@ definitions:
     properties:
       items:
         type: object
-      
-        
+        properties:
+          item1:
+            type: integer
+          item2:
+            type: integer
   User:
     type: object
     required:

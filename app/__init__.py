@@ -36,27 +36,6 @@ def create_app(env_name):
     @app.route('/', methods=['GET'])
     @app.route('/favicon.png', methods=['GET'])
     def index():
-        """Home endpoint"""
-        # return '<h2 style="color: yellow;">Welcome to Fast-Food-Fast API<h2>\
-        # <h3>Endpoints (All order endpoints require auth):</h3>\
-        #     <i>(To be tested on postman)<i><br><br>\
-        #     <h5>USER:</h5>\
-        #     POST: /api/v1/auth/register<br>POST: /api/v1/auth/login<br>\
-        #     <h5>ORDER:</h5>\
-        #     POST: /api/v1/orders<br>GET: /api/v1/orders/order_id<br>\
-        #     GET: /api/v1/orders<br>PUT: /api/v1/orders/order_id<br>\
-        #     PUT: /api/v1/orders/order_id/edit<br>DELETE: /api/v1/orders/order_id<br><br>\
-        #     GET: /api/v1/orders/customer<br>\
-        #     <h5>MENU<h5>\
-        #     POST: /api/v1/menu<br>GET: /api/v1/menu<br>\
-        #     GET: /api/v1/menu/menu_id<br>PUT: /api/v1/menu/menu_id<br>\
-        #     DELETE: /api/v1/menu/menu_id<br>\
-        #     <h4>Sample user register data:</h4>\
-        #     {<br>"first_name": "Kunta",<br>"last_name": "Kinte",<br>"username": "kunta.kinte",<br>\
-        #     "email": "kuntatest@gmail.com",<br>"password": "#123pass"<br>\
-        #     }<br><br><h4>Sample order data:</h4>{<br>"items": {"burger": 2, "pizza": 3}<br>\
-        #     }<br><h4>Available pre-added menu items:</h4>\
-        #     {<br>"burger": 800,<br>"pizza": 1000<br>\
-        #     }'
+        """Home endpoint - render API documentation"""
         return render_template('version2.html')
     return app

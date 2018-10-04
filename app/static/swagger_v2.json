@@ -139,6 +139,32 @@
         ]
       }
     },
+    "/auth/users": {
+      "get": {
+        "summary": "Get all registered users",
+        "description": "This admin endpoint will return a json object of all registered users. Endpoint only avilable to superuser.",
+        "consumes": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "return all registered users"
+          }
+        },
+        "parameters": [
+          {
+            "name": "x-access-token",
+            "in": "header",
+            "description": "an authorization header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "User"
+        ]
+      }
+    },
     "/menu": {
       "post": {
         "summary": "Add a new menu",
@@ -296,7 +322,7 @@
     "/auth/users/orders": {
       "post": {
         "summary": "Add a new Order",
-        "description": "This endpoint accepts orders details in an json objects, creates a order and returns a json response. Auth token is required to an order",
+        "description": "This endpoint accepts orders details in an json objects with key, value for item name and quantity respectively, creates a order and returns a json response. Auth token is required to an order",
         "consumes": [
           "application/json"
         ],
@@ -426,7 +452,7 @@
         ]
       }
     },
-    "/Orders": {
+    "/orders": {
       "get": {
         "summary": "Get all placed orders",
         "description": "This admin endpoint will return a json object of all orders placed by all users.",
@@ -513,7 +539,6 @@
             "name": "x-access-token",
             "in": "header",
             "description": "an authorization header",
-            "required": true,
             "type": "string"
           }
         ],
@@ -554,7 +579,15 @@
       ],
       "properties": {
         "items": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "item1": {
+              "type": "integer"
+            },
+            "item2": {
+              "type": "integer"
+            }
+          }
         }
       }
     },

@@ -60,7 +60,7 @@ class Menu:
         try:
             if not re.match(r"^[a-zA-Z]{4,500}$", str(data['name']).strip(" ").lower()) or\
             not re.match(r"^[a-zA-Z]{4,200}$", str(data['category']).strip(" ").lower())  or \
-            not re.match(r"^[0-9.]{5,15}$", str(data['price'])) :
+            not re.match(r"^[0-9.]{5,15}$", str(data['price'])):
                 return "Invalid"
             else:
                 self.name = str(data['name']).strip(" ").lower()
@@ -105,7 +105,7 @@ class Menu:
                 return "exists"
             if not re.match(r"^[a-zA-Z]{4,500}$", str(name).strip(" ").lower()) or\
             not re.match(r"^[a-zA-Z]{4,200}$", str(category).strip(" ").lower())  or \
-            not re.match(r"^[0-9.]{5,15}$", str(price)) :
+            not re.match(r"^[0-9.]{5,15}$", str(price)):
                 return "Invalid"
             query = "UPDATE menu SET name=%s, price=%s, category=%s,\
             image=%s, updated_at=%s WHERE item_id=%s"

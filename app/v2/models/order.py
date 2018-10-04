@@ -1,8 +1,6 @@
 """order module"""
 from datetime import datetime
 from decimal import Decimal
-import psycopg2
-from flask import json
 
 from .menu import Menu
 from .. database import Database
@@ -24,6 +22,7 @@ class Order:
         self.CUR = DB.cursor()
 
     def create_order(self):
+        """Save an order to db"""
         try:
             query = "INSERT INTO orders(user_id,items, total,status,created_at, updated_at)\
             VALUES(%s,%s,%s,%s,%s,%s)"
@@ -71,8 +70,8 @@ class Order:
             total,
             updated_at):
         """Update order items"""
-        query = "UPDATE orders SET items=%s, total=%s, updated_at=%s WHERE order_id=order_id"
-        self.CUR.execute(query, (items, total, updated_at))
+        query = "UPDATE orders SET items=%s, total=%s, updated_at=%s WHERE order_id=%s"
+        self.CUR.execute(query, (items, total, updated_at, order_id))
         DB.connection.commit()
         return True
 
@@ -97,13 +96,14 @@ class Order:
         return True
 
     def get_menu(self):
+        """Retun list of menu"""
         query = "SELECT name FROM menu"
         cur = DB.cursor()
         cur.execute(query)
         full_menu = cur.fetchall()
         return full_menu
 
-    def total_cost(self,items):
+    def total_cost(self, items):
         """calucate total order cost"""
         total = Decimal(0.00)
         full_menu = self.get_menu()
@@ -118,7 +118,7 @@ class Order:
                 else:
                     menu_inst = Menu()
                     price = menu_inst.get_item_price(food)
-                    if type(servings) != int:
+                    if not isinstance(servings, int):
                         return "NaN"
-                    total += Decimal(price) * servings                      
+                    total += Decimal(price) * servings                     
         return total, missing_foods
