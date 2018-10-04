@@ -71,7 +71,7 @@ def update_order_status(current_user, order_id):
     """Updates the status of a given order. This is done by admin"""
     data = request.get_json()
     try:
-        new_status = data['status']
+        new_status = data['status'].strip(" ").lower()
         new_time = datetime.datetime.now()
         order = order_inst.find_order_by_id(order_id)
     except KeyError as e:
@@ -79,10 +79,29 @@ def update_order_status(current_user, order_id):
     if order:
         if current_user['admin']:
             if new_status == order['status']:
-                return jsonify({"Message": "Order already {}".format(new_status)}), 400
-            response = order_inst.update_order_status(order_id, new_status, new_time)
+                return jsonify({"Message": "Order already {}".format(new_status.strip(" ").lower())}), 400
+            if new_status.strip(" ").lower() not in ["new","processing","cancelled", "completed"]:
+                return jsonify({"Message": "Order can only be 'new','processing,"
+                "'cancelled' or 'completed'",
+                    "Data": {
+                                        "Order_id": order_id,
+                                        "Items": order['items'],
+                                        "Total": '%.*f' % (2, order['total']),
+                                        "Status": order['status'].strip(" ").lower(),
+                                        "Updated_at": new_time
+                        }
+                })
+            response = order_inst.update_order_status(order_id, new_status.strip(" ").lower(), new_time)
             if response:
-                return jsonify({'Message': 'Order {}'.format(new_status)}), 200
+                return jsonify({'Message': 'Order {}'.format(new_status.strip(" ").lower()),
+                            "Data": {
+                                        "Order_id": order_id,
+                                        "Items": order['items'],
+                                        "Total": '%.*f' % (2, order['total']),
+                                        "Status": new_status.strip(" ").lower(),
+                                        "Updated_at": new_time
+                        }
+                }), 200
         return jsonify(
             {"Message": "Not authorized to update order"}), 403
     return jsonify({"Message": "Order not found"}), 404

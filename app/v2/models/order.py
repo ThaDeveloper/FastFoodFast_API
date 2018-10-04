@@ -82,8 +82,8 @@ class Order:
             status,
             updated_at):
         """updates the status of a given order"""
-        query = "UPDATE orders SET status=%s, updated_at=%s WHERE order_id=order_id"
-        self.CUR.execute(query, (status, updated_at))
+        query = "UPDATE orders SET status=%s, updated_at=%s WHERE order_id=%s;"
+        self.CUR.execute(query, (status, updated_at, order_id))
         DB.connection.commit()
         return True
 
@@ -115,5 +115,7 @@ class Order:
                 else:
                     menu_inst = Menu()
                     price = menu_inst.get_item_price(food)
-                    total += Decimal(price) * servings
+                    if type(servings) != int:
+                        return "NaN"
+                    total += Decimal(price) * servings                      
         return total, missing_foods
