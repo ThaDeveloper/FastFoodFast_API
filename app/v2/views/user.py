@@ -184,9 +184,19 @@ def place_order(current_user):
     total = order_inst.total_cost(data['items'])
     if total == "NaN":
             return jsonify({"Message": "Quantity must be a number"}), 406
-    if len(total[1]) > 0:
-        return jsonify({"Message": "Some item(s) are out of stock:" + ','.join(total[1])+\
+    if len(total[1]) > 0 and not total[0] > 1:
+        return jsonify({"Message": "All item(s) are out of stock:" + ','.join(total[1])+\
         ". Please edit your order to something else"}), 406 #Not acceptable
+    if len(total[1]) > 0 and total[0] > 1:
+        try:                   
+            order_inst = Order(
+                user,
+                str(data['items']),
+                total[0])
+        except KeyError as e:
+            return jsonify({'Message': e.args[0] + ' field is required'}), 500
+        success = order_inst.create_order()
+        return jsonify({"Message": "Order made but some item(s) are out of stock:" + ','.join(total[1])}), 207
     try:
         order_inst = Order(
             user,

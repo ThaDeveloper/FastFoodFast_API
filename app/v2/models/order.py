@@ -96,14 +96,17 @@ class Order:
         DB.connection.commit()
         return True
 
-    @staticmethod
-    def total_cost(items):
-        """calucate total order cost"""
-        total = Decimal(0.00)
+    def get_menu(self):
         query = "SELECT name FROM menu"
         cur = DB.cursor()
         cur.execute(query)
         full_menu = cur.fetchall()
+        return full_menu
+
+    def total_cost(self,items):
+        """calucate total order cost"""
+        total = Decimal(0.00)
+        full_menu = self.get_menu()
         foods = []
         missing_foods = []
         for item in full_menu:#list of dictionaries

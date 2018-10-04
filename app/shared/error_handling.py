@@ -13,4 +13,8 @@ def bad_request(e):
 
 def method_not_found(e):
     return jsonify({
+ 
         "Message": "Something went wrong! The server couldn't intepret the request method, try again."}), 405
+def timeout_504(e):
+    return jsonify({
+        "Message": "Sorry, the connection seems to be taking longer than expected"}), 504

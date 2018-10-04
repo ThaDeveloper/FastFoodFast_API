@@ -32,6 +32,7 @@ def create_app(env_name):
     app.register_error_handler(404, page_404)
     app.register_error_handler(400, bad_request)
     app.register_error_handler(405, method_not_found)
+    app.register_error_handler(504, timeout_504)
 
     @app.route('/', methods=['GET'])
     def index():
