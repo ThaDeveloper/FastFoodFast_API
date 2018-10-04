@@ -1,6 +1,7 @@
 """order module"""
 from datetime import datetime
 from decimal import Decimal
+from flask import json
 
 from .menu import Menu
 from .. database import Database
@@ -12,7 +13,7 @@ DB = Database()
 class Order:
     """constructor and methods for the Order model"""
 
-    def __init__(self, user_id=1, items=[], total=0.00, status='New'):
+    def __init__(self, user_id=1, items={}, total=0.00, status='New'):
         self.user_id = user_id
         self.items = items
         self.total = total
@@ -29,7 +30,7 @@ class Order:
             self.CUR.execute(
                 query,
                 (self.user_id,
-                 self.items,
+                 json.dumps(self.items),
                  self.total,
                  self.status,
                  self.created_at,
@@ -43,7 +44,7 @@ class Order:
     def import_data(self, data):
         """validates the input json data"""
         try:
-            if type(data['items']) != list or len(data['items']) == 0:
+            if type(data['items']) != dict or len(data['items']) == 0:
                 return "Invalid"
             for item in data['items']:
                 if len(item) == 0:
@@ -71,7 +72,7 @@ class Order:
             updated_at):
         """Update order items"""
         query = "UPDATE orders SET items=%s, total=%s, updated_at=%s WHERE order_id=%s"
-        self.CUR.execute(query, (items, total, updated_at, order_id))
+        self.CUR.execute(query, (json.dumps(items), total, updated_at, order_id))
         DB.connection.commit()
         return True
 
@@ -95,30 +96,23 @@ class Order:
         DB.connection.commit()
         return True
 
-    def get_menu(self):
-        """Retun list of menu"""
+    def total_cost(self, items):
+        """calculate total order cost"""
+        total = Decimal(0.00)
         query = "SELECT name FROM menu"
         cur = DB.cursor()
         cur.execute(query)
         full_menu = cur.fetchall()
-        return full_menu
-
-    def total_cost(self, items):
-        """calucate total order cost"""
-        total = Decimal(0.00)
-        full_menu = self.get_menu()
         foods = []
         missing_foods = []
-        for item in full_menu:#list of dictionaries
+        for item in full_menu:
             foods.append(item['name'])
-        for order_item in items:
-            for food, servings in order_item.items():
-                if food not in foods:
-                    missing_foods.append(food)
-                else:
-                    menu_inst = Menu()
-                    price = menu_inst.get_item_price(food)
-                    if not isinstance(servings, int):
-                        return "NaN"
-                    total += Decimal(price) * servings                     
+        for food, servings in items.items():
+            if food not in foods:
+                missing_foods.append(food)
+            menu_inst = Menu()
+            price = menu_inst.get_item_price(food)
+            if not isinstance(servings, int):
+                return "NaN"
+            total += Decimal(price) * servings                    
         return total, missing_foods

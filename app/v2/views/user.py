@@ -2,7 +2,7 @@
 import os
 import datetime
 import jwt
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, json
 from werkzeug.security import check_password_hash
 
 # #Local imports
@@ -189,9 +189,12 @@ def place_order(current_user):
         ". Please edit your order to something else"}), 406 #Not acceptable
     if len(total[1]) > 0 and total[0] > 1:
         try:
+            data_items = data['items']
+            for food in total[1]:
+                del data_items[food]
             order_inst = Order(
                 user,
-                str(data['items']),
+                data_items,
                 total[0])
         except KeyError as e:
             return jsonify({'Message': e.args[0] + ' field is required'}), 500
@@ -201,24 +204,27 @@ def place_order(current_user):
     try:
         order_inst = Order(
             user,
-            str(data['items']),
+            data['items'],
             total[0])
     except KeyError as e:
         return jsonify({'Message': e.args[0] + ' field is required'}), 500
     success = order_inst.create_order()
     if not success:
         raise ValueError
+    print(data['items'])
     query = "SELECT * FROM orders WHERE items=%s"
-    CUR.execute(query, (str(data['items']),))
+    CUR.execute(query, (json.dumps(data['items']),))
     order = CUR.fetchone()
-    return jsonify({
-        'Message': 'Order added',
-        'Data':{
-            'Order Id': order['order_id'],
-            'Items': order['items'],
-            'Total': '%.*f' % (2, order['total'])
-        }
-        }), 201
+    print(order)
+    if order:
+        return jsonify({
+            'Message': 'Order added',
+            'Data':{
+                'Order Id': order['order_id'],
+                'Items': order['items'],
+                'Total': '%.*f' % (2, order['total'])
+            }
+            }), 201
 
 @USER_V2.route('/users/orders', methods=['GET'])
 @Auth.token_required

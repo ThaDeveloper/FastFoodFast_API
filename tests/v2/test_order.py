@@ -224,8 +224,8 @@ class TestOrder(TestSetup):
             '/api/v2/auth/users/orders',
             data=json.dumps(
                 dict(
-                    items=[{
-                        "pizza": 2}])),
+                    items={
+                        "pizza": 2})),
             content_type="application/json",
             headers={
                 "x-access-token": self.token})
@@ -244,8 +244,8 @@ class TestOrder(TestSetup):
             '/api/v2/auth/users/orders',
             data=json.dumps(
                 dict(
-                    items=[{
-                        "pizza": 2}])),
+                    items={
+                        "pizza": 2})),
             content_type="application/json",
             headers={
                 "x-access-token": self.token})

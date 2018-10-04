@@ -31,9 +31,9 @@ class TestSetup(unittest.TestCase):
                       "username": "admin",
                       "email": "admin@fast.com",
                       "password": "@Password1"}
-        self.order = {"items": [{"pizza": 2}]}
-        self.new_order = {"items": [{"pizza": 10}]}
-        self.empty_order = {"items": [{}]}
+        self.order = {"items": {"pizza": 2}}
+        self.new_order = {"items": {"pizza": 10}}
+        self.empty_order = {"items": {}}
         self.menu_item = {
             "name": "fajita",
             "image": "fajita.jpg",
