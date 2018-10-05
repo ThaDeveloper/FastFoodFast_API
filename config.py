@@ -1,4 +1,4 @@
-"""Flaks environment configurations"""
+"""ENV configs module"""
 import os
 
 
