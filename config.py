@@ -2,7 +2,7 @@
 import os
 
 
-class Base(object):
+class Base:
     """Parent configuration class."""
     DEBUG = False
     CSRF_ENABLED = True
@@ -36,7 +36,7 @@ class Production(Base):
     TESTING = False
 
 
-app_config = {
+APP_CONFIG = {
     'development': Development,
     'testing': Testing,
     'staging': Staging,

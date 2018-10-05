@@ -112,7 +112,7 @@ def update_order_status(current_user, order_id):
             if response:
                 return jsonify({'Message': 'Order {}'.format(new_status)}), 200
         return jsonify(
-            {"Message": "Not authorized to update order"}), 401
+            {"Message": "Not authorized to update order"}), 401  # test
     return jsonify({'Message': 'Order not found'}), 404
 
 

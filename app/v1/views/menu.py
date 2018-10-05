@@ -10,7 +10,6 @@ MENU_V1 = Blueprint('menu', __name__)
 menu_inst = Menu()
 full_menu = menu_inst.menu
 
-
 @MENU_V1.route('', methods=['POST'])
 @Auth.token_required
 def add_menu(current_user):

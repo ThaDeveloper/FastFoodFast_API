@@ -5,6 +5,7 @@ from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 
+
 from ..utils.authentication import user_inst
 from ...shared.validation import validate_user
 
@@ -61,3 +62,4 @@ def login():
         return jsonify({"Message": "login invalid!"}), 401
     except KeyError as e:
         return jsonify(str(e) + " field is missing"), 500
+

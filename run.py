@@ -3,8 +3,8 @@ import os
 
 from app import create_app
 
-env_name = os.getenv('FLASK_ENV')
-app = create_app(env_name)
+ENV_NAME = os.getenv('FLASK_ENV')
+APP = create_app(ENV_NAME)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    APP.run(debug=True)

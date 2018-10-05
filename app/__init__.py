@@ -1,12 +1,16 @@
+"""Flask app initialization"""
 from flask import Flask
 from flask_cors import CORS
 
-from config import app_config
+from config import APP_CONFIG
 
 # Import order_api blueprint
 from . v1.views.order import ORDER_V1 as order_blueprint
 from . v1.views.user import USER_V1 as user_blueprint
 from . v1.views.menu import MENU_V1 as menu_blueprint
+from . v2.views.user import USER_V2 as v2_user_blueprint
+from . v2.views.menu import MENU_V2 as v2_menu_blueprint
+from . v2.views.order import ORDER_V2 as v2_order_blueprint
 from . v1.utils.error_handling import *
 
 def create_app(env_name):
@@ -16,13 +20,15 @@ def create_app(env_name):
 
     # app initiliazation
     app = Flask(__name__, instance_relative_config=True)
-    #handling Cross Origin Resource Sharing 
     CORS(app)
-    app.config.from_object(app_config[env_name])
+    app.config.from_object(APP_CONFIG[env_name])
 
     app.register_blueprint(order_blueprint, url_prefix='/api/v1/orders')
     app.register_blueprint(user_blueprint, url_prefix='/api/v1/auth')
     app.register_blueprint(menu_blueprint, url_prefix='/api/v1/menu')
+    app.register_blueprint(v2_user_blueprint, url_prefix='/api/v2/auth')
+    app.register_blueprint(v2_menu_blueprint, url_prefix='/api/v2/menu')
+    app.register_blueprint(v2_order_blueprint, url_prefix='/api/v2/orders')
     app.register_error_handler(404, page_404)
     app.register_error_handler(400, bad_request)
     app.register_error_handler(405, method_not_found)

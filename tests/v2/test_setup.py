@@ -1,9 +1,9 @@
+import os
 import json
 import unittest
 from app import create_app
 from app.v2.database import Database
 
-db = Database()
 
 class TestSetup(unittest.TestCase):
     """Initialize the app with test data
@@ -12,11 +12,8 @@ class TestSetup(unittest.TestCase):
     def setUp(self):
         self.app = create_app("testing")
         self.client = self.app.test_client()
-        #fetch testing admin
-        cur = db.cursor()
-        cur.execute("SELECT * from users WHERE username = 'admin'")
-        admin = cur.fetchone()
-
+        self.db = Database()
+        self.db.create_tables()
         self.user = {"first_name": "Justin",
                      "last_name": "Ndwiga",
                      "username": "justin.ndwiga",
@@ -28,12 +25,17 @@ class TestSetup(unittest.TestCase):
                             "username": "uknownuser",
                             "email": "uknown@gmail.com",
                             "password": "@Password2"}
-        self.order = {"items": {"burger": 2, "pizza": 1}}
-        self.new_order = {"items": {"burger": 1, "pizza": 3}}
+        self.admin = {"first_name": "Super",
+                            "last_name": "User",
+                            "username": "admin",
+                            "email": "admin@fast.com",
+                            "password": "@Password1"}
+        self.order = {"items": {"pizza": 2}}
+        self.new_order = {"items": {"pizza": 10}}
         self.empty_order = {"items": {}}
         self.menu_item = {
-            "name": "rice",
-            "image": "rice.jpg",
+            "name": "fajita",
+            "image": "fajita.jpg",
             "price": 800,
             "category": "main"}
         self.new_menu_item = {
@@ -58,9 +60,17 @@ class TestSetup(unittest.TestCase):
         self.data = json.loads(self.login.get_data(as_text=True))
         self.token = self.data['token']
 
-        #login test admin
+        #Resgister and login test admin
+        self.register = self.client.post('/api/v2/auth/register',
+                                         data=json.dumps(self.admin),
+                                         headers={"content-type":
+                                                  "application/json"})
+        #make the user admin and login
+        q = "UPDATE users SET admin='true' WHERE username=%s;"
+        self.db.cursor().execute(q, (self.admin['username'],))
+        self.db.connection.commit()
         self.adminlogin = self.client.post('/api/v2/auth/login',
-                                           data=json.dumps(dict(username=admin['username'], password=admin['password'])),
+                                           data=json.dumps(self.admin),
                                            content_type='application/json')
 
         self.data = json.loads(self.adminlogin.get_data(as_text=True))
@@ -79,5 +89,13 @@ class TestSetup(unittest.TestCase):
         self.data = json.loads(self.unkownlogin.get_data(as_text=True))
         self.unkowntoken = self.data['token']
 
+        #add one menu item to db
+        q = "INSERT INTO menu(name, price, category, image) VALUES(%s,%s,%s,%s);"
+        self.db.cursor().execute(q, ('pizza',900.00, 'snacks', 'image'))
+        self.db.connection.commit()
+
     def tearDown(self):
-        db.drop_tables()
+        self.db.drop_tables()
+        
+if __name__ == "__main__":
+    unittest.main()
