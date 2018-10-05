@@ -148,8 +148,6 @@ Check out the full documentation of the FastFoodFast API on [Swagger Docs](https
 1. Check all passes - `$ pytest`
 2. Check coverage - `$nosetests --with-coverage --cover-package=app`
 
-## Screenshots
-
 ## Deployment 
 Live on [heroku](https://fastfoodfast-api.herokuapp.com/)
 
