@@ -6,12 +6,12 @@ from . shared.error_handling import *
 
 # Import blueprints
 from . v1.views.order import ORDER_V1 as order_blueprint		
- from . v1.views.user import USER_V1 as user_blueprint		
- from . v1.views.menu import MENU_V1 as menu_blueprint
+from . v1.views.user import USER_V1 as user_blueprint		
+from . v1.views.menu import MENU_V1 as menu_blueprint
 from . v2.views.user import USER_V2 as v2_user_blueprint
 from . v2.views.menu import MENU_V2 as v2_menu_blueprint
 from . v2.views.order import ORDER_V2 as v2_order_blueprint
-from config import app_config
+from config import APP_CONFIG
 
 def create_app(env_name):
     """
