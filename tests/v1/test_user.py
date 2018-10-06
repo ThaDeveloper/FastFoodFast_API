@@ -84,7 +84,7 @@ class TestUser(TestSetup):
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("can only be 3-15 letters", response_msg["Message"])
+        self.assertIn("only be 3-15 letters", response_msg["Message"])
 
     def test_missing_first_or_last_name(self):
         """Tests error raised when first name or last name is missing."""
@@ -132,14 +132,14 @@ class TestUser(TestSetup):
                     last_name="Ndwiga",
                     username="justin.ndwiga",
                     email="ndwigatest@gmail.com",
-                    password="!passWord3"
+                    password="@passWord3"
                 )),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("already exists", response_msg["Message"])
 
-    def test_user_can_register(self):
+    def test_1_user_can_register(self):
         """Test new user can be added to the system."""
         response = self.client.post(
             "/api/v1/auth/register",
@@ -152,9 +152,24 @@ class TestUser(TestSetup):
                     password="@Yassword5"
                 )),
             content_type="application/json")
-        self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("registered", response_msg["Message"])
+        self.assertEqual(response.status_code, 201)
+
+    def test_2_email_already_taken(self):
+        """Tests returns error if email is already registered."""
+        response = self.client.post(
+            "api/v1/auth/register", data=json.dumps(
+                dict(
+                    first_name="Email",
+                    last_name="Taken",
+                    username="rick.sanchez",
+                    email="elon.musk@gmail.com",
+                    password="$Upasswor4d")),
+            content_type="application/json")
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("already registered", response_msg["Message"])
+        self.assertEqual(response.status_code, 400)
 
     def test_missing_credentials(self):
         """Tests error raised for missing auth details."""
