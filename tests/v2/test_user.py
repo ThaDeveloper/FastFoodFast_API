@@ -215,6 +215,19 @@ class TestUser(TestSetup):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("out", response_msg["Message"])
 
+    def test_return_all_users(self):
+        """test returns all users"""
+        response = self.client.get(
+            'api/v2/auth/users',
+            headers={"x-access-token": self.su_token})
+        self.assertEqual(response.status_code, 200)
+
+    def test_promote_user(self):
+        """test promotes user to admin"""
+        response = self.client.put(
+            'api/v2/auth/users/1/promote',
+            headers={"x-access-token": self.su_token})
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == "__main__":
     unittest.main()

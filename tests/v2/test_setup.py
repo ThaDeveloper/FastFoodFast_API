@@ -31,6 +31,11 @@ class TestSetup(unittest.TestCase):
                       "username": "admin",
                       "email": "admin@fast.com",
                       "password": "@Password1"}
+        self.su = {"first_name": "Super",
+                    "last_name": "User",
+                    "username": "superuser",
+                    "email": "su@fast.com",
+                    "password": "@Password1"}
         self.order = {"items": {"pizza": 2}}
         self.new_order = {"items": {"pizza": 10}}
         self.empty_order = {"items": {}}
@@ -77,6 +82,16 @@ class TestSetup(unittest.TestCase):
         self.data = json.loads(self.adminlogin.get_data(as_text=True))
         self.admintoken = self.data['token']
 
+        #register and login superuser
+        self.register = self.client.post('/api/v2/auth/register',
+                                         data=json.dumps(self.su),
+                                         headers={"content-type":
+                                                  "application/json"})
+        self.su_login = self.client.post('/api/v2/auth/login',
+                                           data=json.dumps(self.su),
+                                           content_type='application/json')
+        self.data = json.loads(self.su_login.get_data(as_text=True))
+        self.su_token = self.data['token']
         # Register and login a testunkownuser
         self.client.post(
             "/api/v2/auth/register",
