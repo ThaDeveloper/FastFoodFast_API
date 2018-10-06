@@ -118,7 +118,7 @@ class TestUser(TestSetup):
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("Wrong", response_msg["Message"])
+        self.assertIn("can only be 3-15 letters", response_msg["Message"])
 
     def test_duplicate_users(self):
         """

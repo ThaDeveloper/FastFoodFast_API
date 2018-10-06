@@ -35,7 +35,6 @@ def create_order(current_user):
         total)
     return jsonify({'Message': 'Order Created'}), 201
 
-
 @ORDER_V1.route('<int:order_id>', methods=['GET'])
 @Auth.token_required
 def get_single_order(current_user, order_id):

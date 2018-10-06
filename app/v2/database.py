@@ -1,6 +1,9 @@
-import psycopg2
+"""Databse setup script"""
 import os
+import psycopg2
 from psycopg2.extras import RealDictCursor
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from .check_if_db import check_db_exists
 
 
 class Database:
@@ -8,13 +11,36 @@ class Database:
 
     def __init__(self):
         """Initialize by setting up and connecting to database"""
-        if os.getenv('FLASK_ENV') == 'development':
-            self.database = os.getenv("DEV_DATABASE")
-        elif os.getenv('FLASK_ENV') == 'testing':
-            self.database = os.getenv("TEST_DATABASE")
         self.user = os.getenv('USER')
         self.password = os.getenv('PASSWORD')
         self.host = os.getenv('HOST')
+        con = psycopg2.connect(dbname=os.getenv('DEFAULT_DB'),
+                               user=self.user, host=self.host,
+                               password=self.password)
+        #All other transactions are stopped and no commit() or rollback() is required
+        con.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = con.cursor()
+        if os.getenv('FLASK_ENV') == 'development':
+            self.database = os.getenv("DEV_DATABASE")
+            db_connected = check_db_exists(self.database)
+            if db_connected[0]:
+                self.connection = db_connected[1]
+            else:
+                cur.execute("CREATE DATABASE {};".format(self.database))
+        elif os.getenv('FLASK_ENV') == 'testing':
+            self.database = os.getenv("TEST_DATABASE")
+            db_connected = check_db_exists(self.database)
+            if db_connected[0]:
+                self.connection = db_connected[1]
+            else:
+                cur.execute("CREATE DATABASE {};".format(self.database))
+        elif os.getenv('FLASK_ENV') == 'production':
+            self.database = os.getenv("PROD_DATABASE")
+            db_connected = check_db_exists(self.database)
+            if db_connected[0]:
+                self.connection = db_connected[1]
+            else:
+                cur.execute("CREATE DATABASE {};".format(self.database))
         try:
             self.connection = psycopg2.connect(
                 database=self.database,
@@ -22,7 +48,7 @@ class Database:
                 host=self.host,
                 password=self.password)
         except BaseException:
-            print("Can't connet to database")
+            print("Can't connect to database")
 
     @staticmethod
     def tables():
@@ -33,7 +59,7 @@ class Database:
                     first_name VARCHAR(30) NOT NULL,\
                     last_name VARCHAR(30) NOT NULL,\
                     username VARCHAR(30) UNIQUE NOT NULL,\
-                    email VARCHAR(90) UNIQUE NOT NULL,\
+                    email VARCHAR(90) NOT NULL,\
                     password VARCHAR(200) NOT NULL,\
                     admin bool,\
                     created_at TIMESTAMP\
@@ -48,8 +74,8 @@ class Database:
             'CREATE TABLE IF NOT EXISTS menu (\
                     item_id SERIAL PRIMARY KEY,\
                     name VARCHAR(70) NOT NULL,\
-                    price DECIMAL(10, 2) NOT NULL,\
-                    cat_id INTEGER REFERENCES categories(cat_id) ON DELETE CASCADE,\
+                    price numeric(10, 2) NOT NULL,\
+                    category VARCHAR(200),\
                     image VARCHAR(250) NOT NULL,\
                     created_at TIMESTAMP,\
                     updated_at TIMESTAMP\
@@ -59,7 +85,7 @@ class Database:
                     order_id SERIAL PRIMARY KEY,\
                     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,\
                     items VARCHAR(250) NOT NULL,\
-                    total DECIMAL(10, 2) NOT NULL,\
+                    total numeric(10, 2) NOT NULL,\
                     status VARCHAR(10) NOT NULL,\
                     created_at TIMESTAMP,\
                     updated_at TIMESTAMP\
@@ -101,14 +127,20 @@ class Database:
             print(error)
 
     def drop_tables(self):
-        """drop tables esle return exection error"""
+        """drop tables else return exection error"""
         cur = self.cursor()
-        table_drops = ["DROP TABLE IF EXISTS users CASCADE",
-                       "DROP TABLE IF EXISTS categories CASCADE",
-                       "DROP TABLE IF EXISTS menu",
-                       "DROP TABLE IF EXISTS orders",
-                       "DROP TABLE IF EXISTS tokens",
-                       "DROP TABLE IF EXISTS blacklist"
+        table_drops = ["DELETE FROM users CASCADE",
+                       "DELETE FROM categories CASCADE",
+                       "DELETE FROM menu",
+                       "DELETE FROM orders",
+                       "DELETE FROM tokens",
+                       "DELETE FROM blacklist",
+                       "ALTER SEQUENCE users_id_seq RESTART WITH 1;",
+                       "ALTER SEQUENCE categories_cat_id_seq RESTART WITH 1;",
+                       "ALTER SEQUENCE menu_item_id_seq RESTART WITH 1;"
+                       "ALTER SEQUENCE orders_order_id_seq RESTART WITH 1;"
+                       "ALTER SEQUENCE tokens_token_id_seq RESTART WITH 1;"
+                       "ALTER SEQUENCE blacklist_token_id_seq RESTART WITH 1;"
                        ]
 
         try:
