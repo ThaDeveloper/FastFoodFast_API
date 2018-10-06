@@ -141,7 +141,6 @@ User
 
 Or can simply test the hosted version by replacing `http://127.0.0.1:5000` with `https://fastfoodfast-api.herokuapp.com`
 
-
 ##### Documentation
 Check out the full documentation of the FastFoodFast API on [Swagger Docs](https://app.swaggerhub.com/apis/justin.ndwiga/FastFoodFast/1.0.0)
 ## Running tests
