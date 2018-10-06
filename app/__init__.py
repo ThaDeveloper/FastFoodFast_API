@@ -8,10 +8,10 @@ from config import APP_CONFIG
 from . v1.views.order import order_v1 as order_blueprint
 from . v1.views.user import user_v1 as user_blueprint
 from . v1.views.menu import menu_v1 as menu_blueprint
-from . v2.views.user import USER_V2 as v2_user_blueprint
-from . v2.views.menu import MENU_V2 as v2_menu_blueprint
-from . v2.utils.error_handling import *
-
+from . v1.views.order import ORDER_V1 as order_blueprint
+from . v1.views.user import USER_V1 as user_blueprint
+from . v1.views.menu import MENU_V1 as menu_blueprint
+from . v1.utils.error_handling import *
 
 def create_app(env_name):
     """

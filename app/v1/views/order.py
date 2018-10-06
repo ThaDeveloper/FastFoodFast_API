@@ -3,17 +3,17 @@ from flask import request, jsonify, Blueprint
 
 from ..models.order import Order
 from ..models.menu import Menu
-from ...v1.authentication import Auth
+from ..utils.authentication import Auth
 from ...shared.validation import ValidationError
 
 # Blueprint app to handle our order resources
-order_v1 = Blueprint('order', __name__)
+ORDER_V1 = Blueprint('order', __name__)
 order_inst = Order()
 all_orders = order_inst.orders
 menu_inst = Menu()
 
 
-@order_v1.route('', methods=['POST'])
+@ORDER_V1.route('', methods=['POST'])
 @Auth.token_required
 def create_order(current_user):
     """Create order method"""
@@ -35,30 +35,31 @@ def create_order(current_user):
         total)
     return jsonify({'Message': 'Order Created'}), 201
 
-
-@order_v1.route('<int:order_id>', methods=['GET'])
+@ORDER_V1.route('<int:order_id>', methods=['GET'])
 @Auth.token_required
 def get_single_order(current_user, order_id):
     """Returns a single order for the owner or admin"""
     order = order_inst.find_order_by_id(order_id)
     if order:
-        if current_user['username'] == order['user_id']:
+        if current_user['username'] == order['user_id'] or current_user['admin']:
             return jsonify({"Order": order}), 200
-        return jsonify({"Message": "Not authorized to view order"}), 401
+        return jsonify(
+            {"Message": "Not authorized: Can only view your order"}), 401
 
     return jsonify({"Message": "Order not found"}), 404
 
-
-@order_v1.route('', methods=['GET'])
+@ORDER_V1.route('', methods=['GET'])
 @Auth.token_required
 def get_all_orders(current_user):
     """Returns all created orders"""
-    if not all_orders:
-        return jsonify({'Message': "No orders found"}), 200
-    return jsonify({"Orders": all_orders}), 200
+    if current_user['admin']:
+        if not all_orders:
+            return jsonify({'Message': "No orders found"}), 200
+        return jsonify({"Orders": all_orders}), 200
+    return jsonify({"Message": "Not authorized to view all orders"}), 401
 
 
-@order_v1.route('/customer', methods=['GET'])
+@ORDER_V1.route('/customer', methods=['GET'])
 @Auth.token_required
 def get_order_history(current_user):
     """Returns all orders user made in the past"""
@@ -71,13 +72,16 @@ def get_order_history(current_user):
     return jsonify({"Message": "You have 0 orders"}), 200
 
 
-@order_v1.route('<int:order_id>/edit', methods=['PUT'])
+@ORDER_V1.route('<int:order_id>/edit', methods=['PUT'])
 @Auth.token_required
 def edit_order(current_user, order_id):
     """Edits the order elements. Done by the user"""
     data = request.get_json()
-    new_items = data['items']
-    new_total = order_inst.total_cost(data['items'])
+    try:
+        new_items = data['items']
+        new_total = order_inst.total_cost(data['items'])
+    except KeyError as e:
+        return jsonify(str(e) + " field is missing"), 500
     new_time = datetime.datetime.now()
     order = order_inst.find_order_by_id(order_id)
     if order:
@@ -89,12 +93,15 @@ def edit_order(current_user, order_id):
     return jsonify({'Message': 'Order not found'}), 404
 
 
-@order_v1.route('<int:order_id>', methods=['PUT'])
+@ORDER_V1.route('<int:order_id>', methods=['PUT'])
 @Auth.token_required
 def update_order_status(current_user, order_id):
     """Updates the status of a given order. This is done by admin"""
     data = request.get_json()
-    new_status = data['status']
+    try:
+        new_status = data['status']
+    except KeyError as e:
+        return jsonify(str(e) + " field is missing"), 500
     new_time = datetime.datetime.now()
     order = order_inst.find_order_by_id(order_id)
     if order:
@@ -103,14 +110,11 @@ def update_order_status(current_user, order_id):
             if response:
                 return jsonify({'Message': 'Order {}'.format(new_status)}), 200
         return jsonify(
-            {"Message": "Not authorized to update order"}), 401  # test
-        response = order_inst.update_order(order_id, new_status, new_time)
-        if response:
-            return jsonify({'Message': 'Order {}'.format(new_status)}), 200
+            {"Message": "Not authorized to update order"}), 401  # test   
     return jsonify({'Message': 'Order not found'}), 404
 
 
-@order_v1.route('<int:order_id>', methods=['DELETE'])
+@ORDER_V1.route('<int:order_id>', methods=['DELETE'])
 @Auth.token_required
 def cancel_order(current_user, order_id):
     """Owner cancels user order and deletes it from the storage"""
