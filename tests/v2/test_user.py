@@ -10,7 +10,7 @@ class TestUser(TestSetup):
     def test_missing_username(self):
         """tests returns error if username is missing."""
         response = self.client.post(
-            "api/v2/auth/register", data=json.dumps(
+            self.user_base_path+"/register", data=json.dumps(
                 dict(
                     first_name="blank",
                     last_name="username",
@@ -25,7 +25,7 @@ class TestUser(TestSetup):
     def test_username_less_3_chars(self):
         """tests returns error if username less then 3 characters."""
         response = self.client.post(
-            "api/v2/auth/register", data=json.dumps(
+            self.user_base_path+"/register", data=json.dumps(
                 dict(
                     first_name="blank",
                     last_name="username",
@@ -40,7 +40,7 @@ class TestUser(TestSetup):
     def test_missing_email(self):
         """Tests returns error if email is missing."""
         response = self.client.post(
-            "api/v2/auth/register", data=json.dumps(
+            self.user_base_path+"/register", data=json.dumps(
                 dict(
                     first_name="blank",
                     last_name="email",
@@ -55,7 +55,7 @@ class TestUser(TestSetup):
     def test_missing_password(self):
         """Tests error raised when password is missing."""
         response = self.client.post(
-            "/api/v2/auth/register",
+            self.user_base_path+"/register",
             data=json.dumps(
                 dict(
                     first_name="first",
@@ -72,7 +72,7 @@ class TestUser(TestSetup):
     def test_username_has_space(self):
         """Tests error raised when username contains spaces."""
         response = self.client.post(
-            "/api/v2/auth/register",
+            self.user_base_path+"/register",
             data=json.dumps(
                 dict(
                     first_name="first",
@@ -89,7 +89,7 @@ class TestUser(TestSetup):
     def test_missing_first_or_last_name(self):
         """Tests error raised when first name or last name is missing."""
         response = self.client.post(
-            "/api/v2/auth/register",
+            self.user_base_path+"/register",
             data=json.dumps(
                 dict(
                     first_name="",
@@ -106,7 +106,7 @@ class TestUser(TestSetup):
     def test_username_isstring(self):
         """Tests error raised when wrong username format is provided."""
         response = self.client.post(
-            "/api/v2/auth/register",
+            self.user_base_path+"/register",
             data=json.dumps(
                 dict(
                     first_name="first",
@@ -125,7 +125,7 @@ class TestUser(TestSetup):
         Tests for duplicate usernames
         """
         response = self.client.post(
-            "/api/v2/auth/register",
+            self.user_base_path+"/register",
             data=json.dumps(
                 dict(
                     first_name="Justin",
@@ -142,7 +142,7 @@ class TestUser(TestSetup):
     def test_user_can_register(self):
         """Test new user can be added to the system."""
         response = self.client.post(
-            "/api/v2/auth/register",
+            self.user_base_path+"/register",
             data=json.dumps(
                 dict(
                     first_name="Elon",
@@ -159,7 +159,7 @@ class TestUser(TestSetup):
     def test_missing_credentials(self):
         """Tests error raised for missing auth details."""
         response = self.client.post(
-            "/api/v2/auth/login",
+            self.user_base_path+"/login",
             data=json.dumps(
                 dict(
                     username="",
@@ -172,7 +172,7 @@ class TestUser(TestSetup):
     def test_unkown_username_login(self):
         """Tests unauthorized error raised with invalid username."""
         response = self.client.post(
-            "/api/v2/auth/login",
+            self.user_base_path+"/login",
             data=json.dumps(
                 dict(
                     username="invalid",
@@ -185,7 +185,7 @@ class TestUser(TestSetup):
     def test_invalid_password_login(self):
         """Tests unauthorized error raised with invalid password."""
         response = self.client.post(
-            "/api/v2/auth/login",
+            self.user_base_path+"/login",
             data=json.dumps(
                 dict(
                     username="justin.ndwiga",
@@ -197,7 +197,7 @@ class TestUser(TestSetup):
 
     def test_valid_login_generates_token(self):
         """Tests token is generated on successful login."""
-        response = self.client.post("/api/v2/auth/login",
+        response = self.client.post(self.user_base_path+"/login",
                                     data=json.dumps(self.user),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 200)
@@ -208,7 +208,7 @@ class TestUser(TestSetup):
     def test_logout(self):
         """Test logout success"""
         response = self.client.delete(
-            '/api/v2/auth/logout',
+            self.user_base_path+'/logout',
             headers={
                 "x-access-token": self.token})
         self.assertEqual(response.status_code, 200)
@@ -218,14 +218,14 @@ class TestUser(TestSetup):
     def test_return_all_users(self):
         """test returns all users"""
         response = self.client.get(
-            'api/v2/auth/users',
+            self.user_base_path+'/users',
             headers={"x-access-token": self.su_token})
         self.assertEqual(response.status_code, 200)
 
     def test_promote_user(self):
         """test promotes user to admin"""
         response = self.client.put(
-            'api/v2/auth/users/1/promote',
+            self.user_base_path+'/users/1/promote',
             headers={"x-access-token": self.su_token})
         self.assertEqual(response.status_code, 200)
 

@@ -9,7 +9,7 @@ class TestOrder(TestSetup):
     def test_add_new_order(self):
         """Tests creating a new order."""
         response = self.client.post(
-            '/api/v2/auth/users/orders',
+            self.user_base_path+'/users/orders',
             data=json.dumps(
                 self.order),
             content_type="application/json",
@@ -21,7 +21,7 @@ class TestOrder(TestSetup):
 
     def test_add_order_no_login(self):
         """Tests returns error when ordering without login."""
-        response = self.client.post('/api/v2/auth/users/orders',
+        response = self.client.post(self.user_base_path+'/users/orders',
                                     data=json.dumps(self.order),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 401)
@@ -31,7 +31,7 @@ class TestOrder(TestSetup):
     def test_add_order_with_invalid_token(self):
         """Tests returns error when ordering with invalid token."""
         response = self.client.post(
-            '/api/v2/auth/users/orders',
+            self.user_base_path+'/users/orders',
             data=json.dumps(
                 self.order),
             content_type="application/json",
@@ -44,7 +44,7 @@ class TestOrder(TestSetup):
     def test_empty_items(self):
         """Error raised for empty order placed."""
         response = self.client.post(
-            "/api/v2/auth/users/orders",
+            self.user_base_path+"/users/orders",
             data=json.dumps(
                 self.empty_order),
             content_type="application/json",
@@ -57,7 +57,7 @@ class TestOrder(TestSetup):
     def test_empty_field(self):
         """Error raised when ordder field is empty."""
         response = self.client.post(
-            "/api/v2/auth/users/orders",
+            self.user_base_path+"/users/orders",
             data=json.dumps(
                 dict(
                     {})),
@@ -71,7 +71,7 @@ class TestOrder(TestSetup):
     def test_order_list(self):
         """Test full list orders can be returned"""
         resp = self.client.get(
-            '/api/v2/orders',
+            self.order_base_path,
             headers={
                 "x-access-token": self.admintoken})
         self.assertEqual(resp.status_code, 200)
@@ -80,7 +80,7 @@ class TestOrder(TestSetup):
     def test_order_history(self):
         """Test user order history is returned"""
         resp = self.client.get(
-            '/api/v2/auth/users/orders',
+            self.user_base_path+'/users/orders',
             headers={
                 "x-access-token": self.token})
         self.assertEqual(resp.status_code, 200)
@@ -89,12 +89,12 @@ class TestOrder(TestSetup):
     def test_no_order_history(self):
         """Test returns 0 orders message to user"""
         self.client.delete(
-            "/api/v2/auth/users/orders/1",
+            self.user_base_path+"/users/orders/1",
             content_type="application/json",
             headers={
                 "x-access-token": self.token})
         resp = self.client.get(
-            '/api/v2/auth/users/orders',
+            self.user_base_path+'/users/orders',
             headers={
                 "x-access-token": self.token})
         response_msg = json.loads(resp.data.decode("UTF-8"))
@@ -103,11 +103,11 @@ class TestOrder(TestSetup):
     def test_order_detail_200(self):
         """Test if you can get a single order.
         Make a single order first"""
-        self.client.post('/api/v2/auth/users/orders', data=json.dumps(self.order),
+        self.client.post(self.user_base_path+'/users/orders', data=json.dumps(self.order),
                          content_type="application/json",
                          headers={"x-access-token": self.token})
         resp = self.client.get(
-            "/api/v2/orders/1",
+            self.order_base_path+"/1",
             headers={
                 "x-access-token": self.admintoken})
         self.assertEqual(resp.status_code, 200)
@@ -118,7 +118,7 @@ class TestOrder(TestSetup):
         Error raised for invalid order request.
         """
         resp = self.client.get(
-            "/api/v2/orders/100",
+            self.order_base_path+"/100",
             headers={
                 "x-access-token": self.admintoken})
         self.assertEqual(resp.status_code, 404)
@@ -127,11 +127,11 @@ class TestOrder(TestSetup):
 
     def test_edit_order(self):
         """Tests a order can be editted."""
-        self.client.post('/api/v2/auth/users/orders', data=json.dumps(self.order),
+        self.client.post(self.user_base_path+'/users/orders', data=json.dumps(self.order),
                          content_type="application/json",
                          headers={"x-access-token": self.token})
         response = self.client.put(
-            "/api/v2/auth/users/orders/1",
+            self.user_base_path+"/users/orders/1",
             data=json.dumps(self.new_order),
             content_type="application/json",
             headers={
@@ -143,7 +143,7 @@ class TestOrder(TestSetup):
     def test_invalid_edit(self):
         """Error raised for invalid edit request."""
         response = self.client.put(
-            "/api/v2/auth/users/orders/1500",
+            self.user_base_path+"/users/orders/1500",
             data=json.dumps(self.new_order),
             content_type="application/json",
             headers={
@@ -154,10 +154,10 @@ class TestOrder(TestSetup):
 
     def test_editting_unauthorized_order(self):
         """Tests error raised when editting non-authorized order."""
-        self.client.post('/api/v2/auth/users/orders', data=json.dumps(self.order),
+        self.client.post(self.user_base_path+'/users/orders', data=json.dumps(self.order),
                          content_type="application/json",
                          headers={"x-access-token": self.token})
-        response = self.client.put("/api/v2/auth/users/orders/1",
+        response = self.client.put(self.user_base_path+"/users/orders/1",
                                    data=json.dumps(self.new_order),
                                    content_type="application/json",
                                    headers={"x-access-token": self.unkowntoken})
@@ -167,11 +167,11 @@ class TestOrder(TestSetup):
 
     def test_update_order(self):
         """Tests a order can be updated."""
-        self.client.post('/api/v2/auth/users/orders', data=json.dumps(self.order),
+        self.client.post(self.user_base_path+'/users/orders', data=json.dumps(self.order),
                          content_type="application/json",
                          headers={"x-access-token": self.token})
         response = self.client.put(
-            "/api/v2/orders/1",
+            self.order_base_path+"/1",
             data=json.dumps(
                 dict(
                     status="Processing")),
@@ -185,7 +185,7 @@ class TestOrder(TestSetup):
     def test_invalid_update(self):
         """Error raised for invalid update request."""
         response = self.client.put(
-            "/api/v2/orders/1500",
+            self.order_base_path+"/1500",
             data=json.dumps(
                 dict(
                     status="Cancelled")),
@@ -199,7 +199,7 @@ class TestOrder(TestSetup):
 
     def test_updating_unauthorized_order(self):
         """Tests error raised when updating order without login."""
-        response = self.client.put("/api/v2/orders/1",
+        response = self.client.put(self.order_base_path+"/1",
                                    data=json.dumps(dict(status="Completed")),
                                    content_type="application/json")
 
@@ -210,7 +210,7 @@ class TestOrder(TestSetup):
     def test_cancel_invalid_order(self):
         """Tests cancel invalid order."""
         response = self.client.delete(
-            "/api/v2/auth/users/orders/200",
+            self.user_base_path+"/users/orders/200",
             content_type="application/json",
             headers={
                 "x-access-token": self.token})
@@ -221,7 +221,7 @@ class TestOrder(TestSetup):
     def test_canelling_unauthorized_order(self):
         """Tests error raised when cancelling someone else's order."""
         self.client.post(
-            '/api/v2/auth/users/orders',
+            self.user_base_path+'/users/orders',
             data=json.dumps(
                 dict(
                     items={
@@ -230,7 +230,7 @@ class TestOrder(TestSetup):
             headers={
                 "x-access-token": self.token})
         response = self.client.delete(
-            "/api/v2/auth/users/orders/1",
+            self.user_base_path+"/users/orders/1",
             headers={
                 "x-access-token": self.unkowntoken})
 
@@ -241,7 +241,7 @@ class TestOrder(TestSetup):
     def test_cancel_order(self):
         """Tests cancel order."""
         self.client.post(
-            '/api/v2/auth/users/orders',
+            self.user_base_path+'/users/orders',
             data=json.dumps(
                 dict(
                     items={
@@ -250,7 +250,7 @@ class TestOrder(TestSetup):
             headers={
                 "x-access-token": self.token})
         response = self.client.delete(
-            "/api/v2/auth/users/orders/1",
+            self.user_base_path+"/users/orders/1",
             content_type="application/json",
             headers={
                 "x-access-token": self.token})
@@ -261,7 +261,7 @@ class TestOrder(TestSetup):
     def test_no_orders_found(self):
         """Test no orders in memory"""
         resp = self.client.get(
-            '/api/v2/orders',
+            self.order_base_path,
             headers={
                 "x-access-token": self.admintoken})
         self.assertEqual(resp.status_code, 200)

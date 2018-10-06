@@ -55,19 +55,22 @@ class TestSetup(unittest.TestCase):
             "price": "",
             "category": ""}
 
+        self.user_base_path = "/api/v2/auth"
+        self.order_base_path = "/api/v2/orders"
+        self.menu_base_path = "api/v2/menu"
         # Register and login a testuser
-        self.register = self.client.post('/api/v2/auth/register',
+        self.register = self.client.post(self.user_base_path+'/register',
                                          data=json.dumps(self.user),
                                          headers={"content-type":
                                                   "application/json"})
-        self.login = self.client.post('/api/v2/auth/login',
+        self.login = self.client.post(self.user_base_path+'/login',
                                       data=json.dumps(self.user),
                                       content_type='application/json')
         self.data = json.loads(self.login.get_data(as_text=True))
         self.token = self.data['token']
 
         #Resgister and login test admin
-        self.register = self.client.post('/api/v2/auth/register',
+        self.register = self.client.post(self.user_base_path+'/register',
                                          data=json.dumps(self.admin),
                                          headers={"content-type":
                                                   "application/json"})
@@ -75,7 +78,7 @@ class TestSetup(unittest.TestCase):
         q = "UPDATE users SET admin='true' WHERE username=%s;"
         self.db.cursor().execute(q, (self.admin['username'],))
         self.db.connection.commit()
-        self.adminlogin = self.client.post('/api/v2/auth/login',
+        self.adminlogin = self.client.post(self.user_base_path+'/login',
                                            data=json.dumps(self.admin),
                                            content_type='application/json')
 
@@ -83,23 +86,23 @@ class TestSetup(unittest.TestCase):
         self.admintoken = self.data['token']
 
         #register and login superuser
-        self.register = self.client.post('/api/v2/auth/register',
+        self.register = self.client.post(self.user_base_path+'/register',
                                          data=json.dumps(self.su),
                                          headers={"content-type":
                                                   "application/json"})
-        self.su_login = self.client.post('/api/v2/auth/login',
+        self.su_login = self.client.post(self.user_base_path+'/login',
                                            data=json.dumps(self.su),
                                            content_type='application/json')
         self.data = json.loads(self.su_login.get_data(as_text=True))
         self.su_token = self.data['token']
         # Register and login a testunkownuser
         self.client.post(
-            "/api/v2/auth/register",
+            self.user_base_path+"/register",
             data=json.dumps(
                 self.unknownuser),
             content_type="application/json")
 
-        self.unkownlogin = self.client.post("/api/v2/auth/login",
+        self.unkownlogin = self.client.post(self.user_base_path+'/login',
                                             data=json.dumps(self.unknownuser),
                                             content_type="application/json")
         self.data = json.loads(self.unkownlogin.get_data(as_text=True))
