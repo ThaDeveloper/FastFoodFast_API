@@ -19,7 +19,7 @@ class TestUser(TestSetup):
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("3-15 alpha-numeric", response_msg["Message"])
+        self.assertIn("3-15 letters", response_msg["Message"])
 
     def test_username_less_3_chars(self):
         """tests returns error if username less then 3 characters."""
@@ -34,7 +34,7 @@ class TestUser(TestSetup):
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("3-15 alpha-numeric", response_msg["Message"])
+        self.assertIn("3-15 letter", response_msg["Message"])
 
     def test_missing_email(self):
         """Tests returns error if email is missing."""
@@ -131,7 +131,7 @@ class TestUser(TestSetup):
                     last_name="Ndwiga",
                     username="justin.ndwiga",
                     email="ndwigatest@gmail.com",
-                    password="!passWord3"
+                    password="@passWord3"
                 )),
             content_type="application/json")
         self.assertEqual(response.status_code, 400)
@@ -146,14 +146,15 @@ class TestUser(TestSetup):
                 dict(
                     first_name="Elon",
                     last_name="Musk",
-                    username="elon.musk",
+                    username="elonmusk",
                     email="elon.musk@gmail.com",
                     password="@Yassword5"
                 )),
             content_type="application/json")
-        self.assertEqual(response.status_code, 201)
+        
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("registered", response_msg["Message"])
+        self.assertEqual(response.status_code, 201)
 
     def test_missing_credentials(self):
         """Tests error raised for missing auth details."""
@@ -203,16 +204,16 @@ class TestUser(TestSetup):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("token", response_msg)
 
-    # to be implemented later
-    # def test_logout(self):
-    #     """Test logout success"""
-    #     response = self.client.delete(
-    #         '/api/v2/auth/logout',
-    #         headers={
-    #             "x-access-token": self.token})
-    #     self.assertEqual(response.status_code, 200)
-    #     response_msg = json.loads(response.data.decode("UTF-8"))
-    #     self.assertIn("out", response_msg["Message"])
+
+    def test_logout(self):
+        """Test logout success"""
+        response = self.client.delete(
+            '/api/v2/auth/logout',
+            headers={
+                "x-access-token": self.token})
+        self.assertEqual(response.status_code, 200)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("out", response_msg["Message"])
 
 
 if __name__ == "__main__":

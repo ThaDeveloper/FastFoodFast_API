@@ -1,9 +1,11 @@
+"""Menu Test module"""
 import json
 import unittest
 from tests.v2.test_setup import TestSetup
 
 
 class TestMenu(TestSetup):
+    """Menu Test class"""
     def test_menu_access_with_invalid_token(self):
         """Raise unauthorized error invalid token."""
         response = self.client.post("/api/v2/menu",
@@ -25,7 +27,6 @@ class TestMenu(TestSetup):
                                     data=json.dumps(self.menu_item),
                                     content_type="application/json",
                                     headers={"x-access-token": self.admintoken})
-        print(json.dumps(self.menu))
         self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("added", response_msg["Message"])
@@ -34,7 +35,8 @@ class TestMenu(TestSetup):
         """Error raised for blank menu name.
         A menu must have  a name."""
         response = self.client.post("/api/v2/menu",
-                                    data=json.dumps(dict(name="")),
+                                    data=json.dumps(dict(name="", price=200.00, \
+                                    image="empty.jpg", category="none")),
                                     content_type="application/json",
                                     headers={"x-access-token": self.token})
         self.assertEqual(response.status_code, 400)
@@ -46,21 +48,22 @@ class TestMenu(TestSetup):
         Error raised for duplicate menu names.
         """
         self.client.post("/api/v2/menu",
-                         data=json.dumps(self.menu),
+                         data=json.dumps(self.menu_item),
                          content_type="application/json",
-                         headers={"x-access-token": self.token})
+                         headers={"x-access-token": self.admintoken})
         response = self.client.post("/api/v2/menu",
                                     data=json.dumps(dict(name="rice",
                                                          image="rice.jpg",
                                                          price=800,
                                                          category="main")),
                                     content_type="application/json",
-                                    headers={"x-access-token": self.token})
+                                    headers={"x-access-token": self.admintoken})
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("already exists", response_msg["Message"])
 
     def test_menu_list(self):
+        """Test returns full menu"""
         resp = self.client.get('/api/v2/menu')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
@@ -68,8 +71,12 @@ class TestMenu(TestSetup):
     def test_menu_detail_200(self):
         """Test if you can get a single menu.
         Register a single menu first"""
+        self.client.post("/api/v2/menu",
+                         data=json.dumps(self.menu_item),
+                         content_type="application/json",
+                         headers={"x-access-token": self.admintoken})
         resp = self.client.get(
-            '/api/v2/menu/2')
+            '/api/v2/menu/1')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content_type, 'application/json')
 
@@ -84,14 +91,18 @@ class TestMenu(TestSetup):
 
     def test_update_menu(self):
         """Tests a menu can be updated."""
+        self.client.post("/api/v2/menu",
+                         data=json.dumps(self.menu_item),
+                         content_type="application/json",
+                         headers={"x-access-token": self.admintoken})
         response = self.client.put(
-            "/api/v2/menu/2",
+            "/api/v2/menu/1",
             data=json.dumps(
                 self.new_menu_item),
             content_type="application/json",
             headers={
                 "x-access-token": self.admintoken})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("updated", response_msg["Message"])
 
@@ -120,21 +131,13 @@ class TestMenu(TestSetup):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Not authorized", response_msg["Message"])
 
-    def test_duplicate_updates(self):
-        """
-        Tests for updating menu to a name that already exists.
-         """
-        response = self.client.put("/api/v2/menu/2",
-                                   data=json.dumps(self.menu_item),
-                                   content_type="application/json",
-                                   headers={
-                                       "x-access-token": self.admintoken})
-        self.assertEqual(response.status_code, 400)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("already exists", response_msg["Message"])
 
     def test_delete_menu(self):
         """Tests menu deletion."""
+        self.client.post("/api/v2/menu",
+                         data=json.dumps(self.menu_item),
+                         content_type="application/json",
+                         headers={"x-access-token": self.admintoken})
         response = self.client.delete(
             "/api/v2/menu/1",
             content_type="application/json",
@@ -147,7 +150,7 @@ class TestMenu(TestSetup):
     def test_deleting_unauthorized_menu(self):
         """Tests error raised when deleting if not admin."""
         response = self.client.delete(
-            "/api/v2/menu/3",
+            "/api/v2/menu/1",
             content_type="application/json",
             headers={
                 "x-access-token": self.unkowntoken})
