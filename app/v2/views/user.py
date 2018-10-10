@@ -58,16 +58,17 @@ def login():
         return jsonify({"Message": "Username and password required!"}), 401
 
     try:
-        query = "SELECT username, password FROM users WHERE username=%s;"
+        query = "SELECT username, admin, password FROM users WHERE username=%s;"
         CUR.execute(query, (auth['username'],))
         row = CUR.fetchone()
     except Exception as e:
         return str(e)
     if row:
         if check_password_hash(row['password'], auth['password']):
-            u_token = jwt.encode({'username': row['username'],
-                                  'exp': datetime.datetime.utcnow() +
-                                         datetime.timedelta(minutes=30)},
+            payload = {'username': row['username'], 'admin': row['admin'],
+                        'exp': datetime.datetime.utcnow() +
+                                         datetime.timedelta(minutes=30)}
+            u_token = jwt.encode(payload,
                                  os.getenv('SECRET'))
             u_token = u_token.decode('UTF-8')
             query = "INSERT INTO tokens(user_id, token) VALUES(%s, %s)"
