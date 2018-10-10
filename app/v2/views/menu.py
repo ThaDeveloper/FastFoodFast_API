@@ -71,6 +71,7 @@ def get_full_menu():
                     'name': menu['name'],
                     'price': '%.*f' % (2, menu['price']),
                     'category': menu['category'],
+                    'image': menu['image'],
                     'created_at': menu['created_at'],
                     'updated_at': menu['updated_at']
                 } for menu in menus
@@ -92,6 +93,7 @@ def get_single_menu_item(item_id):
                     'name': item['name'],
                     'price': '%.*f' % (2, item['price']),
                     'category': item['category'],
+                    'image': item['image'],
                     'created_at': item['created_at'],
                     'updated_at': item['updated_at']
                 }
