@@ -50,10 +50,10 @@ def add_menu(current_user):
         return jsonify({"Message": "Menu added",
                         "Data": {
                             "Menu id": menu['item_id'],
-                            "Name": menu['name'],
+                            "Name": menu['name'].title(),
                             "Price": '%.*f' % (2, menu['price']),
                             "Image": menu['image'],
-                            "Category": menu['category']}}), 201
+                            "Category": menu['category'].title()}}), 201
     return jsonify({"Message": "Not authorized to add menu"}), 403 #forbidden
 
 
@@ -125,13 +125,16 @@ def edit_menu_item(current_user, item_id):
             return jsonify(
                 {'Message': 'Menu name/price/category cannot be empty and must be valid'}), 400
         if response:
+            query = "SELECT * FROM menu WHERE item_id=%s"
+            CUR.execute(query, (item_id,))
+            menu = CUR.fetchone()
             return jsonify({"Message": "Menu updated",
                             'Data': {
                                 'Item_id': item_id,
-                                'Name': str(data['name']).strip(" ").lower(),
-                                'Price': '%.*f' % (2, data['price']),
-                                'Category': str(data['category']).strip(" ").lower(),
-                                'Image': str(data['image']).strip(" ").lower(),
+                                'Name': menu['name'].title(),
+                                'Price': '%.*f' % (2, menu['price']),
+                                'Category': menu['category'].title(),
+                                'Image': menu['image'],
                                 'Update_at': new_time}}), 200
         return jsonify({"Message":"Meal item not found"}), 404
     return jsonify({"Message": "Not authorized to edit menu"}), 403

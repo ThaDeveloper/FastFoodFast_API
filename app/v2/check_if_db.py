@@ -16,4 +16,4 @@ def check_db_exists(db):
             password=PASSWORD)
         return True, connection
     except BaseException:
-        return False
+        return False, "null"
