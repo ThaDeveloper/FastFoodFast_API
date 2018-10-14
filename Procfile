@@ -1,1 +1,2 @@
-web gunicorn run:app
+release: python3 manage.py create_db
+web: gunicorn run:APP

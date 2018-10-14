@@ -27,7 +27,7 @@ class TestOrder(TestSetup):
             content_type="application/json", headers={
                 "x-access-token": self.admintoken})
         self.assertEqual(response.status_code, 400)
-
+        
     def test_add_new_order(self):
         """Tests creating a new order."""
         response = self.client.post(

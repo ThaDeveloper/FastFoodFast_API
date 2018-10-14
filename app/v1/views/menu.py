@@ -10,7 +10,6 @@ MENU_V1 = Blueprint('menu', __name__)
 menu_inst = Menu()
 full_menu = menu_inst.menu
 
-
 @MENU_V1.route('', methods=['POST'])
 @Auth.token_required
 def add_menu(current_user):
@@ -39,7 +38,6 @@ def add_menu(current_user):
 def get_full_menu():
     """Returns full menu to user or admin"""
     return jsonify({"Our Menu": full_menu}), 200
-
 
 @MENU_V1.route('/<int:item_id>', methods=['GET'])
 def get_single_item(item_id):
